@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "155705220934",
+    "firebase_url": "https://hongchao-a9a68-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "hongchao-a9a68",
+    "storage_bucket": "hongchao-a9a68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155705220934:android:3ac581ef1f85cef4104f47",
+        "android_client_info": {
+          "package_name": "com.example.hong_chao"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155705220934-ppnd2538dh5evseegs3ujuurilc6oacn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwi_F9J1eE2uv3NdE92X1kb-M0LQuMYmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155705220934-ppnd2538dh5evseegs3ujuurilc6oacn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
