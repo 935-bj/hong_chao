@@ -5,6 +5,7 @@ import 'package:hong_chao/wbill.dart';
 import 'package:hong_chao/ebill.dart';
 import 'package:hong_chao/seting.dart';
 import 'package:hong_chao/sum.dart';
+import 'package:hong_chao/wsum.dart';
 
 import 'cal.dart';
 
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         ebill.routeName: (context) => const ebill(),
         seting.routeName: (context) => const seting(),
         sum.routeName: (context) => const sum(),
+        wsum.routeName: (context) => const wsum(),
         cal.routeName: (context) => const cal(),
       },
       initialRoute: home.routeName,

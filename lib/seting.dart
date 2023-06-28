@@ -22,7 +22,7 @@ class _setingState extends State<seting> {
   }
 
   Future<void> setRate(num wrate, num erate) async {
-    await dbRef.set({'wrate': wrate, 'erate': erate});
+    await dbRef.update({'wrate': wrate, 'erate': erate});
     print('finished update rate data ;');
   }
 

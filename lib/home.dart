@@ -3,6 +3,7 @@ import 'package:hong_chao/ebill.dart';
 import 'package:hong_chao/seting.dart';
 import 'package:hong_chao/wbill.dart';
 import 'package:hong_chao/sum.dart';
+import 'package:hong_chao/wsum.dart';
 import 'package:hong_chao/cal.dart';
 
 class home extends StatelessWidget {
@@ -23,6 +24,10 @@ class home extends StatelessWidget {
 
   void to_sum(BuildContext context) {
     Navigator.pushNamed(context, sum.routeName);
+  }
+
+  void to_wsum(BuildContext context) {
+    Navigator.pushNamed(context, wsum.routeName);
   }
 
   void to_cal(BuildContext context) {
@@ -48,13 +53,18 @@ class home extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             ElevatedButton(
-              onPressed: () => to_sum(context),
+              onPressed: () => to_cal(context),
               child: const Text('คำณวนค่าเช่า'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () => to_sum(context),
-              child: const Text('ดูประวัติฯ'),
+              child: const Text('ดูประวัติฯการใช้ไฟ'),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => to_wsum(context),
+              child: const Text('ดูประวัติฯการใช้น้ำ'),
             ),
             const SizedBox(height: 10),
             ElevatedButton(
