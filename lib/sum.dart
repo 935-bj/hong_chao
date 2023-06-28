@@ -1,6 +1,8 @@
 import 'dart:ffi';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 class sum extends StatefulWidget {
@@ -26,15 +28,18 @@ class _sumState extends State<sum> {
       appBar: AppBar(
         title: const Text('HongChao'),
       ),
-      body: const Column(
+      body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('Montly Fee',
-              style: TextStyle(
-                color: Colors.deepPurple,
-                fontWeight: FontWeight.bold,
-              ))
+          Expanded(
+              child: FirebaseAnimatedList(
+                  query: dbRef.child('e1_record'),
+                  itemBuilder: (BuildContext context, DataSnapshot snapshot,
+                      Animation<double> animation, int indext) {
+                    Map erecord = snapshot.value as Map;
+                    return display(data: erecord);
+                  }))
         ],
       ),
     );
@@ -51,13 +56,13 @@ class _sumState extends State<sum> {
       padding: const EdgeInsets.all(10.0),
       child: Container(
         padding: const EdgeInsets.all(15.0),
-        color: Colors.black,
+        color: Colors.deepPurple[100],
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              data as String,
-              style: TextStyle(fontSize: 20.0),
+              data.toString(),
+              style: const TextStyle(fontSize: 20.0, color: Colors.black),
             )
           ],
         ),
