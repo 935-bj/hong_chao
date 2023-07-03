@@ -38,37 +38,62 @@ class home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('HongChao'),
+          title: Center(child: const Text('ห้อง 1')),
         ),
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            ElevatedButton(
-              onPressed: () => to_E(context),
-              child: const Text('ใส่เลขมเตอร์ไฟ'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => to_W(context),
-              child: const Text('ใส่เลขมิเตอร์น้ำ'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => to_cal(context),
-              child: const Text('คำณวนค่าเช่า'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => to_sum(context),
-              child: const Text('ดูประวัติฯการใช้ไฟ'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => to_wsum(context),
-              child: const Text('ดูประวัติฯการใช้น้ำ'),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-                onPressed: () => to_S(context), child: const Text('ตั้งค่า'))
+            SizedBox(
+                width: 300,
+                height: 45,
+                child: (ElevatedButton(
+                  onPressed: () => to_E(context),
+                  child: const Text('ใส่เลขมิเตอร์ไฟ',
+                      style: TextStyle(fontSize: 20)),
+                ))),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: 300,
+                height: 45,
+                child: (ElevatedButton(
+                  onPressed: () => to_W(context),
+                  child: const Text('ใส่เลขมิเตอร์น้ำ',
+                      style: TextStyle(fontSize: 20)),
+                ))),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: 300,
+                height: 45,
+                child: (ElevatedButton(
+                  onPressed: () => to_cal(context),
+                  child: const Text('คำณวนค่าเช่า',
+                      style: TextStyle(fontSize: 20)),
+                ))),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: 300,
+                height: 45,
+                child: (ElevatedButton(
+                  onPressed: () => to_sum(context),
+                  child: const Text('ดูประวัติฯการใช้ไฟ',
+                      style: TextStyle(fontSize: 20)),
+                ))),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: 300,
+                height: 45,
+                child: (ElevatedButton(
+                  onPressed: () => to_wsum(context),
+                  child: const Text('ดูประวัติฯการใช้น้ำ',
+                      style: TextStyle(fontSize: 20)),
+                ))),
+            const SizedBox(height: 20),
+            SizedBox(
+                width: 300,
+                height: 45,
+                child: (ElevatedButton(
+                    onPressed: () => to_S(context),
+                    child:
+                        const Text('ตั้งค่า', style: TextStyle(fontSize: 20)))))
           ]),
         ));
   }

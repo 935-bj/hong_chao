@@ -10,7 +10,7 @@ class wbill extends StatefulWidget {
   @override
   State<wbill> createState() => _wbillState();
 }
-  
+
 class _wbillState extends State<wbill> {
   final TextEditingController _textEditingController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -57,17 +57,18 @@ class _wbillState extends State<wbill> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HongChao'),
+        title: const Text('ห้อง 1'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const Text(
-            'Input electricity meter data',
+            'Input water meter data',
             style: TextStyle(
               color: Colors.deepPurple,
               fontWeight: FontWeight.bold,
+              fontSize: 20,
             ),
           ),
           const SizedBox(height: 20),
@@ -84,10 +85,10 @@ class _wbillState extends State<wbill> {
                 ],
                 validator: _validateInput,
                 decoration: const InputDecoration(
-                  fillColor: Color.fromARGB(255, 225, 207, 243),
-                  filled: true,
-                  hintText: 'ใส่เลขมิเตอร์น้ำ',
-                ),
+                    fillColor: Color.fromARGB(255, 225, 207, 243),
+                    filled: true,
+                    hintText: 'ใส่เลขมิเตอร์น้ำ',
+                    hintStyle: TextStyle(fontSize: 20)),
               ),
             ),
           ),
@@ -97,7 +98,10 @@ class _wbillState extends State<wbill> {
               if (_textEditingController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('กรุณาใส่ข้อมูลให้ครบทุกช่อง'),
+                    content: Text(
+                      'กรุณาใส่ข้อมูลให้ครบทุกช่อง',
+                      style: TextStyle(fontSize: 20),
+                    ),
                     duration: Duration(seconds: 5),
                   ),
                 );
@@ -109,7 +113,7 @@ class _wbillState extends State<wbill> {
                 }
               }
             },
-            child: const Text('เสร็จ'),
+            child: const Text('เสร็จ', style: TextStyle(fontSize: 20)),
           ),
         ],
       ),

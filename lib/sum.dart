@@ -2,7 +2,6 @@ import 'dart:ffi';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 
 class sum extends StatefulWidget {
@@ -26,7 +25,7 @@ class _sumState extends State<sum> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HongChao'),
+        title: const Text('ประวัติการใช้ไฟ'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,

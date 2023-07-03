@@ -60,7 +60,7 @@ class _ebillState extends State<ebill> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HongChao'),
+        title: const Text('ห้อง 1'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -71,6 +71,7 @@ class _ebillState extends State<ebill> {
             style: TextStyle(
               color: Colors.deepPurple,
               fontWeight: FontWeight.bold,
+              fontSize: 20,
             ),
           ),
           const SizedBox(height: 20),
@@ -87,10 +88,10 @@ class _ebillState extends State<ebill> {
                 ],
                 validator: _validateInput,
                 decoration: const InputDecoration(
-                  fillColor: Color.fromARGB(255, 225, 207, 243),
-                  filled: true,
-                  hintText: 'เลขมิเตอร์ไฟ',
-                ),
+                    fillColor: Color.fromARGB(255, 225, 207, 243),
+                    filled: true,
+                    hintText: 'เลขมิเตอร์ไฟ',
+                    hintStyle: TextStyle(fontSize: 20)),
               ),
             ),
           ),
@@ -100,7 +101,8 @@ class _ebillState extends State<ebill> {
               if (_textEditingController.text.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('กรุณาใส่ข้อมูลให้ครบทุกช่อง'),
+                    content: Text('กรุณาใส่ข้อมูลให้ครบทุกช่อง',
+                        style: TextStyle(fontSize: 20)),
                     duration: Duration(seconds: 5),
                   ),
                 );
@@ -112,7 +114,7 @@ class _ebillState extends State<ebill> {
                 }
               }
             },
-            child: const Text('เสร็จ'),
+            child: const Text('เสร็จ', style: TextStyle(fontSize: 20)),
           ),
         ],
       ),

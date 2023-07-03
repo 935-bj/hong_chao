@@ -19,6 +19,8 @@ class _calState extends State<cal> {
   var wUse = 0;
   var erate = 0;
   var wrate = 0;
+  var roomFee = 0;
+  var otherFee = 0;
 
   @override
   void initState() {
@@ -36,6 +38,8 @@ class _calState extends State<cal> {
       setState(() {
         erate = data['erate'];
         wrate = data['wrate'];
+        roomFee = data['roomFee'];
+        otherFee = data['otherFee'];
       });
 
       dbRef.child('e1').once().then((DatabaseEvent? snapshot) {
@@ -62,7 +66,7 @@ class _calState extends State<cal> {
 
   @override
   Widget build(BuildContext context) {
-    var total = eUse * erate + wUse * wrate;
+    var total = eUse * erate + wUse * wrate + roomFee + otherFee;
 
     return Scaffold(
       appBar: AppBar(
@@ -83,34 +87,44 @@ class _calState extends State<cal> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "water rate: $wrate",
-                    style: const TextStyle(fontSize: 20.0, color: Colors.black),
+                    "ค่าน้ำ: $wrate บาท/หน่วย",
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "used: $wUse unit",
-                    style: const TextStyle(fontSize: 20.0, color: Colors.black),
+                    "ใช้ไป: $wUse หน่วย",
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "water rate: $erate",
-                    style: const TextStyle(fontSize: 20.0, color: Colors.black),
+                    "ค่าไฟ: $erate บาท/หน่วย",
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    "used: $eUse unit",
-                    style: const TextStyle(fontSize: 20.0, color: Colors.black),
+                    "ใช้ไป: $eUse หน่วย",
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "ค่าห้อง: $roomFee บาท",
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "ค่าอื่นๆ: $otherFee บาท",
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     '__________________',
-                    style: const TextStyle(fontSize: 20.0, color: Colors.black),
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
                   ),
                   const SizedBox(height: 10),
                   Text(
                     'Total Fee: $total',
-                    style: const TextStyle(fontSize: 20.0, color: Colors.black),
-                  )
+                    style: const TextStyle(fontSize: 24, color: Colors.black),
+                  ),
                 ],
               ),
             ),

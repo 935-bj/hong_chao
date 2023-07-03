@@ -23,7 +23,7 @@ class _wsumState extends State<wsum> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('HongChao'),
+        title: const Text('ประวัติการใช้น้ำ'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
