@@ -13,6 +13,8 @@ class wbill extends StatefulWidget {
 
 class _wbillState extends State<wbill> {
   final TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _roomnumController = TextEditingController();
+  var roomnum;
   final _formKey = GlobalKey<FormState>();
   late DatabaseReference dbRef;
 
@@ -22,25 +24,34 @@ class _wbillState extends State<wbill> {
     dbRef = FirebaseDatabase.instance.ref();
   }
 
-//ใส่เลขมืเตอ-ห้อง1
+//ใส่เลขมืเตอ-ห้อง $roomnum
   Future<void> setData(num data) async {
     //call data from 'this' as prev
     Object? prev;
-    await dbRef.child('w1').child('this').once().then((DatabaseEvent event) {
+    await dbRef
+        .child('$roomnum')
+        .child('w1')
+        .child('this')
+        .once()
+        .then((DatabaseEvent event) {
       prev = event.snapshot.value;
     });
 
     //store prev to 'prev'
-    await dbRef.child('w1').update({'prev': prev});
+    await dbRef.child('$roomnum').child('w1').update({'prev': prev});
 
     //store new 'this'
-    await dbRef.child('w1').update({'this': data});
+    await dbRef.child('$roomnum').child('w1').update({'this': data});
 
     DateTime now = DateTime.now();
     String timestamp = DateFormat('dd MMMM yyyy HH:mm:ss').format(now);
 
     //store to record
-    await dbRef.child('w1_record').push().set({timestamp: data});
+    await dbRef
+        .child('$roomnum')
+        .child('w1_record')
+        .push()
+        .set({timestamp: data});
     print('finished update meter data');
   }
 
@@ -76,19 +87,36 @@ class _wbillState extends State<wbill> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Form(
               key: _formKey,
-              child: TextFormField(
-                controller: _textEditingController,
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                  LengthLimitingTextInputFormatter(6),
+              child: Column(
+                children: [
+                  TextFormField(
+                      controller: _roomnumController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(2),
+                      ],
+                      decoration: const InputDecoration(
+                          fillColor: Color.fromARGB(255, 225, 207, 243),
+                          filled: true,
+                          hintText: 'ใส่เลขห้อง',
+                          hintStyle: TextStyle(fontSize: 18))),
+                  const SizedBox(height: 20),
+                  TextFormField(
+                    controller: _textEditingController,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                      LengthLimitingTextInputFormatter(6),
+                    ],
+                    validator: _validateInput,
+                    decoration: const InputDecoration(
+                        fillColor: Color.fromARGB(255, 225, 207, 243),
+                        filled: true,
+                        hintText: 'ใส่เลขมิเตอร์น้ำ',
+                        hintStyle: TextStyle(fontSize: 20)),
+                  )
                 ],
-                validator: _validateInput,
-                decoration: const InputDecoration(
-                    fillColor: Color.fromARGB(255, 225, 207, 243),
-                    filled: true,
-                    hintText: 'ใส่เลขมิเตอร์น้ำ',
-                    hintStyle: TextStyle(fontSize: 20)),
               ),
             ),
           ),
@@ -106,7 +134,9 @@ class _wbillState extends State<wbill> {
                   ),
                 );
               } else {
+                roomnum = num.tryParse(_roomnumController.text);
                 num? data = num.tryParse(_textEditingController.text);
+                _roomnumController.clear();
                 if (data != null) {
                   setData(data);
                   _textEditingController.clear();

@@ -38,7 +38,7 @@ class home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Center(child: const Text('ห้อง 1')),
+          title: const Center(child: Text('Hongchoa')),
         ),
         body: Center(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [

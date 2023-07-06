@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class cal extends StatefulWidget {
   static String routeName = '/cal';
@@ -14,6 +15,7 @@ class cal extends StatefulWidget {
 }
 
 class _calState extends State<cal> {
+  final TextEditingController _roomnumController = TextEditingController();
   late DatabaseReference dbRef;
   var eUse = 0;
   var wUse = 0;
@@ -83,9 +85,26 @@ class _calState extends State<cal> {
               padding: const EdgeInsets.all(15.0),
               color: Colors.deepPurple[100],
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  TextFormField(
+                      controller: _roomnumController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(2),
+                      ],
+                      decoration: const InputDecoration(
+                          fillColor: Color.fromARGB(255, 225, 207, 243),
+                          filled: true,
+                          hintText: 'ใส่เลขห้อง',
+                          hintStyle: TextStyle(fontSize: 18))),
+                  ElevatedButton(
+                      onPressed: () => fetchData(),
+                      child: const Text('เรียกข้อมูล',
+                          style: TextStyle(fontSize: 20))),
+                  const SizedBox(height: 100),
                   Text(
                     "ค่าน้ำ: $wrate บาท/หน่วย",
                     style: const TextStyle(fontSize: 24, color: Colors.black),
