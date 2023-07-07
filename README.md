@@ -1,15 +1,17 @@
 # hong_chao
 
-A new Flutter project.
+This Flutter project is made to facilitate SME and VSME owners in apartment businesses who found that calculating the rental fee consumes lots of time and energy. 
 
-## Getting Started
+## Project Details
 
-This project is a starting point for a Flutter application.
+This mobile application support various features which aim to reduce pain point of small apartment owners.
 
-A few resources to get you started if this is your first Flutter project:
+This application include:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Multiple rooms support
+- Store electricity and water meter data/ number
+- Help in calculating rental fee of each room
+- Easy to check meter data record
 
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
