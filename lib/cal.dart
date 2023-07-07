@@ -169,6 +169,7 @@ class _calState extends State<cal> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('คำณวนค่าเช่า'),
+        backgroundColor: Colors.deepPurple[100],
       ),
       body: Column(
         children: [
@@ -179,7 +180,7 @@ class _calState extends State<cal> {
               width: MediaQuery.of(context).size.width *
                   2, // Set the width of the purple area
               padding: const EdgeInsets.all(15.0),
-              color: Colors.deepPurple[100],
+
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -199,6 +200,7 @@ class _calState extends State<cal> {
                                 filled: true,
                                 hintText: 'ใส่เลขห้อง',
                                 hintStyle: TextStyle(fontSize: 18))),
+                        SizedBox(height: 10),
                         ElevatedButton(
                             onPressed: () {
                               roomnum = num.tryParse(_roomnumController.text);

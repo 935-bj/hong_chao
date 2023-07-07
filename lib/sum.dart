@@ -43,6 +43,7 @@ class _sumState extends State<sum> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ประวัติการใช้ไฟ'),
+        backgroundColor: Color.fromARGB(255, 225, 207, 243),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -63,10 +64,12 @@ class _sumState extends State<sum> {
                         filled: true,
                         hintText: 'ใส่เลขห้อง',
                         hintStyle: TextStyle(fontSize: 18))),
+                SizedBox(height: 10.0),
                 ElevatedButton(
                     onPressed: () {
                       roomnum = num.tryParse(_roomnumController.text);
                       fetchData();
+                      _roomnumController.clear();
                     },
                     child: const Text('เรียกข้อมูล',
                         style: TextStyle(fontSize: 20)))
@@ -90,9 +93,11 @@ class _sumState extends State<sum> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 30),
-                Column(
-                  children: [display_e(data: data)],
-                )
+                Expanded(
+                  child: Column(
+                    children: [display_e(data: data)],
+                  ),
+                ),
               ],
             ),
           ),
@@ -100,23 +105,27 @@ class _sumState extends State<sum> {
       },
     );
   }
-}
 
-Widget display_e({required Map data}) {
-  return Padding(
-    padding: const EdgeInsets.all(10.0),
-    child: Container(
-      padding: const EdgeInsets.all(15.0),
-      color: Colors.deepPurple[100],
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            data.toString(),
-            style: const TextStyle(fontSize: 20.0, color: Colors.black),
-          )
-        ],
+  Widget display_e({required Map data}) {
+    final values = data.values.toList(); // Convert map values to a list
+
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Container(
+        padding: const EdgeInsets.all(15.0),
+        child: Column(
+          children: values.map((value) {
+            return Padding(
+              padding: const EdgeInsets.only(
+                  bottom: 10.0), // Adjust the space as needed
+              child: Text(
+                value.toString(),
+                style: const TextStyle(fontSize: 20.0, color: Colors.black),
+              ),
+            );
+          }).toList(),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
