@@ -156,6 +156,33 @@ class _calState extends State<cal> {
                   'Total Fee: $total',
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                 ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        paid();
+                      },
+                      child: const Text(
+                        'จ่ายแล้ว',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50,
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        slip();
+                      },
+                      child: const Text(
+                        'ใบเสร็จ',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -163,6 +190,13 @@ class _calState extends State<cal> {
       },
     );
   } //void display()
+
+  void paid() {
+    dbRef.child('$roomnum').update({'paid': '1'});
+    dbRef.child('paid').push().set('1');
+  }
+
+  void slip() {}
 
   @override
   Widget build(BuildContext context) {
