@@ -1,13 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:hong_chao/ebill.dart';
-import 'package:hong_chao/login.dart';
-import 'package:hong_chao/seting.dart';
-import 'package:hong_chao/wbill.dart';
-import 'package:hong_chao/sum.dart';
-import 'package:hong_chao/wsum.dart';
-import 'package:hong_chao/cal.dart';
-import 'package:hong_chao/oldLogin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class home extends StatefulWidget {
@@ -24,6 +16,9 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   late DatabaseReference dbRef;
+  //late controller
+  final SearchController searrchController = SearchController();
+  int currentIndex = 0;
 
   @override
   void initState() {
@@ -41,37 +36,95 @@ class _homeState extends State<home> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              icon: Icon(Icons.exit_to_app_rounded),
-              onPressed: () {} //=> widget.auth.signOut(),
+              icon: Icon(Icons.add_circle_outline_rounded),
+              onPressed: () {} //navgate to write post screen.
               ),
         ],
       ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Container(
-              height: 100,
-              width: 100,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: widget.user!.photoURL != null
-                      ? NetworkImage(widget.user!.photoURL!)
-                      : const NetworkImage(
-                          'https://photos.app.goo.gl/eU38zsmwbFuG8XXM8'),
+      body: <Widget>[
+        //home index 0
+        const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: <Widget>[
+              Card(
+                child: ListTile(
+                  title: Text('Username'),
+                  subtitle: Text('post content'),
                 ),
               ),
-            ),
-            Text(widget.user!.email!),
-            SizedBox(
-              width: 10,
-            ),
-            Text(widget.user!.displayName ?? "no display name"),
-          ],
+              Card(
+                child: ListTile(
+                  title: Text('Username'),
+                  subtitle: Text('post content'),
+                ),
+              ),
+            ],
+          ),
         ),
+        //scarch index 1
+        SearchAnchor(
+            searchController: searrchController,
+            builder: (BuildContext context, SearchController controller) {
+              return IconButton(
+                icon: const Icon(Icons.search_rounded),
+                onPressed: () {
+                  controller.openView();
+                },
+              );
+            },
+            suggestionsBuilder:
+                (BuildContext context, SearchController controller) {
+              return List<ListTile>.generate(5, (int index) {
+                final String item = 'item $index';
+                return ListTile(
+                  title: Text(item),
+                  onTap: () {
+                    setState(() {
+                      controller.closeView(item);
+                    });
+                  },
+                );
+              });
+            }),
+        // profile index 2
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                // Display user picture
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.user?.photoURL ?? ''),
+                  radius: 50,
+                ),
+                SizedBox(height: 10),
+                // Display user email
+                Text(
+                  widget.user?.email ?? '',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ][currentIndex],
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (int index) {
+          setState(() {
+            currentIndex = index;
+          });
+        },
+        destinations: const <Widget>[
+          NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
+          NavigationDestination(
+              icon: Icon(Icons.search_rounded), label: 'Search'),
+          NavigationDestination(
+              icon: Icon(Icons.person_rounded), label: 'Profile')
+        ],
       ),
     );
   }
