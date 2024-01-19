@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+/*
 import 'package:hong_chao/ebill.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/seting.dart';
@@ -6,7 +7,7 @@ import 'package:hong_chao/wbill.dart';
 import 'package:hong_chao/sum.dart';
 import 'package:hong_chao/wsum.dart';
 import 'package:hong_chao/cal.dart';
-import 'package:hong_chao/oldLogin.dart';
+import 'package:hong_chao/oldLogin.dart'; 
 import 'package:firebase_auth/firebase_auth.dart';
 
 class oldhome extends StatelessWidget {
