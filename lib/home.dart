@@ -118,6 +118,7 @@ class _homeState extends State<home> {
             currentIndex = index;
           });
         },
+        selectedIndex: currentIndex,
         destinations: const <Widget>[
           NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
           NavigationDestination(
