@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
 
+//add OpenCase.dart
+import 'package:hong_chao/OpenCase.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -25,6 +28,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         login.routeName: (context) => const login(),
+        OpenCase.routeName:(context) => const OpenCase(),
       },
       initialRoute: login.routeName,
     );
