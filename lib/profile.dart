@@ -63,6 +63,13 @@ class _profileState extends State<profile> {
               TextButton(
                 onPressed: () {},
                 child: Text('Register as PLaintiff'),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text('Log out'),
               )
             ],
           ),

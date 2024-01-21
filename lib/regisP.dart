@@ -1,15 +1,123 @@
+import 'dart:js_interop';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class regisP extends StatefulWidget {
-  const regisP({super.key});
+  static String routename = '/regisP';
+  final FirebaseAuth auth;
+  final User? user;
+
+  const regisP({Key? key, required this.auth, required this.user})
+      : super(key: key);
 
   @override
   State<regisP> createState() => _regisPState();
 }
 
 class _regisPState extends State<regisP> {
+  late DatabaseReference dbRef;
+  final _formKey = GlobalKey<FormState>();
+  //controller
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _nidController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    dbRef = FirebaseDatabase.instance.ref();
+  }
+
+  Future<void> sendForm(String uid, String name, int phone, int nid) async {
+    await dbRef
+        .child('plaintiff_form')
+        .child(uid)
+        .update({'name': name, 'phone': phone, 'nid': nid});
+    print('finished update data ;');
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text('Register as Plaintiff'),
+        ),
+      ),
+      body: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: const InputDecoration(
+                          hintText: 'real name',
+                        ),
+                      ),
+                      TextFormField(
+                        controller: _phoneController,
+                        decoration: const InputDecoration(
+                          hintText: 'real name',
+                        ),
+                      ),
+                      TextFormField(
+                        controller: _nidController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(13),
+                        ],
+                        decoration: const InputDecoration(
+                          hintText: 'national ID',
+                        ),
+                      ),
+                      TextFormField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        decoration: const InputDecoration(
+                          hintText: 'phone number',
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Center(
+              child: ElevatedButton(
+                  onPressed: () {
+                    if (_nameController.text.isEmpty ||
+                        _phoneController.text.isEmpty ||
+                        _nidController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('all filed need to be filled',
+                              style: TextStyle(fontSize: 20)),
+                          duration: Duration(seconds: 10),
+                        ),
+                      );
+                    } else {
+                      sendForm(widget.user!.uid, _nameController.text,
+                          _phoneController as int, _nidController as int);
+                    }
+                  },
+                  child: const Text('submit')),
+            )
+          ]),
+    );
   }
 }

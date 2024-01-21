@@ -87,35 +87,18 @@ class _homeState extends State<home> {
                 );
               });
             }),
-        // profile index 2
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                // Display user picture
-                CircleAvatar(
-                  backgroundImage: NetworkImage(widget.user?.photoURL ?? ''),
-                  radius: 50,
-                ),
-                SizedBox(height: 10),
-                // Display user email
-                Text(
-                  widget.user?.email ?? '',
-                  style: TextStyle(fontSize: 20),
-                ),
-              ],
-            ),
-          ),
-        ),
       ][currentIndex],
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
           setState(() {
             currentIndex = index;
+
+            if (index == 1) {
+              //Navigator.pushNamed(context, '/search');
+            }
+            if (index == 2) {
+              Navigator.pushNamed(context, '/profile');
+            }
           });
         },
         selectedIndex: currentIndex,
