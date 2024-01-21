@@ -16,7 +16,7 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   late DatabaseReference dbRef;
-  //late controller
+  //controller
   final SearchController searrchController = SearchController();
   int currentIndex = 0;
 

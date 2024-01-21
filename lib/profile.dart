@@ -51,10 +51,19 @@ class _profileState extends State<profile> {
               SizedBox(
                 width: 20,
               ),
-              Text(
-                'Register as Lawyer',
+              TextButton(
+                onPressed: () {},
+                child: const Text(
+                  'Register as Lawyer',
+                ),
               ),
-              Text('Register as PLaintiff'),
+              SizedBox(
+                width: 20,
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text('Register as PLaintiff'),
+              )
             ],
           ),
         ),
