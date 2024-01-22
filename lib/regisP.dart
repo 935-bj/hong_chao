@@ -4,7 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:firebase_storage/firebase_storage.dart';
 
 class regisP extends StatefulWidget {
   static String routename = '/regisP';
@@ -22,9 +22,7 @@ class regisP extends StatefulWidget {
 class _regisPState extends State<regisP> {
   late DatabaseReference dbRef;
   final _formKey = GlobalKey<FormState>();
-  XFile? image;
-  final ImagePicker picker = ImagePicker();
-  String imageUrl = '';
+  String imgUrl = '';
   //controller
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -36,35 +34,11 @@ class _regisPState extends State<regisP> {
     dbRef = FirebaseDatabase.instance.ref();
   }
 
-  Future<String> uploadImage(File imageFile, String uid) async {
-    try {
-      String imageName =
-          'user_$uid'; // You can generate a unique name for each image
-
-      firebase_storage.Reference storageReference =
-          firebase_storage.FirebaseStorage.instance.ref().child(imageName);
-      await storageReference.putFile(imageFile);
-      String downloadURL = await storageReference.getDownloadURL();
-      return downloadURL;
-    } catch (e) {
-      print('Error uploading image: $e');
-      return '';
-    }
-  }
-
   Future<void> sendForm(
       String uid, String name, int phone, int nid, String imageUrl) async {
     await dbRef.child('plaintiff_form').child(uid).update(
         {'name': name, 'phone': phone, 'nid': nid, 'imageUrl': imageUrl});
     print('finished update data ;');
-  }
-
-  Future getImg(ImageSource media) async {
-    var img = await picker.pickImage(source: media);
-
-    setState(() {
-      image = img;
-    });
   }
 
   @override
@@ -85,28 +59,22 @@ class _regisPState extends State<regisP> {
                   key: _formKey,
                   child: Column(
                     children: [
+                      Text('Name Lastname'),
+                      SizedBox(
+                        height: 5,
+                      ),
                       TextFormField(
                         controller: _nameController,
                         decoration: const InputDecoration(
                           hintText: 'real name',
                         ),
                       ),
-                      TextFormField(
-                        controller: _phoneController,
-                        decoration: const InputDecoration(
-                          hintText: 'phone number',
-                        ),
+                      SizedBox(
+                        height: 10,
                       ),
-                      TextFormField(
-                        controller: _nidController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(13),
-                        ],
-                        decoration: const InputDecoration(
-                          hintText: 'national ID',
-                        ),
+                      Text('Phone number'),
+                      SizedBox(
+                        height: 5,
                       ),
                       TextFormField(
                         controller: _phoneController,
@@ -119,10 +87,31 @@ class _regisPState extends State<regisP> {
                           hintText: 'phone number',
                         ),
                       ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Text('National ID'),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      TextFormField(
+                        controller: _nidController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(13),
+                        ],
+                        decoration: const InputDecoration(
+                          hintText: 'national ID',
+                        ),
+                      ),
+                      SizedBox(height: 10),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('Upload evidence'),
+                          Center(
+                            child: Text('Upload evidence'),
+                          ),
                           SizedBox(width: 5),
                           GestureDetector(
                             onTap: () {
@@ -152,11 +141,24 @@ class _regisPState extends State<regisP> {
                       ElevatedButton(
                         //if user click this button, user can upload image from gallery
                         onPressed: () async {
-                          Navigator.pop(context);
-                          XFile? img = await getImg(ImageSource.gallery);
-                          if (img != null) {
-                            imageUrl = await uploadImage(File(img.path), 'uid');
-                          }
+                          //get the img from gallery
+                          ImagePicker imagePicker = ImagePicker();
+                          XFile? file = await imagePicker.pickImage(
+                              source: ImageSource.gallery);
+                          print('The path is: ${file?.path}');
+                          if (file == null) print('file null');
+
+                          //get ref to storage
+                          Reference root = FirebaseStorage.instance.ref();
+                          Reference Dir = root.child('nid_card');
+                          Reference uploadTo = Dir.child('username.jpg');
+
+                          //upload
+                          try {
+                            await uploadTo.putFile(File(file!.path));
+                            imgUrl = await uploadTo.getDownloadURL();
+                            print('${imgUrl}');
+                          } catch (error) {}
                         },
                         child: Row(
                           children: [
@@ -190,7 +192,10 @@ class _regisPState extends State<regisP> {
                           _nameController.text,
                           int.parse(_phoneController.text),
                           int.parse(_nidController.text),
-                          imageUrl);
+                          imgUrl);
+                      _nameController.clear();
+                      _nidController.clear();
+                      _phoneController.clear();
                     }
                   },
                   child: const Text('submit')),
