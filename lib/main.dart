@@ -6,7 +6,7 @@ import 'package:hong_chao/home.dart';
 
 //add OpenCase.dart
 import 'package:hong_chao/OpenCase.dart';
-import 'package:hong_chao/profile.dart';
+
 import 'package:hong_chao/regisP.dart';
 
 void main() async {
@@ -31,9 +31,6 @@ class MyApp extends StatelessWidget {
       routes: {
         login.routeName: (context) => const login(),
         home.routeName: ((context) => home(
-            auth: FirebaseAuth.instance,
-            user: FirebaseAuth.instance.currentUser)),
-        profile.routeName: ((context) => profile(
             auth: FirebaseAuth.instance,
             user: FirebaseAuth.instance.currentUser)),
         regisP.routename: ((context) => regisP(
