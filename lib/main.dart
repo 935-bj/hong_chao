@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 //add OpenCase.dart
 import 'package:hong_chao/OpenCase.dart';
@@ -34,11 +35,11 @@ class MyApp extends StatelessWidget {
             auth: FirebaseAuth.instance,
             user: FirebaseAuth.instance.currentUser)),
         regisP.routename: ((context) => regisP(
-            auth: FirebaseAuth.instance,
-            user: FirebaseAuth.instance.currentUser)),
+            //auth: FirebaseAuth.instance,
+            /*user: FirebaseAuth.instance.currentUser*/)),
         OpenCase.routeName: (context) => const OpenCase(),
       },
-      initialRoute: login.routeName,
+      initialRoute: regisP.routename,
     );
   }
 }

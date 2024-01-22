@@ -4,14 +4,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class regisP extends StatefulWidget {
   static String routename = '/regisP';
-  final FirebaseAuth auth;
-  final User? user;
+  //final FirebaseAuth auth;
+  //final User? user;
 
-  const regisP({Key? key, required this.auth, required this.user})
-      : super(key: key);
+  //const regisP({Key? key, required this.auth, required this.user})
+  //    : super(key: key);
+  const regisP({super.key});
 
   @override
   State<regisP> createState() => _regisPState();
@@ -22,6 +24,7 @@ class _regisPState extends State<regisP> {
   final _formKey = GlobalKey<FormState>();
   XFile? image;
   final ImagePicker picker = ImagePicker();
+  String imageUrl = '';
   //controller
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -33,11 +36,26 @@ class _regisPState extends State<regisP> {
     dbRef = FirebaseDatabase.instance.ref();
   }
 
-  Future<void> sendForm(String uid, String name, int phone, int nid) async {
-    await dbRef
-        .child('plaintiff_form')
-        .child(uid)
-        .update({'name': name, 'phone': phone, 'nid': nid});
+  Future<String> uploadImage(File imageFile, String uid) async {
+    try {
+      String imageName =
+          'user_$uid'; // You can generate a unique name for each image
+
+      firebase_storage.Reference storageReference =
+          firebase_storage.FirebaseStorage.instance.ref().child(imageName);
+      await storageReference.putFile(imageFile);
+      String downloadURL = await storageReference.getDownloadURL();
+      return downloadURL;
+    } catch (e) {
+      print('Error uploading image: $e');
+      return '';
+    }
+  }
+
+  Future<void> sendForm(
+      String uid, String name, int phone, int nid, String imageUrl) async {
+    await dbRef.child('plaintiff_form').child(uid).update(
+        {'name': name, 'phone': phone, 'nid': nid, 'imageUrl': imageUrl});
     print('finished update data ;');
   }
 
@@ -133,9 +151,12 @@ class _regisPState extends State<regisP> {
                       ),
                       ElevatedButton(
                         //if user click this button, user can upload image from gallery
-                        onPressed: () {
+                        onPressed: () async {
                           Navigator.pop(context);
-                          getImg(ImageSource.gallery);
+                          XFile? img = await getImg(ImageSource.gallery);
+                          if (img != null) {
+                            imageUrl = await uploadImage(File(img.path), 'uid');
+                          }
                         },
                         child: Row(
                           children: [
@@ -165,10 +186,11 @@ class _regisPState extends State<regisP> {
                       );
                     } else {
                       sendForm(
-                          widget.user!.uid,
+                          'uid',
                           _nameController.text,
                           int.parse(_phoneController.text),
-                          int.parse(_nidController.text));
+                          int.parse(_nidController.text),
+                          imageUrl);
                     }
                   },
                   child: const Text('submit')),
