@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hong_chao/authService.dart';
 
 //add OpenCase.dart
 import 'package:hong_chao/OpenCase.dart';
@@ -14,6 +15,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
+  AuthService.initAuthState();
 }
 
 class MyApp extends StatelessWidget {
@@ -34,12 +36,10 @@ class MyApp extends StatelessWidget {
         home.routeName: ((context) => home(
             auth: FirebaseAuth.instance,
             user: FirebaseAuth.instance.currentUser)),
-        regisP.routename: ((context) => regisP(
-            //auth: FirebaseAuth.instance,
-            /*user: FirebaseAuth.instance.currentUser*/)),
+        regisP.routeName: ((context) => regisP()),
         OpenCase.routeName: (context) => const OpenCase(),
       },
-      initialRoute: regisP.routename,
+      initialRoute: login.routeName,
     );
   }
 }

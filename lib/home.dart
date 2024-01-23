@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hong_chao/regisP.dart';
 
 class home extends StatefulWidget {
   static String routeName = '/home';
@@ -120,7 +121,9 @@ class _homeState extends State<home> {
                   width: 10,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, regisP.routeName);
+                  },
                   child: Text('Register as PLaintiff'),
                 ),
                 SizedBox(

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:hong_chao/authService.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -7,12 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class regisP extends StatefulWidget {
-  static String routename = '/regisP';
-  //final FirebaseAuth auth;
-  //final User? user;
-
-  //const regisP({Key? key, required this.auth, required this.user})
-  //    : super(key: key);
+  static String routeName = '/regisP';
   const regisP({super.key});
 
   @override
@@ -27,6 +23,10 @@ class _regisPState extends State<regisP> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nidController = TextEditingController();
+
+  //auth - user
+  FirebaseAuth auth = AuthService.authInstance;
+  User? user = AuthService.currentUser;
 
   @override
   void initState() {
@@ -151,7 +151,7 @@ class _regisPState extends State<regisP> {
                           //get ref to storage
                           Reference root = FirebaseStorage.instance.ref();
                           Reference Dir = root.child('nid_card');
-                          Reference uploadTo = Dir.child('username.jpg');
+                          Reference uploadTo = Dir.child('${user?.uid}.jpg');
 
                           //upload
                           try {
@@ -188,7 +188,7 @@ class _regisPState extends State<regisP> {
                       );
                     } else {
                       sendForm(
-                          'uid',
+                          '${user?.uid}',
                           _nameController.text,
                           int.parse(_phoneController.text),
                           int.parse(_nidController.text),
