@@ -2,6 +2,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hong_chao/regisP.dart';
+import 'package:hong_chao/post.dart';
 
 class home extends StatefulWidget {
   static String routeName = '/home';
@@ -19,6 +20,7 @@ class _homeState extends State<home> {
   late DatabaseReference dbRef;
   //controller
   final SearchController searrchController = SearchController();
+  final TextEditingController postController = TextEditingController();
   int currentIndex = 0;
 
   @override
@@ -38,7 +40,39 @@ class _homeState extends State<home> {
         actions: [
           IconButton(
               icon: Icon(Icons.add_circle_outline_rounded),
-              onPressed: () {} //navgate to write post screen.
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text('Write a Post'),
+                        content: TextField(
+                          controller: postController,
+                          decoration: InputDecoration(
+                              label: Text('your post content...')),
+                        ),
+                        actions: [
+                          //close the dialog box
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: Text('cancle'),
+                          ),
+                          //post
+                          ElevatedButton(
+                              onPressed: () {
+                                //call post func.
+                                post.createPost(dbRef, widget.user!.uid, 'name',
+                                    postController.text, 'location');
+                                print('post content: ${postController.text}');
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('Post'))
+                        ],
+                      );
+                    });
+              } //navgate to write post screen.
               ),
         ],
       ),
