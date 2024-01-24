@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         regisP.routeName: ((context) => regisP()),
         OpenCase.routeName: (context) => const OpenCase(),
       },
-      initialRoute: login.routeName,
+      initialRoute: regisP.routeName,
     );
   }
 }

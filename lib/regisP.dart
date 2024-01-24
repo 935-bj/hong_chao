@@ -18,7 +18,7 @@ class regisP extends StatefulWidget {
 class _regisPState extends State<regisP> {
   late DatabaseReference dbRef;
   final _formKey = GlobalKey<FormState>();
-  String imgUrl = '';
+  String nidUrl = '';
   //controller
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -156,8 +156,8 @@ class _regisPState extends State<regisP> {
                           //upload
                           try {
                             await uploadTo.putFile(File(file!.path));
-                            imgUrl = await uploadTo.getDownloadURL();
-                            print('${imgUrl}');
+                            nidUrl = await uploadTo.getDownloadURL();
+                            print('${nidUrl}');
                           } catch (error) {}
                         },
                         child: Row(
@@ -186,16 +186,27 @@ class _regisPState extends State<regisP> {
                           duration: Duration(seconds: 10),
                         ),
                       );
+                    }
+                    if (nidUrl.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'you must upload the evidences before submit the form',
+                              style: TextStyle(fontSize: 20)),
+                          duration: Duration(seconds: 10),
+                        ),
+                      );
                     } else {
                       sendForm(
                           '${user?.uid}',
                           _nameController.text,
                           int.parse(_phoneController.text),
                           int.parse(_nidController.text),
-                          imgUrl);
+                          nidUrl);
                       _nameController.clear();
                       _nidController.clear();
                       _phoneController.clear();
+                      nidUrl = '';
                     }
                   },
                   child: const Text('submit')),

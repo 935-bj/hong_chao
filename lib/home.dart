@@ -122,7 +122,10 @@ class _homeState extends State<home> {
                 ),
                 TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, regisP.routeName);
+                    Future.delayed(Duration.zero, () {
+                      _to_regisP();
+                    });
+                    print('direct to regisP');
                   },
                   child: Text('Register as PLaintiff'),
                 ),
@@ -154,5 +157,13 @@ class _homeState extends State<home> {
         ],
       ),
     );
+  }
+
+  Widget _to_regisP() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => regisP()),
+    );
+    return Container();
   }
 }

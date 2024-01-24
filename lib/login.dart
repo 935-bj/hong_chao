@@ -52,7 +52,7 @@ class _loginState extends State<login> {
     );
   }
 
-  Widget _to_home() {
+  /*Widget _to_home() {
     //Navigator.pushNamed(context, home.routeName);
     Navigator.push(
         context,
@@ -60,6 +60,10 @@ class _loginState extends State<login> {
           builder: (context) => home(
               auth: AuthService.authInstance, user: AuthService.currentUser),
         ));
+    return Container();
+  }*/
+  Widget _to_home() {
+    Navigator.pushReplacementNamed(context, home.routeName);
     return Container();
   }
 }
