@@ -33,6 +33,25 @@ class _postScreenState extends State<postScreen> {
     print('finished update data ;');
   }
 
+  Future<String?> getName() async {
+    String? username;
+    await dbRef
+        .child('user')
+        .child('${AuthService.currentUser!.uid}')
+        .once()
+        .then((DatabaseEvent? snapshot) {
+      if (snapshot != null && snapshot.snapshot.value != null) {
+        Map<dynamic, dynamic>? data =
+            (snapshot.snapshot.value as Map<dynamic, dynamic>?);
+        if (data != null) {
+          username = data['name'];
+          print(username);
+        }
+      }
+    });
+    return username;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,26 +61,12 @@ class _postScreenState extends State<postScreen> {
         ),
         actions: [
           ElevatedButton(
-              onPressed: () {
-                var username;
+              onPressed: () async {
                 String postID =
                     DateTime.now().millisecondsSinceEpoch.toString();
-                dbRef
-                    .child('user')
-                    .child('${AuthService.currentUser!.uid}')
-                    .once()
-                    .then((DatabaseEvent? snapshot) {
-                  if (snapshot != null && snapshot.snapshot.value != null) {
-                    Map<dynamic, dynamic>? data =
-                        (snapshot.snapshot.value as Map<dynamic, dynamic>?);
-                    if (data != null) {
-                      username = data['name'] ?? '';
-                      print(username);
-                    }
-                  }
-                });
-                print(
-                    'post content: ${_postController.text}, username: ${username}');
+                String? username = await getName();
+
+                print('post content: ${_postController.text}');
                 dbRef.child('Post').child(postID).update({
                   'content': _postController.text,
                   'location': '',

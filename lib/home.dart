@@ -22,7 +22,7 @@ class _homeState extends State<home> {
   final TextEditingController postController = TextEditingController();
   int currentIndex = 0;
 
-  List<String> dataFromFirebase = [];
+  List<Map<String, dynamic>> postDetailsList = [];
 
   @override
   void initState() {
@@ -35,15 +35,23 @@ class _homeState extends State<home> {
   void _fetchdata() {
     dbRef.child('Post').once().then((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
-        Map/*<dynamic, dynamic>*/ postData = snapshot.snapshot.value as Map;
+        Map<dynamic, dynamic> postData = snapshot.snapshot.value as Map;
         postData.forEach(
           (key, value) {
-            setState(() {
-              dataFromFirebase.add(value.toString());
-            });
+            Map<dynamic, dynamic> postDetails = value as Map;
+
+            Map<String, dynamic> postMap = {
+              'postID': key,
+              'author': postDetails['author'],
+              'uid': postDetails['uid'],
+              'content': postDetails['content'],
+              'timestamp': postDetails['timestamp'],
+            };
+
+            postDetailsList.add(postMap);
           },
         );
-        print(postData);
+        //print(postData);
         //return display(data: postData);
       }
     });
@@ -70,33 +78,51 @@ class _homeState extends State<home> {
         ],
       ),
       body: <Widget>[
-        //home index 0
-        /*const Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Column(
-            children: <Widget>[
-              Card(
-                child: ListTile(
-                  title: Text('Username'),
-                  subtitle: Text('post content'),
-                ),
-              ),
-              Card(
-                child: ListTile(
-                  title: Text('Username'),
-                  subtitle: Text('post content'),
-                ),
-              ),
-            ],
-          ),
-        ), */
         ListView.builder(
-            itemCount: dataFromFirebase.length,
+            itemCount: postDetailsList.length,
             itemBuilder: (context, index) {
+              if (index < 0 || index >= postDetailsList.length) {
+                // Handle the case where the index is out of bounds
+                return SizedBox.shrink(); // or any other fallback widget
+              }
+
+              Map<String, dynamic> postDetail = postDetailsList[index];
+              String time = postDetail['timestamp'].toString();
               return Card(
                 child: ListTile(
-                  title: Text(dataFromFirebase[index]),
-                  // Add more ListTile properties or customize Card content here
+                  title: Text(
+                      '${postDetail['author'].toString()} • ${time.substring(0, time.length - 10)}'),
+                  subtitle: Text(postDetail['content']),
+                  trailing: PopupMenuButton<String>(
+                    onSelected: (String choice) {
+                      print('Selected: $choice');
+                    },
+                    itemBuilder: (BuildContext context) {
+                      if (AuthService.currentUser?.uid == postDetail['key']) {
+                        return <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'Make this post to case',
+                            child: Text('Make this post to case'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'Edit',
+                            child: Text('Edit'),
+                          ),
+                          const PopupMenuItem<String>(
+                            value: 'Delete',
+                            child: Text('Delete'),
+                          )
+                        ];
+                      } else {
+                        return <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'Agree',
+                            child: Text('Agree'),
+                          ),
+                        ];
+                      }
+                    },
+                  ),
                 ),
               );
             }),
