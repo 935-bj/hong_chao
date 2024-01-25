@@ -54,6 +54,8 @@ class _homeState extends State<home> {
         //print(postData);
         //return display(data: postData);
       }
+    }).catchError((e) {
+      print(e);
     });
   }
 
@@ -98,7 +100,7 @@ class _homeState extends State<home> {
                       print('Selected: $choice');
                     },
                     itemBuilder: (BuildContext context) {
-                      if (AuthService.currentUser?.uid == postDetail['key']) {
+                      if (AuthService.currentUser?.uid == postDetail['uid']) {
                         return <PopupMenuEntry<String>>[
                           const PopupMenuItem<String>(
                             value: 'Make this post to case',
