@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/post.dart';
 
+import 'authService.dart';
+
 class home extends StatefulWidget {
   static String routeName = '/home';
   final FirebaseAuth auth;
@@ -62,10 +64,19 @@ class _homeState extends State<home> {
                           //post
                           ElevatedButton(
                               onPressed: () {
+                                var username;
+                                DatabaseReference nameRef =
+                                    FirebaseDatabase.instance.ref(
+                                        'user/${AuthService.currentUser!.uid}/name');
+                                nameRef.onValue.listen((DatabaseEvent event) {
+                                  username = event.snapshot.value.toString();
+                                });
                                 //call post func.
-                                post.createPost(dbRef, widget.user!.uid, 'name',
-                                    postController.text, 'location');
-                                print('post content: ${postController.text}');
+                                post.createPost(dbRef, widget.user!.uid,
+                                    username, postController.text, 'location');
+                                postController.clear;
+                                print(
+                                    'post content: ${postController.text}, username: ${username}');
                                 Navigator.of(context).pop();
                               },
                               child: Text('Post'))
