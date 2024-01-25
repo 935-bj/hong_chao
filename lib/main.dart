@@ -8,6 +8,7 @@ import 'package:hong_chao/authService.dart';
 
 //add OpenCase.dart
 import 'package:hong_chao/OpenCase.dart';
+import 'package:hong_chao/postScreen.dart';
 
 import 'package:hong_chao/regisP.dart';
 
@@ -33,13 +34,12 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         login.routeName: (context) => const login(),
-        home.routeName: ((context) => home(
-            auth: FirebaseAuth.instance,
-            user: FirebaseAuth.instance.currentUser)),
+        home.routeName: ((context) => home()),
         regisP.routeName: ((context) => regisP()),
         OpenCase.routeName: (context) => const OpenCase(),
+        postScreen.routeName: ((context) => const postScreen()),
       },
-      initialRoute: regisP.routeName,
+      initialRoute: home.routeName,
     );
   }
 }

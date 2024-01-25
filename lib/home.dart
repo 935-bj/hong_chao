@@ -1,18 +1,15 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hong_chao/postScreen.dart';
+import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
-import 'package:hong_chao/post.dart';
 
 import 'authService.dart';
 
 class home extends StatefulWidget {
   static String routeName = '/home';
-  final FirebaseAuth auth;
-  final User? user;
-
-  const home({Key? key, required this.auth, required this.user})
-      : super(key: key);
+  const home({super.key});
 
   @override
   State<home> createState() => _homeState();
@@ -25,10 +22,31 @@ class _homeState extends State<home> {
   final TextEditingController postController = TextEditingController();
   int currentIndex = 0;
 
+  List<String> dataFromFirebase = [];
+
   @override
   void initState() {
     super.initState();
-    print("User Email: ${widget.user?.email}");
+    dbRef = FirebaseDatabase.instance.ref();
+    _fetchdata();
+    print("User Email: ${AuthService.currentUser!.email}");
+  }
+
+  void _fetchdata() {
+    dbRef.child('Post').once().then((DatabaseEvent? snapshot) {
+      if (snapshot != null && snapshot.snapshot.value != null) {
+        Map/*<dynamic, dynamic>*/ postData = snapshot.snapshot.value as Map;
+        postData.forEach(
+          (key, value) {
+            setState(() {
+              dataFromFirebase.add(value.toString());
+            });
+          },
+        );
+        print(postData);
+        //return display(data: postData);
+      }
+    });
   }
 
   @override
@@ -43,53 +61,17 @@ class _homeState extends State<home> {
           IconButton(
               icon: Icon(Icons.add_circle_outline_rounded),
               onPressed: () {
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('Write a Post'),
-                        content: TextField(
-                          controller: postController,
-                          decoration: InputDecoration(
-                              label: Text('your post content...')),
-                        ),
-                        actions: [
-                          //close the dialog box
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: Text('cancle'),
-                          ),
-                          //post
-                          ElevatedButton(
-                              onPressed: () {
-                                var username;
-                                DatabaseReference nameRef =
-                                    FirebaseDatabase.instance.ref(
-                                        'user/${AuthService.currentUser!.uid}/name');
-                                nameRef.onValue.listen((DatabaseEvent event) {
-                                  username = event.snapshot.value.toString();
-                                });
-                                //call post func.
-                                post.createPost(dbRef, widget.user!.uid,
-                                    username, postController.text, 'location');
-                                postController.clear;
-                                print(
-                                    'post content: ${postController.text}, username: ${username}');
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('Post'))
-                        ],
-                      );
-                    });
+                Future.delayed(Duration.zero, () {
+                  _to_post();
+                });
+                print('direct to postScreen');
               } //navgate to write post screen.
               ),
         ],
       ),
       body: <Widget>[
         //home index 0
-        const Padding(
+        /*const Padding(
           padding: EdgeInsets.all(8.0),
           child: Column(
             children: <Widget>[
@@ -107,7 +89,17 @@ class _homeState extends State<home> {
               ),
             ],
           ),
-        ),
+        ), */
+        ListView.builder(
+            itemCount: dataFromFirebase.length,
+            itemBuilder: (context, index) {
+              return Card(
+                child: ListTile(
+                  title: Text(dataFromFirebase[index]),
+                  // Add more ListTile properties or customize Card content here
+                ),
+              );
+            }),
         //scarch index 1
         SearchAnchor(
             searchController: searrchController,
@@ -144,20 +136,26 @@ class _homeState extends State<home> {
               children: [
                 // Display user picture
                 CircleAvatar(
-                  backgroundImage: NetworkImage(widget.user?.photoURL ?? ''),
+                  backgroundImage:
+                      NetworkImage(AuthService.currentUser!.photoURL ?? ''),
                   radius: 50,
                 ),
                 SizedBox(height: 10),
                 // Display user email
                 Text(
-                  widget.user?.email ?? '',
+                  AuthService.currentUser!.email ?? '',
                   style: TextStyle(fontSize: 20),
                 ),
                 SizedBox(
                   width: 20,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Future.delayed(Duration.zero, () {
+                      _to_regisL();
+                    });
+                    print('direct to regisL');
+                  },
                   child: const Text(
                     'Register as Lawyer',
                   ),
@@ -209,6 +207,20 @@ class _homeState extends State<home> {
       context,
       MaterialPageRoute(builder: (context) => regisP()),
     );
+    return Container();
+  }
+
+  Widget _to_regisL() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => regisL()),
+    );
+    return Container();
+  }
+
+  Widget _to_post() {
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => postScreen()));
     return Container();
   }
 }
