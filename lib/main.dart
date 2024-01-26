@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
         OpenCase.routeName: (context) => const OpenCase(),
         postScreen.routeName: ((context) => const postScreen()),
       },
-      initialRoute: home.routeName,
+      initialRoute: OpenCase.routeName,
     );
   }
 }
