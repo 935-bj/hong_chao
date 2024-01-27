@@ -38,7 +38,7 @@ class _regisLState extends State<regisL> {
 
   Future<void> sendForm(String uid, String name, int phone, int nid, int lid,
       String nidUrl, String lidUrl) async {
-    await dbRef.child('plaintiff_form').child(uid).update({
+    await dbRef.child('lawyerz_form').child(uid).update({
       'name': name,
       'phone': phone,
       'nid': nid,

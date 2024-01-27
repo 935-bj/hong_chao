@@ -80,6 +80,7 @@ class _homeState extends State<home> {
         ],
       ),
       body: <Widget>[
+        //index0 home
         ListView.builder(
             itemCount: postDetailsList.length,
             itemBuilder: (context, index) {
@@ -91,6 +92,7 @@ class _homeState extends State<home> {
               Map<String, dynamic> postDetail = postDetailsList[index];
               String time = postDetail['timestamp'].toString();
               return Card(
+                //กล่อง
                 child: ListTile(
                   title: Text(
                       '${postDetail['author'].toString()} • ${time.substring(0, time.length - 10)}'),
