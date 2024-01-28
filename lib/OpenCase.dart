@@ -128,7 +128,8 @@ class _OpenCaseState extends State<OpenCase> {
               ElevatedButton(
                 onPressed: () => _selectDate(context, false),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(255, 250, 94, 94), // Set button color to red
+                  backgroundColor: Color.fromARGB(
+                      255, 250, 94, 94), // Set button color to red
                 ),
                 child: Text(
                   'End Date',
@@ -154,14 +155,27 @@ class _OpenCaseState extends State<OpenCase> {
                 // Add the submit logic here
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.lightBlue, // Set button color to red
+                backgroundColor:
+                    Colors.lightBlue, // Set button color to light blue
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(
+                      5.0), // Adjust the borderRadius as needed
+                ),
               ),
-              child: Text(
-                'Submit',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.0 // Set text color to white
+              child: Container(
+                width:
+                    double.infinity, // Make the button fill the available width
+                padding: EdgeInsets.symmetric(
+                    vertical: 15.0), // Adjust the padding as needed
+                child: Center(
+                  child: Text(
+                    'Open Case',
+                    style: TextStyle(
+                      color: Colors.white, // Set text color to white
+                      fontSize: 18.0,
                     ),
+                  ),
+                ),
               ),
             ),
           ],
