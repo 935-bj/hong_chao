@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         login.routeName: (context) => const login(),
         home.routeName: ((context) => home()),
         regisP.routeName: ((context) => regisP()),
-        OpenCase.routeName: (context) => const OpenCase(),
+        //OpenCase.routeName: (context) => const OpenCase(),
         postScreen.routeName: ((context) => const postScreen()),
       },
       initialRoute: home.routeName,

@@ -7,7 +7,10 @@ import 'package:hong_chao/home.dart';
 
 class OpenCase extends StatefulWidget {
   static String routeName = '/OpenCase';
-  const OpenCase({super.key});
+  //const OpenCase({super.key});
+  final Map<String, dynamic> postDetail;
+
+  const OpenCase({required this.postDetail});
 
   @override
   State<OpenCase> createState() => _OpenCaseState();
@@ -89,11 +92,12 @@ class _OpenCaseState extends State<OpenCase> {
 
   @override
   Widget build(BuildContext context) {
+    String formattedTime = '';
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          //child: Text('Open Case'),
-        ),
+            //child: Text('Open Case'),
+            ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -115,17 +119,19 @@ class _OpenCaseState extends State<OpenCase> {
                   ? Center(
                       child: CircularProgressIndicator(),
                     )
-                  : ListView.builder(
-                      itemCount: postDetailsList.length,
-                      itemBuilder: (context, index) {
-                        // Build your UI based on the fetched data
-                        // Example: display each post in a ListTile
-                        return ListTile(
-                          title: Text(postDetailsList[index]['author']),
-                          subtitle: Text(postDetailsList[index]['content']),
-                          // Add more details as needed
-                        );
-                      },
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${postDetailsList[0]['author'].toString()} • $formattedTime',
+                          // Assuming 'formattedTime' is defined somewhere
+                        ),
+                        Text(
+                          postDetailsList[0]['content'],
+                          style: TextStyle(fontSize: 18.0),
+                        ),
+                        // Other widgets can be added as needed
+                      ],
                     ),
             ),
 

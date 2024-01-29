@@ -120,8 +120,9 @@ class _homeState extends State<home> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) =>
-                                      OpenCase()), // Replace OpenCase() with the correct constructor if it requires arguments
+                                builder: (context) =>
+                                    OpenCase(postDetail: postDetail),
+                              ),
                             );
                           },
                         ),
