@@ -85,17 +85,21 @@ class _homeState extends State<home> {
             itemCount: postDetailsList.length,
             itemBuilder: (context, index) {
               if (index < 0 || index >= postDetailsList.length) {
-                // Handle the case where the index is out of bounds
-                return SizedBox.shrink(); // or any other fallback widget
+                // Debugging: Print the problematic index
+                print('Invalid index: $index');
+                // Return an empty container or placeholder widget
+                return Container();
               }
 
               Map<String, dynamic> postDetail = postDetailsList[index];
               String time = postDetail['timestamp'].toString();
+              String formattedTime =
+                  time.length > 10 ? time.substring(0, time.length - 10) : time;
               return Card(
                 //กล่อง
                 child: ListTile(
                   title: Text(
-                      '${postDetail['author'].toString()} • ${time.substring(0, time.length - 10)}'),
+                      '${postDetail['author'].toString()} • $formattedTime'),
                   subtitle: Text(postDetail['content']),
                   trailing: PopupMenuButton<String>(
                     onSelected: (String choice) {
