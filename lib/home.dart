@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
+import 'package:hong_chao/OpenCase.dart';
 
 import 'authService.dart';
 
@@ -104,31 +105,58 @@ class _homeState extends State<home> {
                   trailing: PopupMenuButton<String>(
                     onSelected: (String choice) {
                       print('Selected: $choice');
+                      // No action needed here since we're only displaying options
                     },
                     itemBuilder: (BuildContext context) {
-                      if (AuthService.currentUser?.uid == postDetail['uid']) {
-                        return <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
-                            value: 'Make this post to case',
-                            child: Text('Make this post to case'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'Edit',
-                            child: Text('Edit'),
-                          ),
-                          const PopupMenuItem<String>(
-                            value: 'Delete',
-                            child: Text('Delete'),
-                          )
-                        ];
-                      } else {
-                        return <PopupMenuEntry<String>>[
-                          const PopupMenuItem<String>(
+                      List<PopupMenuEntry<String>> items = [];
+
+                      // Add 'Make this post to case', 'Edit', and 'Delete' options
+                      items.add(
+                        PopupMenuItem<String>(
+                          value: 'Make this post to case',
+                          child: Text('Make this post to case'),
+                          // Empty onSelected handler
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      OpenCase()), // Replace OpenCase() with the correct constructor if it requires arguments
+                            );
+                          },
+                        ),
+                      );
+                      items.add(
+                        PopupMenuItem<String>(
+                          value: 'Edit',
+                          child: Text('Edit'),
+                          // Empty onSelected handler
+                          onTap: () {},
+                        ),
+                      );
+                      items.add(
+                        PopupMenuItem<String>(
+                          value: 'Delete',
+                          child: Text('Delete'),
+                          // Empty onSelected handler
+                          onTap: () {},
+                        ),
+                      );
+
+                      // If the condition is not met, add 'Agree' option
+                      if (!(AuthService.currentUser?.uid ==
+                          postDetail['uid'])) {
+                        items.add(
+                          PopupMenuItem<String>(
                             value: 'Agree',
                             child: Text('Agree'),
+                            // Empty onSelected handler
+                            onTap: () {},
                           ),
-                        ];
+                        );
                       }
+
+                      return items;
                     },
                   ),
                 ),

@@ -38,6 +38,7 @@ dependencies:
   firebase_database: ^10.2.2
   firebase_auth: ^4.16.0
   firebase_storage: ^11.6.0 
+  firebase_app_check: ^0.2.1+8
   sign_in_button: ^3.2.0
   intl: ^0.18.1
   image_picker: ^1.0.7

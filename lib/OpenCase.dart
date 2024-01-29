@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:intl/intl.dart';
+import 'package:hong_chao/home.dart';
 
 class OpenCase extends StatefulWidget {
   static String routeName = '/OpenCase';
@@ -14,6 +15,7 @@ class OpenCase extends StatefulWidget {
 
 class _OpenCaseState extends State<OpenCase> {
   late DatabaseReference dbRef;
+  List<Map<String, dynamic>> postDetailsList = [];
   bool switchValue = false; // Add a boolean variable to control the Switch
 
   late DateTime _startDate;
@@ -24,8 +26,8 @@ class _OpenCaseState extends State<OpenCase> {
   @override
   void initState() {
     super.initState();
-    // Initialize DatabaseReference if needed
-    // dbRef = FirebaseDatabase.instance.reference();
+    dbRef = FirebaseDatabase.instance.ref();
+    _fetchdata();
 
     _startDate = DateTime.now();
     _endDate = DateTime.now(); // Initialize _endDate if necessary
@@ -52,6 +54,33 @@ class _OpenCaseState extends State<OpenCase> {
     }
   }
 
+  void _fetchdata() {
+    dbRef.child('Post').once().then((DatabaseEvent? snapshot) {
+      if (snapshot != null && snapshot.snapshot.value != null) {
+        Map<dynamic, dynamic> postData = snapshot.snapshot.value as Map;
+        postData.forEach(
+          (key, value) {
+            Map<dynamic, dynamic> postDetails = value as Map;
+
+            Map<String, dynamic> postMap = {
+              'postID': key,
+              'author': postDetails['author'],
+              'uid': postDetails['uid'],
+              'content': postDetails['content'],
+              'timestamp': postDetails['timestamp'],
+            };
+
+            postDetailsList.add(postMap);
+          },
+        );
+        //print(postData);
+        //return display(data: postData);
+      }
+    }).catchError((e) {
+      print(e);
+    });
+  }
+
   String _formattedDate(DateTime? date) {
     return date != null
         ? DateFormat('dd/MM/yyyy').format(date)
@@ -63,7 +92,7 @@ class _OpenCaseState extends State<OpenCase> {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text('Open Case'),
+          //child: Text('Open Case'),
         ),
       ),
       body: Padding(
@@ -71,6 +100,34 @@ class _OpenCaseState extends State<OpenCase> {
         child: Column(
           children: [
             // Other widgets can go here...
+            Text(
+              'Posts Detail:',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 18,
+              ),
+            ),
+            SizedBox(height: 16), // Add some spacing between widgets
+
+            // ListView.builder to display posts
+            Expanded(
+              child: postDetailsList.isEmpty
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : ListView.builder(
+                      itemCount: postDetailsList.length,
+                      itemBuilder: (context, index) {
+                        // Build your UI based on the fetched data
+                        // Example: display each post in a ListTile
+                        return ListTile(
+                          title: Text(postDetailsList[index]['author']),
+                          subtitle: Text(postDetailsList[index]['content']),
+                          // Add more details as needed
+                        );
+                      },
+                    ),
+            ),
 
             // Add the Switch widget
             Row(
