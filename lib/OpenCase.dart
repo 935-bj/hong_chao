@@ -8,9 +8,9 @@ import 'package:hong_chao/home.dart';
 class OpenCase extends StatefulWidget {
   static String routeName = '/OpenCase';
   //const OpenCase({super.key});
-  final Map<String, dynamic> postDetail;
+  final Map<String, dynamic>? postDetail;
 
-  const OpenCase({required this.postDetail});
+  const OpenCase({Key? key, required this.postDetail});
 
   @override
   State<OpenCase> createState() => _OpenCaseState();
@@ -105,34 +105,55 @@ class _OpenCaseState extends State<OpenCase> {
           children: [
             // Other widgets can go here...
             Text(
-              'Posts Detail:',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
+              widget.postDetail!['author'],
+              style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 16), // Add some spacing between widgets
 
-            // ListView.builder to display posts
-            Expanded(
-              child: postDetailsList.isEmpty
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          '${postDetailsList[0]['author'].toString()} • $formattedTime',
-                          // Assuming 'formattedTime' is defined somewhere
-                        ),
-                        Text(
-                          postDetailsList[0]['content'],
-                          style: TextStyle(fontSize: 18.0),
-                        ),
-                        // Other widgets can be added as needed
-                      ],
-                    ),
+            // ListView to display posts
+            // Expanded(
+            //   child: postDetailsList.isEmpty
+            //       ? Center(
+            //           child: CircularProgressIndicator(),
+            //         )
+            //       : Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Text(
+            //               '${postDetailsList[0]['author'].toString()}',
+            //             ),
+            //             Text(
+            //               postDetailsList[0]['content'],
+            //               style: TextStyle(fontSize: 18.0),
+            //             ),
+            //           ],
+            //         ),
+            // ),
+
+            //Post detail from home.dart
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 40.0),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(
+                    255, 215, 215, 215), // Specify the color you want
+                borderRadius: BorderRadius.circular(
+                    10.0), // Adjust the borderRadius as needed
+              ),
+              child: Padding(
+                padding: EdgeInsets.all(15.0),
+                child: widget.postDetail == null
+                    ? Center(child: CircularProgressIndicator())
+                    : Column(
+                        //crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.postDetail!['content'],
+                            style: TextStyle(fontSize: 18.0),
+                          ),
+                        ],
+                      ),
+              ),
             ),
 
             // Add the Switch widget

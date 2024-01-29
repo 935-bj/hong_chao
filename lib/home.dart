@@ -60,6 +60,14 @@ class _homeState extends State<home> {
     });
   }
 
+  Future<Map<String, dynamic>> fetchSelectedPost() async {
+    // Logic to fetch the details of the selected post asynchronously
+    // For example, you might make a network request here
+    // Replace this with your actual implementation
+    await Future.delayed(Duration(seconds: 1)); // Simulating delay
+    return {'author': 'Selected Author', 'content': 'Selected Content'};
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,10 +111,6 @@ class _homeState extends State<home> {
                       '${postDetail['author'].toString()} • $formattedTime'),
                   subtitle: Text(postDetail['content']),
                   trailing: PopupMenuButton<String>(
-                    onSelected: (String choice) {
-                      print('Selected: $choice');
-                      // No action needed here since we're only displaying options
-                    },
                     itemBuilder: (BuildContext context) {
                       List<PopupMenuEntry<String>> items = [];
 
