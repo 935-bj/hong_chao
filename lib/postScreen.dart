@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hong_chao/home.dart';
 import 'authService.dart';
 
 class postScreen extends StatefulWidget {
@@ -74,6 +75,7 @@ class _postScreenState extends State<postScreen> {
                   'uid': AuthService.currentUser!.uid,
                   'author': username
                 });
+                Navigator.pushNamed(context, home.routeName);
                 _postController.clear();
               },
               child: Text('Post'))

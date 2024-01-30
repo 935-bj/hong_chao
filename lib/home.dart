@@ -41,12 +41,22 @@ class _homeState extends State<home> {
           (key, value) {
             Map<dynamic, dynamic> postDetails = value as Map;
 
+            // Access the agreeList directly from the postDetails
+            List<String> agreeList = [];
+
+            if (postDetails.containsKey('agreeList')) {
+              Map<dynamic, dynamic> agreeMap =
+                  postDetails['agreeList'] as Map<dynamic, dynamic>;
+              agreeList = agreeMap.keys.cast<String>().toList();
+            }
+
             Map<String, dynamic> postMap = {
               'postID': key,
               'author': postDetails['author'],
               'uid': postDetails['uid'],
               'content': postDetails['content'],
               'timestamp': postDetails['timestamp'],
+              'agreeList': agreeList
             };
 
             postDetailsList.add(postMap);
@@ -108,55 +118,100 @@ class _homeState extends State<home> {
                 //กล่อง
                 child: ListTile(
                   title: Text(
-                      '${postDetail['author'].toString()} • $formattedTime'),
-                  subtitle: Text(postDetail['content']),
+                    //'${postDetail['author'].toString()} • $formattedTime',
+                    postDetail['content'],
+                    style: const TextStyle(fontSize: 20.0
+                        //fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  subtitle: Text(
+                      '${postDetail['agreeList'].length} agree • ${postDetail['author'].toString()} • $formattedTime'),
+                  //Text(postDetail['content'],style: TextStyle(fontSize: 18.0),),
+
                   trailing: PopupMenuButton<String>(
                     itemBuilder: (BuildContext context) {
                       List<PopupMenuEntry<String>> items = [];
 
-                      // Add 'Make this post to case', 'Edit', and 'Delete' options
+                      // if currentUser != post owner, they can only click Agree
+
+                      //agree
                       items.add(
                         PopupMenuItem<String>(
-                          value: 'Make this post to case',
-                          child: Text('Make this post to case'),
+                          value: 'Agree',
+                          child: Text('Agree'),
                           // Empty onSelected handler
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    OpenCase(postDetail: postDetail),
-                              ),
-                            );
+                            dbRef
+                                    .child('Post')
+                                    .child(postDetail['postID'].toString())
+                                    .child('agreeList')
+                                    .update({
+                              '${AuthService.currentUser!.uid}':
+                                  AuthService.currentUser!.uid
+                            }) /*.then((_) {
+                              setState(() {
+                                // Update the local state to reflect the changes
+                                postDetail['agreeList']
+                                    [AuthService.currentUser!.uid] = true;
+                              });
+                            }).catchError((e) {
+                              print('erroe: $e');
+                            }) */
+                                ;
                           },
                         ),
                       );
-                      items.add(
-                        PopupMenuItem<String>(
-                          value: 'Edit',
-                          child: Text('Edit'),
-                          // Empty onSelected handler
-                          onTap: () {},
-                        ),
-                      );
-                      items.add(
-                        PopupMenuItem<String>(
-                          value: 'Delete',
-                          child: Text('Delete'),
-                          // Empty onSelected handler
-                          onTap: () {},
-                        ),
-                      );
 
-                      // If the condition is not met, add 'Agree' option
-                      if (!(AuthService.currentUser?.uid ==
-                          postDetail['uid'])) {
+                      // If the current user is owner of the post,
+                      //beside Agree they can make it a case, edit, delete
+                      if (AuthService.currentUser?.uid == postDetail['uid']) {
+                        //make this post to case
                         items.add(
                           PopupMenuItem<String>(
-                            value: 'Agree',
-                            child: Text('Agree'),
+                            value: 'Make this post to case',
+                            child: Text('Make this post to case'),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      OpenCase(postDetail: postDetail),
+                                ),
+                              );
+                            },
+                          ),
+                        );
+                        //edit post
+                        items.add(
+                          PopupMenuItem<String>(
+                            value: 'Edit',
+                            child: Text('Edit'),
                             // Empty onSelected handler
                             onTap: () {},
+                          ),
+                        );
+                        //delete post
+                        items.add(
+                          PopupMenuItem<String>(
+                            value: 'Delete',
+                            child: Text('Delete'),
+                            onTap: () {
+                              print('tab delete');
+                              dbRef
+                                  .child('Post')
+                                  .child(postDetail['postID'].toString())
+                                  .remove()
+                                  .then((_) {
+                                // Remove the item from the local state
+                                setState(() {
+                                  postDetailsList.removeWhere((item) =>
+                                      item['postID'] == postDetail['postID']);
+                                });
+                              }).catchError((e) {
+                                print(e);
+                              });
+                              //_deleteDialog(postDetail['postID'].toString());
+                            },
                           ),
                         );
                       }
@@ -167,7 +222,7 @@ class _homeState extends State<home> {
                 ),
               );
             }),
-        //scarch index 1
+        //search index 1
         SearchAnchor(
             searchController: searrchController,
             builder: (BuildContext context, SearchController controller) {
@@ -289,5 +344,40 @@ class _homeState extends State<home> {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => postScreen()));
     return Container();
+  }
+
+  Future<void> _deleteDialog(String key) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete this post?'),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Once this action is done'),
+                Text('the post will be permanently delete'),
+                Text('and cannot be undone. ')
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancle'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () {
+                dbRef.child('Post').child(key).remove();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
