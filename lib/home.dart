@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -214,7 +215,11 @@ class _homeState extends State<home> {
                             value: 'Edit',
                             child: const Text('Edit'),
                             // Empty onSelected handler
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.pushNamed(context, editPost.routeName,
+                                  arguments: editPostArg(postDetail['postID']));
+                              print('edit clicked');
+                            },
                           ),
                         );
                         //delete post

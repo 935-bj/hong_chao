@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         },*/
         editPost.routeName: ((context) => const editPost())
       },
-      initialRoute: editPost.routeName,
+      initialRoute: home.routeName,
     );
   }
 }

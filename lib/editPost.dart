@@ -2,6 +2,11 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/home.dart';
 
+class editPostArg {
+  final String postID;
+  editPostArg(this.postID);
+}
+
 class editPost extends StatefulWidget {
   static String routeName = "/editPost";
   const editPost({super.key});
@@ -16,18 +21,33 @@ class _editPostState extends State<editPost> {
   late final TextEditingController _postController;
   final _formKey = GlobalKey<FormState>();
 
+  String postID = '';
+
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    //access argument
+    final args = ModalRoute.of(context)!.settings.arguments as editPostArg;
+
+    //check if postID change before fetch data
+    if (postID != args.postID) {
+      postID = args.postID;
+      _getPostContent(postID).then((postContent) => {
+            setState(() {
+              _postController.text = postContent;
+            })
+          });
+    }
+  }
+  //overide didChangeDependency to ensure that
+  //ModalRoute.of(context) is executed after the initialization of the widget.
+
   @override
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref();
     _postController = TextEditingController();
-
-    _getPostContent('1706169914297').then((postContent) {
-      setState(() {
-        _postController.text = postContent;
-      });
-    });
   }
 
   @override
@@ -41,7 +61,7 @@ class _editPostState extends State<editPost> {
           ElevatedButton(
               onPressed: () async {
                 print('post content: ${_postController.text}');
-                dbRef.child('Post').child('1706169914297').update({
+                dbRef.child('Post').child(postID).update({
                   'content': _postController.text,
                 });
                 Navigator.pushNamed(context, home.routeName);
