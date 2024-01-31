@@ -34,7 +34,7 @@ class _homeState extends State<home> {
   }
 
   void _fetchdata() {
-    dbRef.child('Post').once().then((DatabaseEvent? snapshot) {
+    dbRef.child('Post').onValue.listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
         Map<dynamic, dynamic> postData = snapshot.snapshot.value as Map;
         postData.forEach(
@@ -65,8 +65,6 @@ class _homeState extends State<home> {
         //print(postData);
         //return display(data: postData);
       }
-    }).catchError((e) {
-      print(e);
     });
   }
 
@@ -141,23 +139,31 @@ class _homeState extends State<home> {
                           child: Text('Agree'),
                           // Empty onSelected handler
                           onTap: () {
-                            dbRef
-                                    .child('Post')
-                                    .child(postDetail['postID'].toString())
-                                    .child('agreeList')
-                                    .update({
-                              '${AuthService.currentUser!.uid}':
-                                  AuthService.currentUser!.uid
-                            }) /*.then((_) {
-                              setState(() {
-                                // Update the local state to reflect the changes
-                                postDetail['agreeList']
-                                    [AuthService.currentUser!.uid] = true;
+                            String curUid = AuthService.currentUser!.uid;
+                            if (!postDetail['agreeList'].contains(curUid)) {
+                              dbRef
+                                  .child('Post')
+                                  .child(postDetail['postID'].toString())
+                                  .child('agreeList')
+                                  .update({
+                                '${AuthService.currentUser!.uid}':
+                                    AuthService.currentUser!.uid
+                              }).then((_) {
+                                setState(() {
+                                  // Update the local state to reflect the changes
+                                  //postDetail['agreeList'] =
+                                  //  AuthService.currentUser!.uid;
+                                  //print(postDetail['agreeList'][2]);
+                                  //postDetail['agreeList'] = postDetailsList[index]['agreeList'];
+                                  postDetail['agreeList']
+                                      .add(AuthService.currentUser!.uid);
+                                });
+                              }).catchError((e) {
+                                print('erroe: $e');
                               });
-                            }).catchError((e) {
-                              print('erroe: $e');
-                            }) */
-                                ;
+                            } else {
+                              print('current user already agree to this post');
+                            }
                           },
                         ),
                       );
