@@ -5,12 +5,15 @@ import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/OpenCase.dart';
+import 'package:hong_chao/report.dart';
 
 import 'authService.dart';
 
 class home extends StatefulWidget {
   static String routeName = '/home';
-  const home({super.key});
+  home({super.key});
+
+  //get sentPid => _sentPid;
 
   @override
   State<home> createState() => _homeState();
@@ -18,6 +21,7 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   late DatabaseReference dbRef;
+
   //controller
   final SearchController searrchController = SearchController();
   final TextEditingController postController = TextEditingController();
@@ -130,7 +134,7 @@ class _homeState extends State<home> {
                     itemBuilder: (BuildContext context) {
                       List<PopupMenuEntry<String>> items = [];
 
-                      // if currentUser != post owner, they can only click Agree
+                      // if currentUser != post owner, they can only click Agree, report
 
                       //agree
                       items.add(
@@ -150,11 +154,6 @@ class _homeState extends State<home> {
                                     AuthService.currentUser!.uid
                               }).then((_) {
                                 setState(() {
-                                  // Update the local state to reflect the changes
-                                  //postDetail['agreeList'] =
-                                  //  AuthService.currentUser!.uid;
-                                  //print(postDetail['agreeList'][2]);
-                                  //postDetail['agreeList'] = postDetailsList[index]['agreeList'];
                                   postDetail['agreeList']
                                       .add(AuthService.currentUser!.uid);
                                 });
@@ -164,6 +163,17 @@ class _homeState extends State<home> {
                             } else {
                               print('current user already agree to this post');
                             }
+                          },
+                        ),
+                      );
+
+                      //report
+                      items.add(
+                        PopupMenuItem<String>(
+                          value: 'Report',
+                          child: Text('Report'),
+                          onTap: () {
+                            _to_report(postDetail['postID']);
                           },
                         ),
                       );
@@ -349,6 +359,12 @@ class _homeState extends State<home> {
   Widget _to_post() {
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => postScreen()));
+    return Container();
+  }
+
+  Widget _to_report(String pid) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => report(postID: pid)));
     return Container();
   }
 

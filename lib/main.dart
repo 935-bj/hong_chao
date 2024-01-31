@@ -5,12 +5,10 @@ import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hong_chao/authService.dart';
-
-//add OpenCase.dart
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/postScreen.dart';
-
 import 'package:hong_chao/regisP.dart';
+import 'package:hong_chao/report.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +34,9 @@ class MyApp extends StatelessWidget {
         login.routeName: (context) => const login(),
         home.routeName: ((context) => home()),
         regisP.routeName: ((context) => regisP()),
-        //OpenCase.routeName: (context) => const OpenCase(),
+        OpenCase.routeName: (context) => const OpenCase(
+              postDetail: {},
+            ),
         postScreen.routeName: ((context) => const postScreen()),
       },
       initialRoute: home.routeName,
