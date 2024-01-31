@@ -41,7 +41,8 @@ class MyApp extends StatelessWidget {
           final Map args = ModalRoute.of(context)!.settings.arguments as Map;
           return report(postID: args['postID']);
         },*/
-        editPost.routeName: ((context) => const editPost())
+        //editPost.routeName: ((context) => const editPost()),
+        editPost.routeName: (context) => const editPost(),
       },
       initialRoute: home.routeName,
     );
