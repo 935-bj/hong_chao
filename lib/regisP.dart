@@ -59,8 +59,8 @@ class _regisPState extends State<regisP> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      Text('Name Lastname'),
-                      SizedBox(
+                      const Text('Name Lastname'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -69,11 +69,11 @@ class _regisPState extends State<regisP> {
                           hintText: 'real name',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Text('Phone number'),
-                      SizedBox(
+                      const Text('Phone number'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -87,11 +87,11 @@ class _regisPState extends State<regisP> {
                           hintText: 'phone number',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Text('National ID'),
-                      SizedBox(
+                      const Text('National ID'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -105,22 +105,22 @@ class _regisPState extends State<regisP> {
                           hintText: 'national ID',
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Center(
+                          const Center(
                             child: Text('Upload evidence'),
                           ),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           GestureDetector(
                             onTap: () {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('Note'),
-                                      content: Text(
+                                      title: const Text('Note'),
+                                      content: const Text(
                                           'upload a picture of your national ID card or your pastport if you are foreigner '),
                                       actions: [
                                         //close the dialog box
@@ -128,13 +128,13 @@ class _regisPState extends State<regisP> {
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child: Text('OK'),
+                                          child: const Text('OK'),
                                         ),
                                       ],
                                     );
                                   });
                             },
-                            child: Icon(Icons.help_outline),
+                            child: const Icon(Icons.help_outline),
                           )
                         ],
                       ),
@@ -157,10 +157,10 @@ class _regisPState extends State<regisP> {
                           try {
                             await uploadTo.putFile(File(file!.path));
                             nidUrl = await uploadTo.getDownloadURL();
-                            print('${nidUrl}');
+                            print(nidUrl);
                           } catch (error) {}
                         },
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.image_rounded),
                             Text('Upload photo from Gallery'),

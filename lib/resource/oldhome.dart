@@ -7,7 +7,6 @@ import 'package:hong_chao/resource/wbill.dart';
 import 'package:hong_chao/resource/sum.dart';
 import 'package:hong_chao/resource/wsum.dart';
 import 'package:hong_chao/resource/cal.dart';
-import 'package:hong_chao/resource/oldLogin.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class oldhome extends StatelessWidget {
@@ -51,7 +50,7 @@ class oldhome extends StatelessWidget {
           automaticallyImplyLeading: false,
           actions: [
             IconButton(
-              icon: Icon(Icons.exit_to_app_rounded),
+              icon: const Icon(Icons.exit_to_app_rounded),
               onPressed: () async {
                 await auth.signOut();
                 Future.microtask(() => log_out(context));
@@ -119,6 +118,6 @@ class oldhome extends StatelessWidget {
   }
 
   Widget _googleSignIn() {
-    return Center();
+    return const Center();
   }
 }

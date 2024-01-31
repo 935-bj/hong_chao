@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -45,7 +44,7 @@ class _wsumState extends State<wsum> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ประวัติการใช้น้ำ'),
-        backgroundColor: Color.fromARGB(255, 225, 207, 243),
+        backgroundColor: const Color.fromARGB(255, 225, 207, 243),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -63,7 +62,7 @@ class _wsumState extends State<wsum> {
                   filled: true,
                   hintText: 'ใส่เลขห้อง',
                   hintStyle: TextStyle(fontSize: 18))),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           ElevatedButton(
               onPressed: () {
                 roomnum = num.tryParse(_roomnumController.text);

@@ -1,8 +1,6 @@
-import 'dart:ffi';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:hong_chao/resource/oldhome.dart';
 import 'package:hong_chao/login.dart';
 
 class oldLogin extends StatefulWidget {
@@ -65,7 +63,7 @@ class _loginState extends State<oldLogin> {
                       filled: true,
                       hintText: 'Email',
                       hintStyle: TextStyle(fontSize: 18))),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               TextFormField(

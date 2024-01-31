@@ -67,8 +67,8 @@ class _regisLState extends State<regisL> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      Text('Name Lastname'),
-                      SizedBox(
+                      const Text('Name Lastname'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -77,11 +77,11 @@ class _regisLState extends State<regisL> {
                           hintText: 'real name',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Text('Phone number'),
-                      SizedBox(
+                      const Text('Phone number'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -95,11 +95,11 @@ class _regisLState extends State<regisL> {
                           hintText: 'phone number',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Text('Attorney-at-law License Number'),
-                      SizedBox(
+                      const Text('Attorney-at-law License Number'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -113,11 +113,11 @@ class _regisLState extends State<regisL> {
                           hintText: 'put license number with out slash',
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Text('National ID'),
-                      SizedBox(
+                      const Text('National ID'),
+                      const SizedBox(
                         height: 5,
                       ),
                       TextFormField(
@@ -131,22 +131,22 @@ class _regisLState extends State<regisL> {
                           hintText: 'national ID',
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Center(
+                          const Center(
                             child: Text('Upload evidence'),
                           ),
-                          SizedBox(width: 5),
+                          const SizedBox(width: 5),
                           GestureDetector(
                             onTap: () {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('Note'),
-                                      content: Text(
+                                      title: const Text('Note'),
+                                      content: const Text(
                                           'upload a picture of your national ID card and Attorney-at-law License '),
                                       actions: [
                                         //close the dialog box
@@ -154,13 +154,13 @@ class _regisLState extends State<regisL> {
                                           onPressed: () {
                                             Navigator.of(context).pop();
                                           },
-                                          child: Text('OK'),
+                                          child: const Text('OK'),
                                         ),
                                       ],
                                     );
                                   });
                             },
-                            child: Icon(Icons.help_outline),
+                            child: const Icon(Icons.help_outline),
                           )
                         ],
                       ),
@@ -184,10 +184,10 @@ class _regisLState extends State<regisL> {
                           try {
                             await uploadTo.putFile(File(file!.path));
                             nidUrl = await uploadTo.getDownloadURL();
-                            print('${nidUrl}');
+                            print(nidUrl);
                           } catch (error) {}
                         },
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.image_rounded),
                             Text('Upload a picture of National ID card'),
@@ -213,10 +213,10 @@ class _regisLState extends State<regisL> {
                           try {
                             await uploadTo.putFile(File(file!.path));
                             lidUrl = await uploadTo.getDownloadURL();
-                            print('${nidUrl}');
+                            print(nidUrl);
                           } catch (error) {}
                         },
-                        child: Row(
+                        child: const Row(
                           children: [
                             Icon(Icons.image_rounded),
                             Text('Upload a picture of Attorney-at-law License'),

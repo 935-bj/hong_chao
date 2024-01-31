@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
-  static FirebaseAuth _auth = FirebaseAuth.instance;
+  static final FirebaseAuth _auth = FirebaseAuth.instance;
 
   static User? _user;
 
@@ -17,8 +17,8 @@ class AuthService {
 
   static Future<void> signInWithGoogle() async {
     try {
-      GoogleAuthProvider _googleAuthProvider = GoogleAuthProvider();
-      await _auth.signInWithProvider(_googleAuthProvider);
+      GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
+      await _auth.signInWithProvider(googleAuthProvider);
     } catch (error) {
       print(error);
     }

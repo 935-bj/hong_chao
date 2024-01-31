@@ -4,7 +4,7 @@ import 'authService.dart';
 import 'package:hong_chao/home.dart';
 
 class report extends StatefulWidget {
-  static String routeName = '/report';
+  //static String routeName = '/report';
   final String postID;
   const report({Key? key, required this.postID}) : super(key: key);
   //const report({super.key});
@@ -59,7 +59,7 @@ class _reportState extends State<report> {
                   );
                 }
               },
-              child: Text('send'))
+              child: const Text('send'))
         ],
       ),
       body: Column(

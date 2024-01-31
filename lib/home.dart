@@ -1,6 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -11,7 +10,7 @@ import 'authService.dart';
 
 class home extends StatefulWidget {
   static String routeName = '/home';
-  home({super.key});
+  const home({super.key});
 
   //get sentPid => _sentPid;
 
@@ -76,7 +75,7 @@ class _homeState extends State<home> {
     // Logic to fetch the details of the selected post asynchronously
     // For example, you might make a network request here
     // Replace this with your actual implementation
-    await Future.delayed(Duration(seconds: 1)); // Simulating delay
+    await Future.delayed(const Duration(seconds: 1)); // Simulating delay
     return {'author': 'Selected Author', 'content': 'Selected Content'};
   }
 
@@ -90,7 +89,7 @@ class _homeState extends State<home> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-              icon: Icon(Icons.add_circle_outline_rounded),
+              icon: const Icon(Icons.add_circle_outline_rounded),
               onPressed: () {
                 Future.delayed(Duration.zero, () {
                   _to_post();
@@ -108,7 +107,6 @@ class _homeState extends State<home> {
               if (index < 0 || index >= postDetailsList.length) {
                 // Debugging: Print the problematic index
                 print('Invalid index: $index');
-                // Return an empty container or placeholder widget
                 return Container();
               }
 
@@ -140,7 +138,7 @@ class _homeState extends State<home> {
                       items.add(
                         PopupMenuItem<String>(
                           value: 'Agree',
-                          child: Text('Agree'),
+                          child: const Text('Agree'),
                           // Empty onSelected handler
                           onTap: () {
                             String curUid = AuthService.currentUser!.uid;
@@ -150,7 +148,7 @@ class _homeState extends State<home> {
                                   .child(postDetail['postID'].toString())
                                   .child('agreeList')
                                   .update({
-                                '${AuthService.currentUser!.uid}':
+                                AuthService.currentUser!.uid:
                                     AuthService.currentUser!.uid
                               }).then((_) {
                                 setState(() {
@@ -171,9 +169,22 @@ class _homeState extends State<home> {
                       items.add(
                         PopupMenuItem<String>(
                           value: 'Report',
-                          child: Text('Report'),
+                          child: const Text('Report'),
                           onTap: () {
                             _to_report(postDetail['postID']);
+
+                            print('heading to report');
+
+                            /*Navigator.of(context).pushNamed(
+                              report.routeName,
+                              arguments: {'postID': postDetail['postID']},
+                            ); */
+
+                            /*Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    report(postID: postDetail['postID'])));
+*/
+                            //_to_report(postDetail['postID']);
                           },
                         ),
                       );
@@ -185,7 +196,7 @@ class _homeState extends State<home> {
                         items.add(
                           PopupMenuItem<String>(
                             value: 'Make this post to case',
-                            child: Text('Make this post to case'),
+                            child: const Text('Make this post to case'),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -201,7 +212,7 @@ class _homeState extends State<home> {
                         items.add(
                           PopupMenuItem<String>(
                             value: 'Edit',
-                            child: Text('Edit'),
+                            child: const Text('Edit'),
                             // Empty onSelected handler
                             onTap: () {},
                           ),
@@ -210,7 +221,7 @@ class _homeState extends State<home> {
                         items.add(
                           PopupMenuItem<String>(
                             value: 'Delete',
-                            child: Text('Delete'),
+                            child: const Text('Delete'),
                             onTap: () {
                               print('tab delete');
                               dbRef
@@ -278,13 +289,13 @@ class _homeState extends State<home> {
                       NetworkImage(AuthService.currentUser!.photoURL ?? ''),
                   radius: 50,
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 // Display user email
                 Text(
                   AuthService.currentUser!.email ?? '',
-                  style: TextStyle(fontSize: 20),
+                  style: const TextStyle(fontSize: 20),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 20,
                 ),
                 TextButton(
@@ -298,7 +309,7 @@ class _homeState extends State<home> {
                     'Register as Lawyer',
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 TextButton(
@@ -308,14 +319,14 @@ class _homeState extends State<home> {
                     });
                     print('direct to regisP');
                   },
-                  child: Text('Register as PLaintiff'),
+                  child: const Text('Register as PLaintiff'),
                 ),
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 TextButton(
                   onPressed: () {},
-                  child: Text('Log out'),
+                  child: const Text('Log out'),
                 )
               ],
             ),
@@ -343,7 +354,7 @@ class _homeState extends State<home> {
   Widget _to_regisP() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => regisP()),
+      MaterialPageRoute(builder: (context) => const regisP()),
     );
     return Container();
   }
@@ -351,20 +362,23 @@ class _homeState extends State<home> {
   Widget _to_regisL() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => regisL()),
+      MaterialPageRoute(builder: (context) => const regisL()),
     );
     return Container();
   }
 
   Widget _to_post() {
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => postScreen()));
+        context, MaterialPageRoute(builder: (context) => const postScreen()));
     return Container();
   }
 
   Widget _to_report(String pid) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => report(postID: pid)));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => report(postID: pid)),
+    );
+    print('route to report');
     return Container();
   }
 

@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -112,9 +110,9 @@ class _calState extends State<cal> {
                   "สรุปค่าเช่า ห้อง $roomnum",
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                 ),
-                Text(
+                const Text(
                   '__________________',
-                  style: const TextStyle(fontSize: 20, color: Colors.black),
+                  style: TextStyle(fontSize: 20, color: Colors.black),
                 ),
                 const SizedBox(height: 15),
                 Text(
@@ -147,9 +145,9 @@ class _calState extends State<cal> {
                   style: const TextStyle(fontSize: 20, color: Colors.black),
                 ),
                 const SizedBox(height: 15),
-                Text(
+                const Text(
                   '__________________',
-                  style: const TextStyle(fontSize: 20, color: Colors.black),
+                  style: TextStyle(fontSize: 20, color: Colors.black),
                 ),
                 const SizedBox(height: 15),
                 Text(
@@ -169,7 +167,7 @@ class _calState extends State<cal> {
                         style: TextStyle(fontSize: 20),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 50,
                     ),
                     ElevatedButton(
@@ -234,7 +232,7 @@ class _calState extends State<cal> {
                                 filled: true,
                                 hintText: 'ใส่เลขห้อง',
                                 hintStyle: TextStyle(fontSize: 18))),
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
                         ElevatedButton(
                             onPressed: () {
                               roomnum = num.tryParse(_roomnumController.text);

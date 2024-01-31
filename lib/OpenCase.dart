@@ -1,16 +1,15 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:intl/intl.dart';
-import 'package:hong_chao/home.dart';
 
 class OpenCase extends StatefulWidget {
   static String routeName = '/OpenCase';
   //const OpenCase({super.key});
   final Map<String, dynamic>? postDetail;
 
-  const OpenCase({Key? key, required this.postDetail});
+  //const OpenCase({super.key, Key? key, required this.postDetail});
+  const OpenCase({Key? key, required this.postDetail}) : super(key: key);
 
   @override
   State<OpenCase> createState() => _OpenCaseState();
@@ -106,9 +105,9 @@ class _OpenCaseState extends State<OpenCase> {
             // Other widgets can go here...
             Text(
               widget.postDetail!['author'],
-              style: TextStyle(fontSize: 18.0),
+              style: const TextStyle(fontSize: 18.0),
             ),
-            SizedBox(height: 16), // Add some spacing between widgets
+            const SizedBox(height: 16), // Add some spacing between widgets
 
             // ListView to display posts
             // Expanded(
@@ -132,24 +131,24 @@ class _OpenCaseState extends State<OpenCase> {
 
             //Post detail from home.dart
             Container(
-              padding: EdgeInsets.symmetric(vertical: 40.0),
+              padding: const EdgeInsets.symmetric(vertical: 40.0),
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Color.fromARGB(
+                color: const Color.fromARGB(
                     255, 215, 215, 215), // Specify the color you want
                 borderRadius: BorderRadius.circular(
                     10.0), // Adjust the borderRadius as needed
               ),
               child: Padding(
-                padding: EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(15.0),
                 child: widget.postDetail == null
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : Column(
                         //crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             widget.postDetail!['content'],
-                            style: TextStyle(fontSize: 18.0),
+                            style: const TextStyle(fontSize: 18.0),
                           ),
                         ],
                       ),
@@ -159,11 +158,11 @@ class _OpenCaseState extends State<OpenCase> {
             // Add the Switch widget
             Row(
               children: [
-                Text(
+                const Text(
                   'Open for case bidding',
                   style: TextStyle(fontSize: 17.0),
                 ),
-                Spacer(), // Add space to separate the label and the Switch
+                const Spacer(), // Add space to separate the label and the Switch
                 Switch(
                   value: switchValue,
                   onChanged: (newValue) {
@@ -203,7 +202,7 @@ class _OpenCaseState extends State<OpenCase> {
 
             //Text('Bidding period'),
 
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
 
@@ -212,10 +211,10 @@ class _OpenCaseState extends State<OpenCase> {
               ElevatedButton(
                 onPressed: () => _selectDate(context, false),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color.fromARGB(
+                  backgroundColor: const Color.fromARGB(
                       255, 250, 94, 94), // Set button color to red
                 ),
-                child: Text(
+                child: const Text(
                   'End Date',
                   style: TextStyle(
                       color: Colors.white,
@@ -223,13 +222,13 @@ class _OpenCaseState extends State<OpenCase> {
                       ),
                 ),
               ),
-              Spacer(),
+              const Spacer(),
               Text(
                   '${_formattedDate(_startDate)} to ${_formattedDate(_endDate)}',
-                  style: TextStyle(fontSize: 17.0)),
+                  style: const TextStyle(fontSize: 17.0)),
             ]),
 
-            SizedBox(
+            const SizedBox(
               height: 50,
             ),
 
@@ -249,9 +248,9 @@ class _OpenCaseState extends State<OpenCase> {
               child: Container(
                 width:
                     double.infinity, // Make the button fill the available width
-                padding: EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                     vertical: 15.0), // Adjust the padding as needed
-                child: Center(
+                child: const Center(
                   child: Text(
                     'Open Case',
                     style: TextStyle(

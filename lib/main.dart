@@ -1,14 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:hong_chao/authService.dart';
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisP.dart';
-import 'package:hong_chao/report.dart';
+import 'package:hong_chao/editPost.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,14 +30,20 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         login.routeName: (context) => const login(),
-        home.routeName: ((context) => home()),
-        regisP.routeName: ((context) => regisP()),
+        home.routeName: ((context) => const home()),
+        regisP.routeName: ((context) => const regisP()),
         OpenCase.routeName: (context) => const OpenCase(
               postDetail: {},
             ),
         postScreen.routeName: ((context) => const postScreen()),
+        //report.routeName: (context) => report(postID: ''),
+        /*report.routeName: (context) {
+          final Map args = ModalRoute.of(context)!.settings.arguments as Map;
+          return report(postID: args['postID']);
+        },*/
+        editPost.routeName: ((context) => const editPost())
       },
-      initialRoute: home.routeName,
+      initialRoute: editPost.routeName,
     );
   }
 }

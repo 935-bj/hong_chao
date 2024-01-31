@@ -38,7 +38,7 @@ class _postScreenState extends State<postScreen> {
     String? username;
     await dbRef
         .child('user')
-        .child('${AuthService.currentUser!.uid}')
+        .child(AuthService.currentUser!.uid)
         .once()
         .then((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
@@ -78,7 +78,7 @@ class _postScreenState extends State<postScreen> {
                 Navigator.pushNamed(context, home.routeName);
                 _postController.clear();
               },
-              child: Text('Post'))
+              child: const Text('Post'))
         ],
       ),
       body: Column(
