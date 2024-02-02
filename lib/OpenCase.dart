@@ -111,6 +111,10 @@ class _OpenCaseState extends State<OpenCase> {
           'endDate': _endDate.toString(),
           'status': 'Open',
         });
+
+        await dbRef.child('Post').child(widget.postDetail!['postID']).update({'areCase':'True'});
+
+        
       } else {
         print('Switch is inactive');
         // If switch is inactive, set the post status to 'closed' in the database
@@ -122,6 +126,8 @@ class _OpenCaseState extends State<OpenCase> {
           'endDate': _endDate.toString(),
           'status': 'closed',
         });
+
+        await dbRef.child('Post').child(widget.postDetail!['postID']).update({'areCase':'False'});
       }
     } catch (error) {
       print('Error submitting case: $error');

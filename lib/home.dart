@@ -255,7 +255,9 @@ class _homeState extends State<home> {
                 ),
               );
             }),
-        //search index 1
+
+        //case index1
+        //ListView.builder(itemBuilder: itemBuilder)
         SearchAnchor(
             searchController: searrchController,
             builder: (BuildContext context, SearchController controller) {
@@ -280,7 +282,33 @@ class _homeState extends State<home> {
                 );
               });
             }),
-        //profile index2
+
+        //search index 2
+        SearchAnchor(
+            searchController: searrchController,
+            builder: (BuildContext context, SearchController controller) {
+              return IconButton(
+                icon: const Icon(Icons.search_rounded),
+                onPressed: () {
+                  controller.openView();
+                },
+              );
+            },
+            suggestionsBuilder:
+                (BuildContext context, SearchController controller) {
+              return List<ListTile>.generate(5, (int index) {
+                final String item = 'item $index';
+                return ListTile(
+                  title: Text(item),
+                  onTap: () {
+                    setState(() {
+                      controller.closeView(item);
+                    });
+                  },
+                );
+              });
+            }),
+        //profile index3
         Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -354,9 +382,13 @@ class _homeState extends State<home> {
         destinations: const <Widget>[
           NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
           NavigationDestination(
+            icon: Icon(Icons.star_rounded),
+            label: 'case',
+          ),
+          NavigationDestination(
               icon: Icon(Icons.search_rounded), label: 'Search'),
           NavigationDestination(
-              icon: Icon(Icons.person_rounded), label: 'Profile')
+              icon: Icon(Icons.person_rounded), label: 'Profile'),
         ],
       ),
     );

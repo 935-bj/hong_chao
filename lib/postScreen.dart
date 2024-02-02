@@ -60,6 +60,7 @@ class _postScreenState extends State<postScreen> {
         title: const Center(
           child: Text('write post'),
         ),
+        automaticallyImplyLeading: true,
         actions: [
           ElevatedButton(
               onPressed: () async {
