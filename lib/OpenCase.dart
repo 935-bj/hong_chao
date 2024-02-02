@@ -1,14 +1,13 @@
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
 class OpenCase extends StatefulWidget {
   static String routeName = '/OpenCase';
-  //const OpenCase({super.key});
-  final Map<String, dynamic>? postDetail;
 
-  //const OpenCase({super.key, Key? key, required this.postDetail});
+  final Map<String, dynamic>? postDetail;
   const OpenCase({Key? key, required this.postDetail}) : super(key: key);
 
   @override
@@ -22,8 +21,14 @@ class _OpenCaseState extends State<OpenCase> {
 
   late DateTime _startDate;
   DateTime? _endDate;
-  //late TimeOfDay _startTime;
-  //late TimeOfDay _endTime;
+  String? _uid;
+  String? _author;
+
+  String _formattedDate(DateTime? date) {
+    return date != null
+        ? DateFormat('dd/MM/yyyy').format(date)
+        : 'Not selected';
+  }
 
   @override
   void initState() {
@@ -40,7 +45,7 @@ class _OpenCaseState extends State<OpenCase> {
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: isStartDate ? _startDate : _endDate ?? DateTime.now(),
       firstDate: DateTime(2022),
       lastDate: DateTime(2025),
     );
@@ -56,38 +61,74 @@ class _OpenCaseState extends State<OpenCase> {
     }
   }
 
-  void _fetchdata() {
-    dbRef.child('Post').once().then((DatabaseEvent? snapshot) {
+  Future<void> _fetchdata() async {
+    await dbRef
+        .child('Post')
+        .child(widget.postDetail!['postID'])
+        .once()
+        .then((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
-        Map<dynamic, dynamic> postData = snapshot.snapshot.value as Map;
-        postData.forEach(
-          (key, value) {
-            Map<dynamic, dynamic> postDetails = value as Map;
+        Map<dynamic, dynamic> postDetails = snapshot.snapshot.value as Map;
 
-            Map<String, dynamic> postMap = {
-              'postID': key,
-              'author': postDetails['author'],
-              'uid': postDetails['uid'],
-              'content': postDetails['content'],
-              'timestamp': postDetails['timestamp'],
-            };
+        // Get UID and author from the current post
+        _uid = postDetails['uid'];
+        _author = postDetails['author'];
 
-            postDetailsList.add(postMap);
-          },
-        );
-        //print(postData);
-        //return display(data: postData);
+        // Update start time, end time, UID, and author
+        setState(() {
+          _startDate = DateTime.now(); // Update with your logic
+          _endDate = DateTime.now(); // Update with your logic
+          // Update other values as needed
+        });
       }
     }).catchError((e) {
       print(e);
     });
   }
 
-  String _formattedDate(DateTime? date) {
-    return date != null
-        ? DateFormat('dd/MM/yyyy').format(date)
-        : 'Not selected';
+  Future<void> _submitCase() async {
+    try {
+      // Get current user UID and author
+      User? user = FirebaseAuth.instance.currentUser;
+      String? uid = user?.uid;
+      String? author = user?.displayName;
+
+      // Create a new case object with the current data
+      Map<String, dynamic> caseData = {
+        'startDate': _startDate.toString(),
+        'endDate': _endDate.toString(),
+        'uid': uid,
+        'author': author,
+      };
+
+      // Check if the switch is active
+      if (switchValue) {
+        await dbRef
+            .child('OpenCase')
+            .child(widget.postDetail!['postID'])
+            .update({
+          'startDate': _startDate.toString(),
+          'endDate': _endDate.toString(),
+          'status': 'Open',
+        });
+      } else {
+        print('Switch is inactive');
+        // If switch is inactive, set the post status to 'closed' in the database
+        await dbRef
+            .child('OpenCase')
+            .child(widget.postDetail!['postID'])
+            .update({
+          'startDate': _startDate.toString(),
+          'endDate': _endDate.toString(),
+          'status': 'closed',
+        });
+      }
+    } catch (error) {
+      print('Error submitting case: $error');
+    }
   }
+
+  // Other methods remain unchanged
 
   @override
   Widget build(BuildContext context) {
@@ -104,32 +145,11 @@ class _OpenCaseState extends State<OpenCase> {
           children: [
             // Other widgets can go here...
             Text(
-              widget.postDetail!['author'],
+              _author ?? '', // Use the _author variable here
               style: const TextStyle(fontSize: 18.0),
             ),
             const SizedBox(height: 16), // Add some spacing between widgets
 
-            // ListView to display posts
-            // Expanded(
-            //   child: postDetailsList.isEmpty
-            //       ? Center(
-            //           child: CircularProgressIndicator(),
-            //         )
-            //       : Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             Text(
-            //               '${postDetailsList[0]['author'].toString()}',
-            //             ),
-            //             Text(
-            //               postDetailsList[0]['content'],
-            //               style: TextStyle(fontSize: 18.0),
-            //             ),
-            //           ],
-            //         ),
-            // ),
-
-            //Post detail from home.dart
             Container(
               padding: const EdgeInsets.symmetric(vertical: 40.0),
               width: double.infinity,
@@ -177,31 +197,6 @@ class _OpenCaseState extends State<OpenCase> {
               ],
             ),
 
-            // // Add the Select date widget
-            // Row(
-            //   children: [
-            //     ElevatedButton(
-            //       onPressed: () => _selectDate(context, true),
-            //       child: Text('Start Date'),
-            //     ),
-            //     //Text('Selected Start Date: ${_formattedDate(_startDate)}'),
-            //     Text('Selected: ${_formattedDate(_startDate)}'),
-            //   ],
-            // ),
-
-            // // Add the Select date widget
-            // Row(
-            //   children: [
-            //     ElevatedButton(
-            //       onPressed: () => _selectDate(context, false),
-            //       child: Text('End Date'),
-            //     ),
-            //     Text('Selected: ${_formattedDate(_endDate)}'),
-            //   ],
-            // ),
-
-            //Text('Bidding period'),
-
             const SizedBox(
               height: 10,
             ),
@@ -234,9 +229,7 @@ class _OpenCaseState extends State<OpenCase> {
 
             //Submit button
             ElevatedButton(
-              onPressed: () {
-                // Add the submit logic here
-              },
+              onPressed: _submitCase, // Call _submitCase when button is pressed
               style: ElevatedButton.styleFrom(
                 backgroundColor:
                     Colors.lightBlue, // Set button color to light blue
@@ -252,7 +245,7 @@ class _OpenCaseState extends State<OpenCase> {
                     vertical: 15.0), // Adjust the padding as needed
                 child: const Center(
                   child: Text(
-                    'Open Case',
+                    'Submit',
                     style: TextStyle(
                       color: Colors.white, // Set text color to white
                       fontSize: 18.0,
