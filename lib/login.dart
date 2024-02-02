@@ -24,9 +24,7 @@ class _loginState extends State<login> {
   void initState() {
     super.initState();
     AuthService.initAuthState();
-    if (AuthService.currentUser != null) {
-      Navigator.pushNamed(context, home.routeName);
-    }
+
     /*_auth.authStateChanges().listen((event) {
       setState(() {
         _user = event;
