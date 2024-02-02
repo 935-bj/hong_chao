@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class AuthService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -21,6 +22,14 @@ class AuthService {
       await _auth.signInWithProvider(googleAuthProvider);
     } catch (error) {
       print(error);
+    }
+  }
+
+  Future<void> signOut(BuildContext context) async {
+    try {
+      await _auth.signOut();
+    } on FirebaseAuthException catch (e) {
+      print('error: $e');
     }
   }
 }

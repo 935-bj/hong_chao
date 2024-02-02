@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/editPost.dart';
+import 'package:hong_chao/login.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -330,7 +331,12 @@ class _homeState extends State<home> {
                   width: 10,
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    //AuthService().signOut(context);
+                    AuthService().signOut(context);
+                    print('log out');
+                    Navigator.pushNamed(context, login.routeName);
+                  },
                   child: const Text('Log out'),
                 )
               ],
