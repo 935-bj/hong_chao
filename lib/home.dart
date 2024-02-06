@@ -70,7 +70,9 @@ class _homeState extends State<home> {
               'agreeList': agreeList
             };
 
-            postDetailsList.add(postMap);
+            setState(() {
+              postDetailsList.add(postMap);
+            });
           },
         );
         //print(postData);
