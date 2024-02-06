@@ -6,7 +6,9 @@ import 'package:hong_chao/home.dart';
 class report extends StatefulWidget {
   //static String routeName = '/report';
   final String postID;
-  const report({Key? key, required this.postID}) : super(key: key);
+  final String postData;
+  const report({Key? key, required this.postID, required this.postData})
+      : super(key: key);
   //const report({super.key});
 
   @override
@@ -30,6 +32,7 @@ class _reportState extends State<report> {
       'pid': widget.postID,
       'timestamp': DateTime.now().toString(),
       'content': content,
+      'postData': widget.postData
     });
     //await dbRef.child('reportPost').child(key!).update(reportData);
     print('finished report post;');

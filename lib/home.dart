@@ -45,6 +45,7 @@ class _homeState extends State<home> {
   }
 
   void _fetchdata() {
+    postDetailsList.clear();
     dbRef.child('Post').onValue.listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
         Map<dynamic, dynamic> postData = snapshot.snapshot.value as Map;
@@ -181,7 +182,8 @@ class _homeState extends State<home> {
                           value: 'Report',
                           child: const Text('Report'),
                           onTap: () {
-                            _to_report(postDetail['postID']);
+                            _to_report(
+                                postDetail['postID'], postDetail['content']);
 
                             print('heading to report');
 
@@ -426,10 +428,14 @@ class _homeState extends State<home> {
     return Container();
   }
 
-  Widget _to_report(String pid) {
+  Widget _to_report(String pid, String postData) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => report(postID: pid)),
+      MaterialPageRoute(
+          builder: (context) => report(
+                postID: pid,
+                postData: postData,
+              )),
     );
     print('route to report');
     return Container();
