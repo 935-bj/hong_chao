@@ -1,4 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/login.dart';
@@ -26,6 +28,10 @@ class _homeState extends State<home> {
   //controller
   final SearchController searrchController = SearchController();
   final TextEditingController postController = TextEditingController();
+
+  final auth = FirebaseAuth.instance;
+  final ref = FirebaseDatabase.instance.ref('OpenCase');
+
   int currentIndex = 0;
 
   List<Map<String, dynamic>> postDetailsList = [];
@@ -257,31 +263,33 @@ class _homeState extends State<home> {
             }),
 
         //case index1
-        //ListView.builder(itemBuilder: itemBuilder)
-        SearchAnchor(
-            searchController: searrchController,
-            builder: (BuildContext context, SearchController controller) {
-              return IconButton(
-                icon: const Icon(Icons.search_rounded),
-                onPressed: () {
-                  controller.openView();
+        Column(
+          children: [
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: ref,
+                itemBuilder: (context, snapshot, animation, index) {
+                  // Call your _fetchdata() function here
+                  _fetchdata();
+                  // Now you can access the data fetched by _fetchdata() function
+                  // and display it in ListTile along with snapshot data
+                  return ListTile(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Status: ' + snapshot.child('status').value.toString()),
+                        Text('Due: ' + snapshot.child('endDate').value.toString()),
+                        Text(snapshot.child('content').value.toString()),
+                        // Add the content text from your _fetchdata() function
+                        //Text(postDetailsList[index]['content']),
+                      ],
+                    ),
+                  );
                 },
-              );
-            },
-            suggestionsBuilder:
-                (BuildContext context, SearchController controller) {
-              return List<ListTile>.generate(5, (int index) {
-                final String item = 'item $index';
-                return ListTile(
-                  title: Text(item),
-                  onTap: () {
-                    setState(() {
-                      controller.closeView(item);
-                    });
-                  },
-                );
-              });
-            }),
+              ),
+            ),
+          ],
+        ),
 
         //search index 2
         SearchAnchor(

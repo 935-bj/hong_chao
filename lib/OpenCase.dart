@@ -103,6 +103,17 @@ class _OpenCaseState extends State<OpenCase> {
 
       // Check if the switch is active
       if (switchValue) {
+        // Retrieve the content from the Post child
+        var contentSnapshot = await dbRef
+            .child('Post')
+            .child(widget.postDetail!['postID'])
+            .child('content')
+            .once();
+
+        // Extract the value from the DataSnapshot
+        var content = contentSnapshot.snapshot.value;
+
+        // Update the OpenCase child with the retrieved content
         await dbRef
             .child('OpenCase')
             .child(widget.postDetail!['postID'])
@@ -110,11 +121,11 @@ class _OpenCaseState extends State<OpenCase> {
           'startDate': _startDate.toString(),
           'endDate': _endDate.toString(),
           'status': 'Open',
+          'content': content, // Update content from Post to OpenCase
         });
-
-        await dbRef.child('Post').child(widget.postDetail!['postID']).update({'areCase':'True'});
-
-        
+        await dbRef.child('Post').child(widget.postDetail!['postID']).update({
+          'areCase': 'True',
+        });
       } else {
         print('Switch is inactive');
         // If switch is inactive, set the post status to 'closed' in the database
@@ -127,7 +138,10 @@ class _OpenCaseState extends State<OpenCase> {
           'status': 'closed',
         });
 
-        await dbRef.child('Post').child(widget.postDetail!['postID']).update({'areCase':'False'});
+        await dbRef
+            .child('Post')
+            .child(widget.postDetail!['postID'])
+            .update({'areCase': 'False'});
       }
     } catch (error) {
       print('Error submitting case: $error');
