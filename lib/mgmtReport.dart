@@ -17,28 +17,35 @@ class _mgmtReportState extends State<mgmtReport> {
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref();
+
     _fetchdata();
   }
 
   void _fetchdata() {
+    //reportDetailsList.clear();
     dbRef.child('reportPost').onValue.listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
         Map<dynamic, dynamic> reportData = snapshot.snapshot.value as Map;
         reportData.forEach((key, value) {
           Map<dynamic, dynamic> reportDetails = value as Map;
 
-          Map<String, dynamic> reportMap = {
-            'reportID': key,
-            'content': reportDetails['content'],
-            'postID': reportDetails['pid'],
-            'timestamp': reportDetails['timestamp'],
-            'userID': reportDetails['uid'],
-          };
-          print(reportMap);
+          bool isDuplicate =
+              reportDetailsList.any((element) => element['reportID'] == key);
 
-          setState(() {
-            reportDetailsList.add(reportMap);
-          });
+          if (!isDuplicate) {
+            Map<String, dynamic> reportMap = {
+              'reportID': key,
+              'content': reportDetails['content'],
+              'postID': reportDetails['pid'],
+              'timestamp': reportDetails['timestamp'],
+              'userID': reportDetails['uid'],
+              'postData': reportDetails['postData'],
+            };
+            print(reportMap);
+            setState(() {
+              reportDetailsList.add(reportMap);
+            });
+          }
         });
       }
     });
@@ -71,6 +78,10 @@ class _mgmtReportState extends State<mgmtReport> {
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
+                    'post content: ${reportDetail['postData']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
                     'detail: ${reportDetail['content']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
@@ -93,7 +104,25 @@ class _mgmtReportState extends State<mgmtReport> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          //delete post
+                          dbRef
+                              .child('Post')
+                              .child(reportDetail['postID'].toString())
+                              .remove();
+                          //delete report
+                          dbRef
+                              .child('reportPost')
+                              .child(reportDetail['reportID'].toString())
+                              .remove()
+                              .then((_) {
+                            setState(() {
+                              reportDetailsList.removeWhere((report) =>
+                                  report['reportID'] ==
+                                  reportDetail['reportID']);
+                            });
+                          });
+                        },
                         icon: const Icon(
                           Icons.delete_forever_rounded,
                           color: Colors.white,
@@ -109,7 +138,20 @@ class _mgmtReportState extends State<mgmtReport> {
                       ),
                       const SizedBox(width: 25),
                       ElevatedButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          //remove report only
+                          dbRef
+                              .child('reportPost')
+                              .child(reportDetail['reportID'].toString())
+                              .remove()
+                              .then((_) {
+                            setState(() {
+                              reportDetailsList.removeWhere((report) =>
+                                  report['reportID'] ==
+                                  reportDetail['reportID']);
+                            });
+                          });
+                        },
                         icon: const Icon(
                           Icons.close_rounded,
                           color: Colors.white,
