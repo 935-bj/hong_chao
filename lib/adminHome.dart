@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hong_chao/mgmtReport.dart';
-import 'authService.dart';
+//import 'authService.dart';
 
 class adminHome extends StatelessWidget {
   static String routeName = '/adminHome';
