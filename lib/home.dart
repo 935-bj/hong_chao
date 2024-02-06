@@ -268,32 +268,51 @@ class _homeState extends State<home> {
 
         //case index1
         Column(
-          children: [
-            Expanded(
-              child: FirebaseAnimatedList(
-                query: ref,
-                itemBuilder: (context, snapshot, animation, index) {
-                  // Call your _fetchdata() function here
-                  _fetchdata();
-                  // Now you can access the data fetched by _fetchdata() function
-                  // and display it in ListTile along with snapshot data
-                  return ListTile(
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Status: ' + snapshot.child('status').value.toString()),
-                        Text('Due: ' + snapshot.child('endDate').value.toString()),
-                        Text(snapshot.child('content').value.toString()),
-                        // Add the content text from your _fetchdata() function
-                        //Text(postDetailsList[index]['content']),
-                      ],
+  children: [
+    Expanded(
+      child: FirebaseAnimatedList(
+        query: ref,
+        itemBuilder: (context, snapshot, animation, index) {
+          // Call your _fetchdata() function here
+          _fetchdata();
+          // display it in ListTile along with snapshot data
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Card(
+              elevation: 2, // adjust elevation as needed
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ListTile(
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Status: ' +
+                              snapshot.child('status').value.toString()),
+                          Text('Due: ' +
+                              snapshot.child('endDate').value.toString()),
+                        ],
+                      ),
+                      subtitle: Text(
+                        snapshot.child('content').value.toString(),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  );
-                },
+                    // Add the content text from your _fetchdata() function
+                    //Text(postDetailsList[index]['content']),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
+          );
+        },
+      ),
+    ),
+    // Other widgets can go here if needed
+  ],
+),
 
         //search index 2
         SearchAnchor(
