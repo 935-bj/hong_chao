@@ -6,6 +6,7 @@ import 'package:hong_chao/home.dart';
 import 'package:hong_chao/authService.dart';
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/mgmtReport.dart';
+import 'package:hong_chao/manageRegis.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/editPost.dart';
@@ -46,9 +47,10 @@ class MyApp extends StatelessWidget {
         //editPost.routeName: ((context) => const editPost()),
         editPost.routeName: (context) => const editPost(),
         adminHome.routeName: (context) => const adminHome(),
-        mgmtReport.routeName: (context) => const mgmtReport()
+        mgmtReport.routeName: (context) => const mgmtReport(),
+        manageRegis.routeName: (context) => const manageRegis()
       },
-      initialRoute: home.routeName,
+      initialRoute: manageRegis.routeName,
     );
   }
 }
