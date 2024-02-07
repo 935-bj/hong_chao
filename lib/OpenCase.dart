@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hong_chao/home.dart';
 
 import 'package:intl/intl.dart';
 
@@ -30,6 +31,10 @@ class _OpenCaseState extends State<OpenCase> {
         : 'Not selected';
   }
 
+  String _formattedTime(DateTime time) {
+  return DateFormat('HH:mm').format(time);
+}
+
   @override
   void initState() {
     super.initState();
@@ -38,8 +43,6 @@ class _OpenCaseState extends State<OpenCase> {
 
     _startDate = DateTime.now();
     _endDate = DateTime.now(); // Initialize _endDate if necessary
-    //_startTime = TimeOfDay.now(); // Initialize _startTime if necessary
-    //_endTime = TimeOfDay.now(); // Initialize _endTime if necessary
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -152,7 +155,9 @@ class _OpenCaseState extends State<OpenCase> {
 
   @override
   Widget build(BuildContext context) {
-    String formattedTime = '';
+    String _formattedTime(DateTime time) {
+  return DateFormat('HH:mm').format(time);
+}
     return Scaffold(
       appBar: AppBar(
         title: const Center(
