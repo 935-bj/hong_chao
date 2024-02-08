@@ -11,6 +11,8 @@ class manageRegis extends StatefulWidget {
   State<manageRegis> createState() => _manageRegisState();
 }
 
+// ต้องใส่ListView.builderยังไงให้เเบบtextเรียงต่อกันเป็นlist?
+
 class _manageRegisState extends State<manageRegis> {
   //เเสดงผลข้อมูล
   @override
@@ -21,6 +23,8 @@ class _manageRegisState extends State<manageRegis> {
           child: Text('Manage Registration Form'),
         )
       ), //Appbar 
+
+      //ListView.builder???
       body: Padding(
         padding: const EdgeInsets.all(8.0),
       child: Column(
