@@ -305,9 +305,27 @@ class _homeState extends State<home> {
                                 snapshot.child('content').value.toString(),
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Add your bidding button action here
+                                    },
+                                    child: Text('Bidding'),
+                                  ),
+                                  SizedBox(
+                                      width:
+                                          10), // Adding space between buttons
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Add your join as plaintiff button action here
+                                    },
+                                    child: Text('Join as Plaintiff'),
+                                  ),
+                                ],
+                              ),
                             ),
-                            // Add the content text from your _fetchdata() function
-                            //Text(postDetailsList[index]['content']),
                           ],
                         ),
                       ),
