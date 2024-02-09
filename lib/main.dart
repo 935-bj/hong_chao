@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         mgmtReport.routeName: (context) => const mgmtReport(),
         manageRegis.routeName: (context) => const manageRegis()
       },
-      initialRoute: manageRegis.routeName,
+      initialRoute: home.routeName,
     );
   }
 }

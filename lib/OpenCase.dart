@@ -27,13 +27,11 @@ class _OpenCaseState extends State<OpenCase> {
 
   String _formattedDate(DateTime? date) {
     return date != null
-        ? DateFormat('dd/MM/yyyy').format(date)
+        ? DateFormat('dd/MM/yyyy')
+            .format(date)
+            .split(' ')[0] // Remove the time part
         : 'Not selected';
   }
-
-  String _formattedTime(DateTime time) {
-  return DateFormat('HH:mm').format(time);
-}
 
   @override
   void initState() {
@@ -58,7 +56,9 @@ class _OpenCaseState extends State<OpenCase> {
         if (isStartDate) {
           _startDate = pickedDate;
         } else {
-          _endDate = pickedDate;
+          // Resetting the time part to 00:00
+          _endDate =
+              DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
         }
       });
     }
@@ -138,7 +138,7 @@ class _OpenCaseState extends State<OpenCase> {
             .update({
           'startDate': _startDate.toString(),
           'endDate': _endDate.toString(),
-          'status': 'closed',
+          'status': 'close',
         });
 
         await dbRef
@@ -156,8 +156,9 @@ class _OpenCaseState extends State<OpenCase> {
   @override
   Widget build(BuildContext context) {
     String _formattedTime(DateTime time) {
-  return DateFormat('HH:mm').format(time);
-}
+      return DateFormat('HH:mm').format(time);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Center(
@@ -254,25 +255,24 @@ class _OpenCaseState extends State<OpenCase> {
 
             //Submit button
             ElevatedButton(
-              onPressed: _submitCase, // Call _submitCase when button is pressed
+              onPressed: () {
+                _submitCase();
+                Navigator.of(context).pop(); // Close the current page
+              },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    Colors.lightBlue, // Set button color to light blue
+                backgroundColor: Colors.lightBlue,
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(
-                      5.0), // Adjust the borderRadius as needed
+                  borderRadius: BorderRadius.circular(5.0),
                 ),
               ),
               child: Container(
-                width:
-                    double.infinity, // Make the button fill the available width
-                padding: const EdgeInsets.symmetric(
-                    vertical: 15.0), // Adjust the padding as needed
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: const Center(
                   child: Text(
                     'Submit',
                     style: TextStyle(
-                      color: Colors.white, // Set text color to white
+                      color: Colors.white,
                       fontSize: 18.0,
                     ),
                   ),
