@@ -315,17 +315,32 @@ class _homeState extends State<home> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 ElevatedButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => BiddingScreen()),
-    );
-  },
-  child: Text('Bidding'),
-),
-
-                                SizedBox(
-                                    width: 8), // Adjust spacing between buttons
+                                  onPressed: () {
+                                    // Ensure snapshot value is not null
+                                    if (snapshot.value != null) {
+                                      // Access the necessary data fields from the snapshot
+                                      var postID = snapshot
+                                          .key; // Assuming 'postID' is the key of the post
+                                      // Create a post detail map
+                                      var postDetail = {
+                                        'postID': postID,
+                                      };
+                                      // Navigate to the BiddingScreen with postDetail
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => BiddingScreen(
+                                              postDetail: postDetail),
+                                        ),
+                                      );
+                                    } else {
+                                      print(
+                                          'Error: Unable to get post detail.');
+                                    }
+                                  },
+                                  child: Text('Bidding'),
+                                ),
+                                SizedBox(width: 8),
                                 ElevatedButton(
                                   onPressed: () {
                                     // Add your join as plaintiff button action here
