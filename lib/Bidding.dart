@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/ui/firebase_animated_list.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:hong_chao/home.dart';
+import 'package:hong_chao/authService.dart';
 
 import 'package:intl/intl.dart';
 
@@ -18,6 +21,8 @@ class BiddingScreen extends StatefulWidget {
 
 class _BiddingScreenState extends State<BiddingScreen> {
   late DatabaseReference dbRef;
+  late DatabaseReference ref;
+  List<dynamic> dataList = [];
   String? _uid;
   String? _author;
 
@@ -28,46 +33,43 @@ class _BiddingScreenState extends State<BiddingScreen> {
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref();
+    ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
+    _fetchData();
   }
 
-  Future<void> _fetchdata() async {
-    await dbRef.child('Post').once().then((DatabaseEvent? snapshot) {
-      if (snapshot != null && snapshot.snapshot.value != null) {
-        Map<dynamic, dynamic> postDetails = snapshot.snapshot.value as Map;
-
-        // Get UID and author from the current post
-        _uid = postDetails['uid'];
-        _author = postDetails['author'];
+  Future<void> _fetchData() async {
+    ref.once().then((DatabaseEvent event) {
+      DataSnapshot snapshot = event.snapshot;
+      if (snapshot.value != null && snapshot.value is Map) {
+        setState(() {
+          dataList = (snapshot.value as Map).values.toList();
+        });
       }
-    }).catchError((e) {
-      print(e);
+    }).catchError((error) {
+      print('Error fetching data: $error');
     });
   }
 
   Future<void> _submitBid() async {
     try {
-      // Get current user UID and author
-      User? user = FirebaseAuth.instance.currentUser;
-      String? uid = user?.uid;
-      String? author = user?.displayName;
+      // Get current user
+      User? user = AuthService.currentUser;
+      String? displayName = user?.displayName;
+
+      // Get current time
+      DateTime now = DateTime.now();
+      String formattedTime = now.toUtc().toString();
+
       // Check if widget.postDetail is not null
       if (widget.postDetail != null) {
-        // Retrieve the content from the Post child
-        var contentSnapshot = await dbRef
-            .child('Post')
-            .child(widget.postDetail!['postID'])
-            .child('content')
-            .once();
-        // Update the OpenCase child with the retrieved content
-        await dbRef
-            .child('OpenCase')
-            .child(widget.postDetail!['postID'])
-            .child('Bid')
-            .update({
+        // Create a new child node under 'Bid' using push()
+        var newBidRef = ref.child(widget.postDetail!['postID']).push();
+
+        // Update the new child node with the bid information
+        await newBidRef.set({
+          'author': displayName, // Add current user's display name
           'Biding price': _bidAmount.toString(), // Update with the bid amount
-        });
-        await dbRef.child('Post').child(widget.postDetail!['postID']).update({
-          'areCase': 'True',
+          'timestamp': formattedTime, // Add current time
         });
       } else {
         print('Error: widget.postDetail is null');
@@ -83,18 +85,12 @@ class _BiddingScreenState extends State<BiddingScreen> {
       appBar: AppBar(
         title: Text('Bidding'),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text('Current Bid: \$${_bidding.getCurrentBid()}'),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                _submitBid();
-              },
-              child: Text('Place Bid'),
-            ),
             SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.number,
@@ -104,6 +100,42 @@ class _BiddingScreenState extends State<BiddingScreen> {
               decoration: InputDecoration(
                 labelText: 'Enter Bid Amount',
                 border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _submitBid();
+              },
+              child: Text('Place Bid'),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: ref,
+                itemBuilder: (context, snapshot, animation, index) {
+                  if (snapshot.value != null &&
+                      snapshot.value is Map<dynamic, dynamic>) {
+                    Map<dynamic, dynamic> dataMap =
+                        snapshot.value as Map<dynamic, dynamic>;
+                    List<dynamic> dataList = dataMap.values.toList();
+                    // Ensure index is within bounds
+                    return Card(
+                      child: ListTile(
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                                'Biding price: ${dataList[index]['Biding price']}'),
+                            Text('Time: ${dataList[index]['timestamp']}'),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  // If snapshot value is null or not a Map, or index is out of bounds, return an empty widget
+                  return SizedBox();
+                },
               ),
             ),
           ],
