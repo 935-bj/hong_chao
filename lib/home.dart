@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
+import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/postScreen.dart';
@@ -97,7 +98,8 @@ class _homeState extends State<home> {
         title: const Center(
           child: Text('Lawbizcase'),
         ),
-        automaticallyImplyLeading: false,
+        //automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         actions: [
           IconButton(
               icon: const Icon(Icons.add_circle_outline_rounded),
@@ -268,86 +270,86 @@ class _homeState extends State<home> {
 
         //case index1
         Column(
-  children: [
-    Expanded(
-      child: FirebaseAnimatedList(
-        query: ref,
-        itemBuilder: (context, snapshot, animation, index) {
-          // Call your _fetchdata() function here
-          _fetchdata();
-          // display it in ListTile along with snapshot data
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Card(
-              elevation: 2, // adjust elevation as needed
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ListTile(
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Status: ' +
-                              snapshot
-                                  .child('status')
-                                  .value
-                                  .toString()),
-                          Text('Due: ' +
-                              snapshot
-                                  .child('endDate')
-                                  .value
-                                  .toString()),
-                        ],
-                      ),
-                      subtitle: Text(
-                        snapshot.child('content').value.toString(),
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    SizedBox(height: 8), // Adjust spacing between ListTile and buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add your bidding button action here
-                            // For example, navigate to bidding screen
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(builder: (context) => BiddingScreen()),
-                            // );
-                          },
-                          child: Text('Bidding'),
-                        ),
-                        SizedBox(width: 8), // Adjust spacing between buttons
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add your join as plaintiff button action here
-                            // For example, navigate to join as plaintiff screen
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(builder: (context) => JoinAsPlaintiffScreen()),
-                            // );
-                          },
-                          child: Text('Join as Plaintiff'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    ),
-    // Other widgets can go here if needed
-  ],
+          children: [
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: ref,
+                itemBuilder: (context, snapshot, animation, index) {
+                  // Call your _fetchdata() function here
+                  _fetchdata();
+                  // display it in ListTile along with snapshot data
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Card(
+                      elevation: 2, // adjust elevation as needed
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Status: ' +
+                                      snapshot
+                                          .child('status')
+                                          .value
+                                          .toString()),
+                                  Text('Due: ' +
+                                      snapshot
+                                          .child('endDate')
+                                          .value
+                                          .toString()),
+                                ],
+                              ),
+                              subtitle: Text(
+                                snapshot.child('content').value.toString(),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(
+                                height:
+                                    8), // Adjust spacing between ListTile and buttons
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                ElevatedButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => BiddingScreen()),
+    );
+  },
+  child: Text('Bidding'),
 ),
 
-
+                                SizedBox(
+                                    width: 8), // Adjust spacing between buttons
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Add your join as plaintiff button action here
+                                    // For example, navigate to join as plaintiff screen
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(builder: (context) => JoinAsPlaintiffScreen()),
+                                    // );
+                                  },
+                                  child: Text('Join as Plaintiff'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Other widgets can go here if needed
+          ],
+        ),
 
         //search index 2
         SearchAnchor(

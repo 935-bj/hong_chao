@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/adminHome.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
@@ -10,6 +11,7 @@ import 'package:hong_chao/manageRegis.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/editPost.dart';
+import 'package:hong_chao/Bidding.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,7 +50,7 @@ class MyApp extends StatelessWidget {
         editPost.routeName: (context) => const editPost(),
         adminHome.routeName: (context) => const adminHome(),
         mgmtReport.routeName: (context) => const mgmtReport(),
-        manageRegis.routeName: (context) => const manageRegis()
+        manageRegis.routeName: (context) => const manageRegis(),
       },
       initialRoute: home.routeName,
     );
