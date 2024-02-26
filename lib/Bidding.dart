@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:hong_chao/home.dart';
 import 'package:hong_chao/authService.dart';
-
 import 'package:intl/intl.dart';
 
 class BiddingScreen extends StatefulWidget {
@@ -22,32 +20,28 @@ class BiddingScreen extends StatefulWidget {
 class _BiddingScreenState extends State<BiddingScreen> {
   late DatabaseReference dbRef;
   late DatabaseReference ref;
-  List<dynamic> dataList = [];
+
+  List<Map<String, dynamic>> bidsList = [];
+
   String? _uid;
   String? _author;
 
   Bidding _bidding = Bidding();
-  int _bidAmount = 0;
+  late TextEditingController _bidAmountController;
 
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref();
+
+    dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
     ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-    _fetchData();
+    _bidAmountController = TextEditingController();
   }
 
-  Future<void> _fetchData() async {
-    ref.once().then((DatabaseEvent event) {
-      DataSnapshot snapshot = event.snapshot;
-      if (snapshot.value != null && snapshot.value is Map) {
-        setState(() {
-          dataList = (snapshot.value as Map).values.toList();
-        });
-      }
-    }).catchError((error) {
-      print('Error fetching data: $error');
-    });
+  @override
+  void dispose() {
+    _bidAmountController.dispose();
+    super.dispose();
   }
 
   Future<void> _submitBid() async {
@@ -60,6 +54,8 @@ class _BiddingScreenState extends State<BiddingScreen> {
       DateTime now = DateTime.now();
       String formattedTime = now.toUtc().toString();
 
+      int bidAmount = int.tryParse(_bidAmountController.text) ?? 0;
+
       // Check if widget.postDetail is not null
       if (widget.postDetail != null) {
         // Create a new child node under 'Bid' using push()
@@ -68,7 +64,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
         // Update the new child node with the bid information
         await newBidRef.set({
           'author': displayName, // Add current user's display name
-          'Biding price': _bidAmount.toString(), // Update with the bid amount
+          'Biding price': bidAmount.toString(), // Update with the bid amount
           'timestamp': formattedTime, // Add current time
         });
       } else {
@@ -90,13 +86,11 @@ class _BiddingScreenState extends State<BiddingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Current Bid: \$${_bidding.getCurrentBid()}'),
+            Text('Current Bid: \$${_bidding.getMinimumIncrement()}'),
             SizedBox(height: 20),
             TextFormField(
+              controller: _bidAmountController,
               keyboardType: TextInputType.number,
-              onChanged: (value) {
-                _bidAmount = int.tryParse(value) ?? 0;
-              },
               decoration: InputDecoration(
                 labelText: 'Enter Bid Amount',
                 border: OutlineInputBorder(),
@@ -105,35 +99,33 @@ class _BiddingScreenState extends State<BiddingScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                _submitBid();
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  _submitBid();
+                });
               },
               child: Text('Place Bid'),
             ),
             SizedBox(height: 20),
             Expanded(
               child: FirebaseAnimatedList(
-                query: ref,
+                query: ref.child(widget.postDetail!['postID']),
                 itemBuilder: (context, snapshot, animation, index) {
-                  if (snapshot.value != null &&
-                      snapshot.value is Map<dynamic, dynamic>) {
-                    Map<dynamic, dynamic> dataMap =
+                  if (snapshot.value != null && snapshot.value is Map) {
+                    Map<dynamic, dynamic> bidMap =
                         snapshot.value as Map<dynamic, dynamic>;
-                    List<dynamic> dataList = dataMap.values.toList();
-                    // Ensure index is within bounds
                     return Card(
                       child: ListTile(
-                        title: Column(
+                        title: Text('Author: ${bidMap['author']}'),
+                        subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                                'Biding price: ${dataList[index]['Biding price']}'),
-                            Text('Time: ${dataList[index]['timestamp']}'),
+                            Text('Bid Amount: ${bidMap['Biding price']}'),
+                            Text('Timestamp: ${bidMap['timestamp']}'),
                           ],
                         ),
                       ),
                     );
                   }
-                  // If snapshot value is null or not a Map, or index is out of bounds, return an empty widget
                   return SizedBox();
                 },
               ),
@@ -162,6 +154,10 @@ class Bidding {
 
   int getCurrentBid() {
     return _currentBid;
+  }
+
+  int getMinimumIncrement() {
+    return _minimumIncrement;
   }
 
   void setMinimumIncrement(int increment) {

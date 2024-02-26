@@ -112,6 +112,3 @@ class _manageRegisState extends State<manageRegis> {
     
   }
 }
-
-  
- 
