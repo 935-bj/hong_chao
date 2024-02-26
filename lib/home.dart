@@ -10,6 +10,7 @@ import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/report.dart';
+import 'package:hong_chao/joinPaintiff.dart';
 
 import 'authService.dart';
 
@@ -343,14 +344,29 @@ class _homeState extends State<home> {
                                 SizedBox(width: 8),
                                 ElevatedButton(
                                   onPressed: () {
-                                    // Add your join as plaintiff button action here
-                                    // For example, navigate to join as plaintiff screen
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: (context) => JoinAsPlaintiffScreen()),
-                                    // );
+                                    // Ensure snapshot value is not null
+                                    if (snapshot.value != null) {
+                                      // Access the necessary data fields from the snapshot
+                                      var postID = snapshot
+                                          .key; // Assuming 'postID' is the key of the post
+                                      // Create a post detail map
+                                      var postDetail = {
+                                        'postID': postID,
+                                      };
+                                      // Navigate to the BiddingScreen with postDetail
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => JoinP(
+                                              postDetail: postDetail),
+                                        ),
+                                      );
+                                    } else {
+                                      print(
+                                          'Error: Unable to get post detail.');
+                                    }
                                   },
-                                  child: Text('Join as Plaintiff'),
+                                  child: Text('Join as Paintiff'),
                                 ),
                               ],
                             ),
