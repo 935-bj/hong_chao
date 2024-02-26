@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
         manageRegis.routeName: (context) => const manageRegis(),
         BiddingScreen.routeName: (context) => const BiddingScreen(
               postDetail: {},
-            ),
+        ),
       },
       initialRoute: home.routeName,
     );
