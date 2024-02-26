@@ -12,6 +12,7 @@ import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/Bidding.dart';
+import 'package:hong_chao/joinPaintiff.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -54,8 +55,11 @@ class MyApp extends StatelessWidget {
         BiddingScreen.routeName: (context) => const BiddingScreen(
               postDetail: {},
             ),
+             JoinP.routeName: (context) => const JoinP(
+              postDetail: {},
+            )
       },
-      initialRoute: home.routeName,
+      initialRoute: login.routeName,
     );
   }
 }
