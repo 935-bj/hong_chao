@@ -31,33 +31,33 @@ class _BiddingScreenState extends State<BiddingScreen> {
   int _minimumBid = 0;
 
   @override
-void initState() {
-  super.initState();
+  void initState() {
+    super.initState();
 
-  dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-  ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-  _bidAmountController = TextEditingController();
+    dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
+    ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
+    _bidAmountController = TextEditingController();
 
-  // Listen to changes in the bid amount and update the minimum bid
-  ref.child(widget.postDetail!['postID']).onValue.listen((event) {
-    DataSnapshot snapshot = event.snapshot;
-    if (snapshot.value != null) {
-      Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
-      if (bids != null) {
-        int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
-          int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
-          if (prev == null) {
-            return bidAmount;
-          } else {
-            return bidAmount < prev ? bidAmount : prev;
-          }
-        });
-        _minimumBid = minBid != null ? minBid : 0;
-        setState(() {});
+    // Listen to changes in the bid amount and update the minimum bid
+    ref.child(widget.postDetail!['postID']).onValue.listen((event) {
+      DataSnapshot snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
+        if (bids != null) {
+          int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
+            int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
+            if (prev == null) {
+              return bidAmount;
+            } else {
+              return bidAmount < prev ? bidAmount : prev;
+            }
+          });
+          _minimumBid = minBid != null ? minBid : 0;
+          setState(() {});
+        }
       }
-    }
-  });
-}
+    });
+  }
 
   Future<void> _submitBid() async {
     try {
@@ -160,7 +160,8 @@ class Bidding {
       _currentBid = bidAmount;
       print('Bid of \$$_currentBid placed successfully.');
     } else {
-      print('Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
+      print(
+          'Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
     }
   }
 
