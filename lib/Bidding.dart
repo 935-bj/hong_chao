@@ -37,6 +37,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
     dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
     ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
     _bidAmountController = TextEditingController();
+    // _fetchAuthorInfo();
 
     // Listen to changes in the bid amount and update the minimum bid
     ref.child(widget.postDetail!['postID']).onValue.listen((event) {
@@ -58,6 +59,23 @@ class _BiddingScreenState extends State<BiddingScreen> {
       }
     });
   }
+
+  // Future<void> _fetchAuthorInfo() async {
+  //   try {
+  //     // Fetch author information from the database
+  //     DataSnapshot snapshot = await dbRef
+  //         .child(widget.postDetail!['postID'])
+  //         .child('author')
+  //         .once() as DataSnapshot;
+
+  //     // Update the _author variable with the retrieved author information
+  //     setState(() {
+  //       _author = snapshot.value.toString(); // Cast to String
+  //     });
+  //   } catch (error) {
+  //     print('Error fetching author info: $error');
+  //   }
+  // }
 
   Future<void> _submitBid() async {
     try {
@@ -100,7 +118,31 @@ class _BiddingScreenState extends State<BiddingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Current Minimum Bid: $_minimumBid'),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Lawyer: ',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    AuthService.currentUser!.email ?? '',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+            Text(
+              'Current Minimum Bid: $_minimumBid',
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.purple),
+            ),
             SizedBox(height: 20),
             TextFormField(
               controller: _bidAmountController,
@@ -129,7 +171,18 @@ class _BiddingScreenState extends State<BiddingScreen> {
                         snapshot.value as Map<dynamic, dynamic>;
                     return Card(
                       child: ListTile(
-                        title: Text('Author: ${bidMap['author']}'),
+                        title: Row(
+                          children: [
+                            Text(
+                              'Lawyer: ',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              AuthService.currentUser!.email ?? '',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

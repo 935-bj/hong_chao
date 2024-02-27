@@ -357,8 +357,8 @@ class _homeState extends State<home> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => JoinP(
-                                              postDetail: postDetail),
+                                          builder: (context) =>
+                                              JoinP(postDetail: postDetail),
                                         ),
                                       );
                                     } else {
