@@ -28,45 +28,59 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
   Bidding _bidding = Bidding();
   late TextEditingController _bidAmountController;
+  int _minimumBid = 0;
 
   @override
-  void initState() {
-    super.initState();
+void initState() {
+  super.initState();
 
-    dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-    ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-    _bidAmountController = TextEditingController();
-  }
+  dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
+  ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
+  _bidAmountController = TextEditingController();
 
-  @override
-  void dispose() {
-    _bidAmountController.dispose();
-    super.dispose();
-  }
+  // Listen to changes in the bid amount and update the minimum bid
+  ref.child(widget.postDetail!['postID']).onValue.listen((event) {
+    DataSnapshot snapshot = event.snapshot;
+    if (snapshot.value != null) {
+      Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
+      if (bids != null) {
+        int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
+          int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
+          if (prev == null) {
+            return bidAmount;
+          } else {
+            return bidAmount < prev ? bidAmount : prev;
+          }
+        });
+        _minimumBid = minBid != null ? minBid : 0;
+        setState(() {});
+      }
+    }
+  });
+}
 
   Future<void> _submitBid() async {
     try {
-      // Get current user
       User? user = AuthService.currentUser;
       String? displayName = user?.displayName;
 
-      // Get current time
       DateTime now = DateTime.now();
       String formattedTime = now.toUtc().toString();
 
       int bidAmount = int.tryParse(_bidAmountController.text) ?? 0;
 
-      // Check if widget.postDetail is not null
       if (widget.postDetail != null) {
-        // Create a new child node under 'Bid' using push()
         var newBidRef = ref.child(widget.postDetail!['postID']).push();
 
-        // Update the new child node with the bid information
         await newBidRef.set({
-          'author': displayName, // Add current user's display name
-          'Biding price': bidAmount.toString(), // Update with the bid amount
-          'timestamp': formattedTime, // Add current time
+          'author': displayName,
+          'Biding price': bidAmount.toString(),
+          'timestamp': formattedTime,
         });
+
+        setState(() {});
+
+        print('Bid placed successfully!');
       } else {
         print('Error: widget.postDetail is null');
       }
@@ -86,7 +100,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Current Bid: \$${_bidding.getMinimumIncrement()}'),
+            Text('Current Minimum Bid: $_minimumBid'),
             SizedBox(height: 20),
             TextFormField(
               controller: _bidAmountController,
@@ -145,10 +159,8 @@ class Bidding {
     if (bidAmount >= _currentBid + _minimumIncrement) {
       _currentBid = bidAmount;
       print('Bid of \$$_currentBid placed successfully.');
-      // You might want to update the UI or perform other actions here.
     } else {
-      print(
-          'Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
+      print('Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
     }
   }
 
