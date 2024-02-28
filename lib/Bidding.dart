@@ -63,7 +63,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
   Future<void> _submitBid() async {
     try {
       User? user = AuthService.currentUser;
-      String? displayName = user?.displayName;
+      String? displayName = await AuthService().username();
 
       DateTime now = DateTime.now();
       String formattedTime = now.toUtc().toString();

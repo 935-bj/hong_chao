@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/home.dart';
 
@@ -32,5 +33,27 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       print('error: $e');
     }
+  }
+
+  Future<String?> username() async {
+    DatabaseReference userRef = FirebaseDatabase.instance
+        .ref()
+        .child('user')
+        .child(_user!.uid)
+        .child('name');
+    String? username;
+    try {
+      if (_user != null) {
+        /*userRef.once().then((DatabaseEvent? snapshot) {
+          username = snapshot?.snapshot.value as String;
+        });*/
+
+        DataSnapshot snapshot = (await userRef.once()) as DataSnapshot;
+        username = snapshot.value as String?;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return username;
   }
 }
