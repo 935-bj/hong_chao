@@ -63,7 +63,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
   Future<void> _submitBid() async {
     try {
       User? user = AuthService.currentUser;
-      String? displayName = await AuthService().username();
+      String displayName = await getUsername();
 
       DateTime now = DateTime.now();
       String formattedTime = now.toUtc().toString();
@@ -80,6 +80,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
         });
 
         setState(() {});
+        _bidAmountController.clear();
 
         print('Bid placed successfully!');
       } else {
@@ -87,6 +88,19 @@ class _BiddingScreenState extends State<BiddingScreen> {
       }
     } catch (error) {
       print('Error: $error');
+    }
+  }
+
+  Future<String> getUsername() async {
+    try {
+      String? snapshot = await AuthService().username();
+      if (snapshot != null) {
+        return snapshot;
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return 'getUsername() Error: $e';
     }
   }
 
@@ -112,10 +126,11 @@ class _BiddingScreenState extends State<BiddingScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
+                  usernameWg(),
+                  /*Text(
                     AuthService.currentUser!.email ?? '',
                     style: TextStyle(fontSize: 18),
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -184,6 +199,25 @@ class _BiddingScreenState extends State<BiddingScreen> {
         ),
       ),
     );
+  }
+
+  Widget usernameWg() {
+    return FutureBuilder<String?>(
+        future: AuthService().username(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // Display loading indicator while waiting
+          } else {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Text(
+                snapshot.data ?? '',
+                style: const TextStyle(fontSize: 20),
+              );
+            }
+          }
+        });
   }
 }
 

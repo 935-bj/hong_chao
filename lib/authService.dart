@@ -46,13 +46,21 @@ class AuthService {
       if (_user != null) {
         /*userRef.once().then((DatabaseEvent? snapshot) {
           username = snapshot?.snapshot.value as String;
-        });*/
+        });
 
         DataSnapshot snapshot = (await userRef.once()) as DataSnapshot;
-        username = snapshot.value as String?;
+        username = snapshot.value as String?;*/
+
+        final snapshot = await userRef.get();
+        if (snapshot.exists) {
+          //print('AuthService: name- ${snapshot.value}');
+          username = snapshot.value.toString();
+        } else {
+          print('นี่คือเสียงจาก AuthService - no data');
+        }
       }
     } catch (e) {
-      print(e);
+      print("authService Error: $e");
     }
     return username;
   }

@@ -457,10 +457,11 @@ class _homeState extends State<home> {
                 ),
                 const SizedBox(height: 10),
                 // Display user email
-                Text(
-                  AuthService.currentUser!.email ?? '',
+                usernameWg(),
+                /*Text(
+                  authService().username().toString(),
                   style: const TextStyle(fontSize: 20),
-                ),
+                ),*/
                 const SizedBox(
                   width: 20,
                 ),
@@ -638,5 +639,24 @@ class _homeState extends State<home> {
         );
       }
     });
+  }
+
+  Widget usernameWg() {
+    return FutureBuilder<String?>(
+        future: AuthService().username(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // Display loading indicator while waiting
+          } else {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              return Text(
+                snapshot.data ?? '',
+                style: const TextStyle(fontSize: 20),
+              );
+            }
+          }
+        });
   }
 }
