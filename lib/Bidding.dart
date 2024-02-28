@@ -60,23 +60,6 @@ class _BiddingScreenState extends State<BiddingScreen> {
     });
   }
 
-  // Future<void> _fetchAuthorInfo() async {
-  //   try {
-  //     // Fetch author information from the database
-  //     DataSnapshot snapshot = await dbRef
-  //         .child(widget.postDetail!['postID'])
-  //         .child('author')
-  //         .once() as DataSnapshot;
-
-  //     // Update the _author variable with the retrieved author information
-  //     setState(() {
-  //       _author = snapshot.value.toString(); // Cast to String
-  //     });
-  //   } catch (error) {
-  //     print('Error fetching author info: $error');
-  //   }
-  // }
-
   Future<void> _submitBid() async {
     try {
       User? user = AuthService.currentUser;

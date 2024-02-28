@@ -11,6 +11,7 @@ import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/report.dart';
 import 'package:hong_chao/joinPaintiff.dart';
+import 'package:hong_chao/bidding.dart' as Bidding;
 
 import 'authService.dart';
 
@@ -26,6 +27,7 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   late DatabaseReference dbRef;
+  int _minimumBid = 0;
 
   //controller
   final SearchController searrchController = SearchController();
@@ -43,7 +45,37 @@ class _homeState extends State<home> {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref();
     _fetchdata();
+    _fetchMinimumBid();
     print("User Email: ${AuthService.currentUser!.email}");
+  }
+
+  void _fetchMinimumBid() {
+    DatabaseReference ref =
+        FirebaseDatabase.instance.ref('OpenCase').child('Bid');
+    ref.onValue.listen((event) {
+      DataSnapshot snapshot = event.snapshot;
+      if (snapshot.value != null) {
+        Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
+        if (bids != null) {
+          int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
+            String? bidPrice = entry.value['Biding price']; // Get the bid price
+            if (bidPrice != null) {
+              int bidAmount = int.tryParse(bidPrice) ??
+                  0; // Parse the bid price as an integer
+              if (prev == null) {
+                return bidAmount;
+              } else {
+                return bidAmount < prev ? bidAmount : prev;
+              }
+            }
+            return prev; // Return the previous minimum bid if the current bid price is null
+          });
+          setState(() {
+            _minimumBid = minBid ?? 0; // Update the minimum bid value
+          });
+        }
+      }
+    });
   }
 
   void _fetchdata() {
