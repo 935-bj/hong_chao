@@ -46,6 +46,7 @@ class _homeState extends State<home> {
     dbRef = FirebaseDatabase.instance.ref();
     _fetchdata();
     _fetchMinimumBid();
+    _checkUser();
     print("User Email: ${AuthService.currentUser!.email}");
   }
 
@@ -593,5 +594,49 @@ class _homeState extends State<home> {
         );
       },
     );
+  }
+
+  void _checkUser() {
+    List<String> uid = [];
+    final TextEditingController _nameController = TextEditingController();
+
+    dbRef.child('user').once().then((DatabaseEvent? snapshot) {
+      Map<dynamic, dynamic> userdata = snapshot?.snapshot.value as Map;
+      userdata.forEach((key, value) {
+        uid.add(key);
+      });
+
+      if (!uid.contains(AuthService.currentUser!.uid)) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title:
+                  Text('To complete the registration please set the username'),
+              content: TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Enter your username'),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('create account'),
+                  onPressed: () {
+                    dbRef
+                        .child('user')
+                        .child(AuthService.currentUser!.uid.toString())
+                        .set({
+                      'mail': AuthService.currentUser?.email,
+                      'name': _nameController.text,
+                      'type': 'N',
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
   }
 }
