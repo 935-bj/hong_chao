@@ -27,7 +27,7 @@ class _OpenCaseState extends State<OpenCase> {
 
   String _formattedDate(DateTime? date) {
     return date != null
-        ? DateFormat('dd/MM/yyyy')
+        ? DateFormat('dd-MM-yyyy HH:mm')
             .format(date)
             .split(' ')[0] // Remove the time part
         : 'Not selected';
@@ -155,8 +155,9 @@ class _OpenCaseState extends State<OpenCase> {
 
   @override
   Widget build(BuildContext context) {
+    DateTime now = DateTime.now();
     String _formattedTime(DateTime time) {
-      return DateFormat('HH:mm').format(time);
+      return DateFormat('dd-MM-yyyy HH:mm').format(now);
     }
 
     return Scaffold(

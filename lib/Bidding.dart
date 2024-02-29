@@ -66,7 +66,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
       String displayName = await getUsername();
 
       DateTime now = DateTime.now();
-      String formattedTime = now.toUtc().toString();
+      String formattedTime = DateFormat('dd-MM-yyyy HH:mm').format(now);
 
       int bidAmount = int.tryParse(_bidAmountController.text) ?? 0;
 
@@ -172,11 +172,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
                         title: Row(
                           children: [
                             Text(
-                              'Lawyer: ',
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              AuthService.currentUser!.email ?? '',
+                              'Lawyer: ${bidMap['author']}',
                               style: TextStyle(fontSize: 18),
                             ),
                           ],
