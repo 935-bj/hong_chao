@@ -56,12 +56,34 @@ class AuthService {
           //print('AuthService: name- ${snapshot.value}');
           username = snapshot.value.toString();
         } else {
-          print('นี่คือเสียงจาก AuthService - no data');
+          print('นี่คือเสียงจาก AuthService - no username data');
         }
       }
     } catch (e) {
-      print("authService Error: $e");
+      print("authService username Error: $e");
     }
     return username;
+  }
+
+  Future<String?> userType() async {
+    DatabaseReference userRef = FirebaseDatabase.instance
+        .ref()
+        .child('user')
+        .child(_user!.uid)
+        .child('type');
+    String? type;
+    try {
+      if (_user != null) {
+        final snapshot = await userRef.get();
+        if (snapshot.exists) {
+          type = snapshot.value.toString();
+        } else {
+          print('นี่คือเสียงจาก AuthService - no usertype data');
+        }
+      }
+    } catch (e) {
+      print("authService usertype Error: $e");
+    }
+    return type;
   }
 }
