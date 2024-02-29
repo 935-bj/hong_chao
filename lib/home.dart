@@ -441,69 +441,7 @@ class _homeState extends State<home> {
               });
             }),
         //profile index3
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                // Display user picture
-                CircleAvatar(
-                  backgroundImage:
-                      NetworkImage(AuthService.currentUser!.photoURL ?? ''),
-                  radius: 50,
-                ),
-                const SizedBox(height: 10),
-                // Display user email
-                usernameWg(),
-                /*Text(
-                  authService().username().toString(),
-                  style: const TextStyle(fontSize: 20),
-                ),*/
-                const SizedBox(
-                  width: 20,
-                ),
-                TextButton(
-                  onPressed: () {
-                    Future.delayed(Duration.zero, () {
-                      _to_regisL();
-                    });
-                    print('direct to regisL');
-                  },
-                  child: const Text(
-                    'Register as Lawyer',
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                TextButton(
-                  onPressed: () {
-                    Future.delayed(Duration.zero, () {
-                      _to_regisP();
-                    });
-                    print('direct to regisP');
-                  },
-                  child: const Text('Register as PLaintiff'),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                TextButton(
-                  onPressed: () {
-                    //AuthService().signOut(context);
-                    AuthService().signOut(context);
-                    print('log out');
-                    Navigator.pushNamed(context, login.routeName);
-                  },
-                  child: const Text('Log out'),
-                )
-              ],
-            ),
-          ),
-        ),
+        customProfile(),
       ][currentIndex],
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (int index) {
@@ -655,6 +593,217 @@ class _homeState extends State<home> {
                 snapshot.data ?? '',
                 style: const TextStyle(fontSize: 20),
               );
+            }
+          }
+        });
+  }
+
+  Widget customProfile() {
+    return FutureBuilder<String?>(
+        future: AuthService().userType(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator(); // Display loading indicator while waiting
+          } else {
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              if (snapshot.data == 'N') {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        // Display user picture
+                        CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              AuthService.currentUser!.photoURL ?? ''),
+                          radius: 50,
+                        ),
+                        const SizedBox(height: 10),
+                        // Display username
+                        usernameWg(),
+                        /*Text(
+                          authService().username().toString(),
+                          style: const TextStyle(fontSize: 20),
+                        ),*/
+                        const SizedBox(
+                          width: 20,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Future.delayed(Duration.zero, () {
+                              _to_regisL();
+                            });
+                            print('direct to regisL');
+                          },
+                          child: const Text(
+                            'Register as Lawyer',
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Future.delayed(Duration.zero, () {
+                              _to_regisP();
+                            });
+                            print('direct to regisP');
+                          },
+                          child: const Text('Register as PLaintiff'),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('My post'),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            AuthService().signOut(context);
+                            print('log out');
+                            Navigator.pushNamed(context, login.routeName);
+                          },
+                          child: const Text('Log out'),
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              } else {
+                if (snapshot.data == 'P') {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          // Display user picture
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                AuthService.currentUser!.photoURL ?? ''),
+                            radius: 50,
+                          ),
+                          const SizedBox(height: 10),
+                          // Display user email
+                          usernameWg(),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Future.delayed(Duration.zero, () {
+                                _to_regisL();
+                              });
+                              print('direct to regisL');
+                            },
+                            child: const Text(
+                              'Register as Lawyer',
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('My post'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('My case'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              //AuthService().signOut(context);
+                              AuthService().signOut(context);
+                              print('log out');
+                              Navigator.pushNamed(context, login.routeName);
+                            },
+                            child: const Text('Log out'),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                } else {
+                  //snapshot.data == 'L'
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          // Display user picture
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                AuthService.currentUser!.photoURL ?? ''),
+                            radius: 50,
+                          ),
+                          const SizedBox(height: 10),
+                          // Display user email
+                          usernameWg(),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Future.delayed(Duration.zero, () {
+                                _to_regisP();
+                              });
+                              print('direct to regisP');
+                            },
+                            child: const Text('Register as PLaintiff'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('My Post'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {},
+                            child: const Text('My Case'),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              //AuthService().signOut(context);
+                              AuthService().signOut(context);
+                              print('log out');
+                              Navigator.pushNamed(context, login.routeName);
+                            },
+                            child: const Text('Log out'),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                }
+              }
             }
           }
         });
