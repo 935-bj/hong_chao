@@ -83,14 +83,57 @@ class _JoinPState extends State<JoinP> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bidding'),
+         title: Text('Bidding'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text('Current Bid: \$${_bidding.getCurrentBid()}'),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Plaintiff: ',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    AuthService.currentUser!.email ?? '',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+             Text(
+                    'Case Information',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+            SizedBox(height: 20),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              onChanged: (value) {
+                _bidAmount = int.tryParse(value) ?? 0;
+              },
+              decoration: InputDecoration(
+                labelText: 'Enter case information',
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+             Text(
+                    'Current Bid: \$${_bidding.getCurrentBid()}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
             SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.number,
@@ -138,6 +181,14 @@ class _JoinPState extends State<JoinP> {
                 },
               ),
             ),
+                  SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                _submitBid();
+              },
+              child: Text('Submit'),
+            ),
+
           ],
         ),
       ),
