@@ -167,11 +167,9 @@ class _homeState extends State<home> {
                 //กล่อง
                 child: ListTile(
                   title: Text(
-                    //'${postDetail['author'].toString()} • $formattedTime',
-                    postDetail['content'],
-                    style: const TextStyle(fontSize: 20.0
-                        //fontWeight: FontWeight.bold,
-                        ),
+                    postDetail['content'] ??
+                        '', // Use an empty string if postDetail['content'] is null
+                    style: const TextStyle(fontSize: 20.0),
                   ),
                   subtitle: Text(
                       '${postDetail['agreeList'].length} agree • ${postDetail['author'].toString()} • $formattedTime'),
@@ -343,6 +341,34 @@ class _homeState extends State<home> {
                                 snapshot.child('content').value.toString(),
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
+                              trailing: PopupMenuButton<String>(
+                                onSelected: (String choice) {
+                                  if (choice == 'Delete') {
+                                    // Delete functionality
+                                    dbRef
+                                        .child('OpenCase')
+                                        .child(snapshot.key.toString())
+                                        .remove()
+                                        .then((_) {
+                                      // Remove the item from the local state
+                                      setState(() {
+                                        postDetailsList.removeWhere((item) =>
+                                            item['postID'] == snapshot.key);
+                                      });
+                                    }).catchError((e) {
+                                      print(e);
+                                    });
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return ['Delete'].map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
+                              ),
                             ),
                             SizedBox(
                                 height:
@@ -401,7 +427,7 @@ class _homeState extends State<home> {
                                           'Error: Unable to get post detail.');
                                     }
                                   },
-                                  child: Text('Join as Paintiff'),
+                                  child: Text('Join as Plaintiff'),
                                 ),
                               ],
                             ),

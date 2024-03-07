@@ -34,13 +34,13 @@ class _BiddingScreenState extends State<BiddingScreen> {
   void initState() {
     super.initState();
 
-    dbRef = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-    ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
+    dbRef = FirebaseDatabase.instance.ref().child('OpenCase');
+    ref = dbRef.child(widget.postDetail!['postID']).child('Bids');
     _bidAmountController = TextEditingController();
     // _fetchAuthorInfo();
 
     // Listen to changes in the bid amount and update the minimum bid
-    ref.child(widget.postDetail!['postID']).onValue.listen((event) {
+    ref.onValue.listen((event) {
       DataSnapshot snapshot = event.snapshot;
       if (snapshot.value != null) {
         Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
@@ -71,7 +71,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
       int bidAmount = int.tryParse(_bidAmountController.text) ?? 0;
 
       if (widget.postDetail != null) {
-        var newBidRef = ref.child(widget.postDetail!['postID']).push();
+        var newBidRef = ref.push();
 
         await newBidRef.set({
           'author': displayName,
@@ -127,10 +127,6 @@ class _BiddingScreenState extends State<BiddingScreen> {
                     ),
                   ),
                   usernameWg(),
-                  /*Text(
-                    AuthService.currentUser!.email ?? '',
-                    style: TextStyle(fontSize: 18),
-                  ),*/
                 ],
               ),
             ),
@@ -162,7 +158,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
             SizedBox(height: 20),
             Expanded(
               child: FirebaseAnimatedList(
-                query: ref.child(widget.postDetail!['postID']),
+                query: ref,
                 itemBuilder: (context, snapshot, animation, index) {
                   if (snapshot.value != null && snapshot.value is Map) {
                     Map<dynamic, dynamic> bidMap =

@@ -1,8 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hong_chao/home.dart';
-
 import 'package:intl/intl.dart';
 
 class OpenCase extends StatefulWidget {
@@ -18,7 +16,6 @@ class OpenCase extends StatefulWidget {
 class _OpenCaseState extends State<OpenCase> {
   late DatabaseReference dbRef;
   List<Map<String, dynamic>> postDetailsList = [];
-  bool switchValue = false; // Add a boolean variable to control the Switch
 
   late DateTime _startDate;
   DateTime? _endDate;
@@ -89,7 +86,7 @@ class _OpenCaseState extends State<OpenCase> {
     });
   }
 
-  Future<void> _submitCase() async {
+  Future<void> _openCase() async {
     try {
       // Get current user UID and author
       User? user = FirebaseAuth.instance.currentUser;
@@ -104,50 +101,31 @@ class _OpenCaseState extends State<OpenCase> {
         'author': author,
       };
 
-      // Check if the switch is active
-      if (switchValue) {
-        // Retrieve the content from the Post child
-        var contentSnapshot = await dbRef
-            .child('Post')
-            .child(widget.postDetail!['postID'])
-            .child('content')
-            .once();
+      // Retrieve the content from the Post child
+      var contentSnapshot = await dbRef
+          .child('Post')
+          .child(widget.postDetail!['postID'])
+          .child('content')
+          .once();
 
-        // Extract the value from the DataSnapshot
-        var content = contentSnapshot.snapshot.value;
+      // Extract the value from the DataSnapshot
+      var content = contentSnapshot.snapshot.value;
 
-        // Update the OpenCase child with the retrieved content
-        await dbRef
-            .child('OpenCase')
-            .child(widget.postDetail!['postID'])
-            .update({
-          'startDate': _startDate.toString(),
-          'endDate': _endDate.toString(),
-          'status': 'Open',
-          'content': content, // Update content from Post to OpenCase
-        });
-        await dbRef.child('Post').child(widget.postDetail!['postID']).update({
-          'areCase': 'True',
-        });
-      } else {
-        print('Switch is inactive');
-        // If switch is inactive, set the post status to 'closed' in the database
-        await dbRef
-            .child('OpenCase')
-            .child(widget.postDetail!['postID'])
-            .update({
-          'startDate': _startDate.toString(),
-          'endDate': _endDate.toString(),
-          'status': 'close',
-        });
+      // Update the OpenCase child with the retrieved content
+      await dbRef.child('OpenCase').child(widget.postDetail!['postID']).update({
+        'startDate': _startDate.toString(),
+        'endDate': _endDate.toString(),
+        'status': 'Open',
+        'content': content, // Update content from Post to OpenCase
+      });
+      await dbRef.child('Post').child(widget.postDetail!['postID']).update({
+        'areCase': 'True',
+      });
 
-        await dbRef
-            .child('Post')
-            .child(widget.postDetail!['postID'])
-            .update({'areCase': 'False'});
-      }
+      // Close the current page
+      Navigator.of(context).pop();
     } catch (error) {
-      print('Error submitting case: $error');
+      print('Error opening case: $error');
     }
   }
 
@@ -178,50 +156,24 @@ class _OpenCaseState extends State<OpenCase> {
             const SizedBox(height: 16), // Add some spacing between widgets
 
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 40.0),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(
-                    255, 215, 215, 215), // Specify the color you want
-                borderRadius: BorderRadius.circular(
-                    10.0), // Adjust the borderRadius as needed
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: widget.postDetail == null
-                    ? const Center(child: CircularProgressIndicator())
-                    : Column(
-                        //crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.postDetail!['content'],
-                            style: const TextStyle(fontSize: 18.0),
-                          ),
-                        ],
-                      ),
-              ),
-            ),
-
-            // Add the Switch widget
-            Row(
-              children: [
-                const Text(
-                  'Open for case bidding',
-                  style: TextStyle(fontSize: 17.0),
+              width: double.infinity, // Set width to fill the screen
+              child: Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: widget.postDetail == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.postDetail!['content'],
+                              style: const TextStyle(fontSize: 18.0),
+                            ),
+                          ],
+                        ),
                 ),
-                const Spacer(), // Add space to separate the label and the Switch
-                Switch(
-                  value: switchValue,
-                  onChanged: (newValue) {
-                    setState(() {
-                      switchValue = newValue;
-                      // You can add logic here based on the switch value
-                    });
-                  },
-                  activeColor: Colors.green, // Change active color to green
-                  //inactiveThumbColor: Colors.green.shade100, // Change inactive color to a lighter green
-                ),
-              ],
+              ),
             ),
 
             const SizedBox(
@@ -249,19 +201,13 @@ class _OpenCaseState extends State<OpenCase> {
                   '${_formattedDate(_startDate)} to ${_formattedDate(_endDate)}',
                   style: const TextStyle(fontSize: 17.0)),
             ]),
+            const SizedBox(height: 10),
 
-            const SizedBox(
-              height: 50,
-            ),
-
-            //Submit button
+            // Button to Open the case
             ElevatedButton(
-              onPressed: () {
-                _submitCase();
-                Navigator.of(context).pop(); // Close the current page
-              },
+              onPressed: _openCase,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.lightBlue,
+                backgroundColor: Colors.green, // Set button color to green
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5.0),
                 ),
@@ -271,7 +217,7 @@ class _OpenCaseState extends State<OpenCase> {
                 padding: const EdgeInsets.symmetric(vertical: 15.0),
                 child: const Center(
                   child: Text(
-                    'Submit',
+                    'Open',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18.0,
