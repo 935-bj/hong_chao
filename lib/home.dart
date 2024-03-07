@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/login.dart';
+import 'package:hong_chao/noti.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -40,14 +41,16 @@ class _homeState extends State<home> {
   int currentIndex = 0;
 
   List<Map<String, dynamic>> postDetailsList = [];
+  List<Map<String, dynamic>> notiDetailsList = [];
 
   @override
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref();
     _fetchdata();
-    _fetchMinimumBid();
+    _fetchNoti();
     _checkUser();
+    _fetchMinimumBid();
     print("User Email: ${AuthService.currentUser!.email}");
   }
 
@@ -118,12 +121,30 @@ class _homeState extends State<home> {
     });
   }
 
-  Future<Map<String, dynamic>> fetchSelectedPost() async {
-    // Logic to fetch the details of the selected post asynchronously
-    // For example, you might make a network request here
-    // Replace this with your actual implementation
-    await Future.delayed(const Duration(seconds: 1)); // Simulating delay
-    return {'author': 'Selected Author', 'content': 'Selected Content'};
+  void _fetchNoti() {
+    notiDetailsList.clear();
+    dbRef
+        .child('noti')
+        .child(AuthService.currentUser!.uid)
+        .onValue
+        .listen((DatabaseEvent? snapshot) {
+      if (snapshot != null && snapshot.snapshot.value != null) {
+        Map<dynamic, dynamic> notiData = snapshot.snapshot.value as Map;
+        notiData.forEach((key, value) {
+          Map<dynamic, dynamic> notiDetails = value as Map;
+
+          Map<String, dynamic> notiMap = {
+            'time': key,
+            'detail': notiDetails['detail'],
+            'title': notiDetails['title'],
+            'from': notiDetails['from']
+          };
+          setState(() {
+            notiDetailsList.add(notiMap);
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -468,7 +489,9 @@ class _homeState extends State<home> {
                 );
               });
             }),
-        //profile index3
+        //noti index3
+        noti(),
+        //profile index4
         customProfile(),
       ][currentIndex],
       bottomNavigationBar: NavigationBar(
@@ -486,6 +509,8 @@ class _homeState extends State<home> {
           ),
           NavigationDestination(
               icon: Icon(Icons.search_rounded), label: 'Search'),
+          NavigationDestination(
+              icon: Icon(Icons.notifications_rounded), label: 'Noti'),
           NavigationDestination(
               icon: Icon(Icons.person_rounded), label: 'Profile'),
         ],
@@ -834,6 +859,41 @@ class _homeState extends State<home> {
               }
             }
           }
+        });
+  }
+
+  Widget noti() {
+    return ListView.builder(
+        itemCount: notiDetailsList.length,
+        itemBuilder: (context, index) {
+          if (index < 0 || index >= postDetailsList.length) {
+            // Debugging: Print the problematic index
+            print('Invalid index: $index');
+            return Container();
+          }
+          Map<String, dynamic> notiDetail = notiDetailsList[index];
+          return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          notiScreen(caseID: notiDetail['form'])),
+                );
+              },
+              child: Card(
+                child: ListTile(
+                  title: Text(
+                    notiDetail['title'] ?? '',
+                    style: const TextStyle(
+                        fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    notiDetail['detail'] ?? '',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                ),
+              ));
         });
   }
 }
