@@ -24,9 +24,7 @@ class _OpenCaseState extends State<OpenCase> {
 
   String _formattedDate(DateTime? date) {
     return date != null
-        ? DateFormat('dd-MM-yyyy HH:mm')
-            .format(date)
-            .split(' ')[0] // Remove the time part
+        ? DateFormat('dd-MM-yyyy HH:mm').format(date)
         : 'Not selected';
   }
 
@@ -37,7 +35,7 @@ class _OpenCaseState extends State<OpenCase> {
     _fetchdata();
 
     _startDate = DateTime.now();
-    _endDate = DateTime.now(); // Initialize _endDate if necessary
+    _endDate = DateTime.now();
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -93,10 +91,16 @@ class _OpenCaseState extends State<OpenCase> {
       String? uid = user?.uid;
       String? author = user?.displayName;
 
-      // Create a new case object with the current data
+      // Format dates
+      String startDateFormatted =
+          DateFormat('dd-MM-yyyy HH:mm').format(_startDate);
+      String endDateFormatted =
+          DateFormat('dd-MM-yyyy HH:mm').format(_endDate!);
+
+      // Create a new case object with the formatted dates
       Map<String, dynamic> caseData = {
-        'startDate': _startDate.toString(),
-        'endDate': _endDate.toString(),
+        'startDate': startDateFormatted,
+        'endDate': endDateFormatted,
         'uid': uid,
         'author': author,
       };
@@ -111,10 +115,10 @@ class _OpenCaseState extends State<OpenCase> {
       // Extract the value from the DataSnapshot
       var content = contentSnapshot.snapshot.value;
 
-      // Update the OpenCase child with the retrieved content
+      // Update the OpenCase child with the retrieved content and formatted dates
       await dbRef.child('OpenCase').child(widget.postDetail!['postID']).update({
-        'startDate': _startDate.toString(),
-        'endDate': _endDate.toString(),
+        'startDate': startDateFormatted,
+        'endDate': endDateFormatted,
         'status': 'Open',
         'content': content, // Update content from Post to OpenCase
       });
@@ -197,9 +201,21 @@ class _OpenCaseState extends State<OpenCase> {
                 ),
               ),
               const Spacer(),
-              Text(
-                  '${_formattedDate(_startDate)} to ${_formattedDate(_endDate)}',
-                  style: const TextStyle(fontSize: 17.0)),
+              RichText(
+                text: TextSpan(
+                  style: const TextStyle(fontSize: 17.0, color: Colors.black),
+                  children: [
+                    TextSpan(
+                      text: 'Start Date: ${_formattedDate(_startDate)}\n',
+                      style: const TextStyle(fontWeight: FontWeight.normal),
+                    ),
+                    TextSpan(
+                      text: 'End Date: ${_formattedDate(_endDate)}',
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
             ]),
             const SizedBox(height: 10),
 

@@ -53,8 +53,22 @@ class _BiddingScreenState extends State<BiddingScreen> {
               return bidAmount < prev ? bidAmount : prev;
             }
           });
-          _minimumBid = minBid != null ? minBid : 0;
-          setState(() {});
+
+          if (minBid != null) {
+            // Find the author who placed the minimum bid
+            String? minBidAuthor;
+            bids.forEach((key, value) {
+              if (value['Biding price'] == minBid.toString()) {
+                minBidAuthor = value['author'];
+              }
+            });
+
+            // Update the minimum bid and author
+            _minimumBid = minBid;
+            _author = minBidAuthor;
+
+            setState(() {});
+          }
         }
       }
     });
@@ -81,6 +95,13 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
         setState(() {});
         _bidAmountController.clear();
+
+        // Display details of the latest bid
+        var latestBid = {
+          'author': displayName,
+          'Biding price': bidAmount.toString(),
+          'timestamp': formattedTime,
+        };
 
         print('Bid placed successfully!');
       } else {
@@ -120,22 +141,23 @@ class _BiddingScreenState extends State<BiddingScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Lawyer: ',
+                    'Lawyer: $_author',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  usernameWg(),
+                  //usernameWg(),
                 ],
               ),
             ),
             Text(
-              'Current Minimum Bid: $_minimumBid',
+              'Current Minimum Bid: $_minimumBid ฿',
               style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.purple),
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.purple,
+              ),
             ),
             SizedBox(height: 20),
             TextFormField(
@@ -176,7 +198,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Bid Amount: ${bidMap['Biding price']}'),
+                            Text('Bid Amount: ${bidMap['Biding price']} ฿'),
                             Text('Timestamp: ${bidMap['timestamp']}'),
                           ],
                         ),
@@ -195,21 +217,22 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
   Widget usernameWg() {
     return FutureBuilder<String?>(
-        future: AuthService().username(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator(); // Display loading indicator while waiting
+      future: AuthService().username(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Display loading indicator while waiting
+        } else {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
           } else {
-            if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
-            } else {
-              return Text(
-                snapshot.data ?? '',
-                style: const TextStyle(fontSize: 20),
-              );
-            }
+            return Text(
+              snapshot.data ?? '',
+              style: const TextStyle(fontSize: 20),
+            );
           }
-        });
+        }
+      },
+    );
   }
 }
 
