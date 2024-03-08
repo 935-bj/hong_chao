@@ -9,6 +9,7 @@ import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/mgmtReport.dart';
 import 'package:hong_chao/manageRegis.dart';
 import 'package:hong_chao/postScreen.dart';
+import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/Bidding.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         login.routeName: (context) => const login(),
         home.routeName: ((context) => const home()),
         regisP.routeName: ((context) => const regisP()),
+        regisL.routeName: ((context) => const regisL()),
         OpenCase.routeName: (context) => const OpenCase(
               postDetail: {},
             ),
@@ -54,8 +56,8 @@ class MyApp extends StatelessWidget {
         manageRegis.routeName: (context) => const manageRegis(),
         BiddingScreen.routeName: (context) => const BiddingScreen(
               postDetail: {},
-        ),
-             JoinP.routeName: (context) => const JoinP(
+            ),
+        JoinP.routeName: (context) => const JoinP(
               postDetail: {},
             )
       },

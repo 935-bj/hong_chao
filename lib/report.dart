@@ -51,7 +51,7 @@ class _reportState extends State<report> {
                 if (_reportController != null) {
                   sendForm(_reportController.text);
                   _reportController.clear();
-                  Navigator.pushNamed(context, home.routeName);
+                  Navigator.pop(context);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(

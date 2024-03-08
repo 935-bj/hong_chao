@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:hong_chao/authService.dart';
+import 'package:hong_chao/home.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -38,7 +39,7 @@ class _regisLState extends State<regisL> {
 
   Future<void> sendForm(String uid, String name, int phone, int nid, int lid,
       String nidUrl, String lidUrl) async {
-    await dbRef.child('lawyerz_form').child(uid).update({
+    await dbRef.child('lawyer_form').child(uid).update({
       'name': name,
       'phone': phone,
       'nid': nid,
@@ -270,6 +271,8 @@ class _regisLState extends State<regisL> {
                       nidUrl = '';
                       lidUrl = '';
                     }
+                    //Navigator.pushNamed(context, home.routeName);
+                    Navigator.pop(context);
                   },
                   child: const Text('submit')),
             )

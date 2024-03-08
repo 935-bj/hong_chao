@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/login.dart';
-import 'package:hong_chao/noti.dart';
+import 'package:hong_chao/notiScreen.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -51,7 +51,7 @@ class _homeState extends State<home> {
     _fetchNoti();
     _checkUser();
     _fetchMinimumBid();
-    print("User Email: ${AuthService.currentUser!.email}");
+    print("UserID: ${AuthService.currentUser!.uid}");
   }
 
   void _fetchMinimumBid() {
@@ -125,7 +125,7 @@ class _homeState extends State<home> {
     notiDetailsList.clear();
     dbRef
         .child('noti')
-        .child(AuthService.currentUser!.uid)
+        .child(AuthService.currentUser!.uid.toString())
         .onValue
         .listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
@@ -144,6 +144,8 @@ class _homeState extends State<home> {
           });
         });
       }
+    }, onError: (error) {
+      print("Error fetching data: $error");
     });
   }
 
@@ -180,10 +182,10 @@ class _homeState extends State<home> {
               }
 
               Map<String, dynamic> postDetail = postDetailsList[index];
+
               String time = postDetail['timestamp'].toString();
 
-              DateTime now = DateTime.now();
-              String formattedTime = DateFormat('dd-MM-yyyy HH:mm').format(now);
+              String formattedTime = time.substring(0, time.length - 10);
               return Card(
                 //กล่อง
                 child: ListTile(
@@ -297,20 +299,7 @@ class _homeState extends State<home> {
                             child: const Text('Delete'),
                             onTap: () {
                               print('tab delete');
-                              dbRef
-                                  .child('Post')
-                                  .child(postDetail['postID'].toString())
-                                  .remove()
-                                  .then((_) {
-                                // Remove the item from the local state
-                                setState(() {
-                                  postDetailsList.removeWhere((item) =>
-                                      item['postID'] == postDetail['postID']);
-                                });
-                              }).catchError((e) {
-                                print(e);
-                              });
-                              //_deleteDialog(postDetail['postID'].toString());
+                              _deleteDialog(postDetail['postID'].toString());
                             },
                           ),
                         );
@@ -519,24 +508,17 @@ class _homeState extends State<home> {
   }
 
   Widget _to_regisP() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const regisP()),
-    );
+    Navigator.pushNamed(context, regisL.routeName);
     return Container();
   }
 
   Widget _to_regisL() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => const regisL()),
-    );
+    Navigator.pushNamed(context, regisL.routeName);
     return Container();
   }
 
   Widget _to_post() {
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => const postScreen()));
+    Navigator.pushNamed(context, postScreen.routeName);
     return Container();
   }
 
@@ -579,7 +561,16 @@ class _homeState extends State<home> {
             TextButton(
               child: const Text('Delete'),
               onPressed: () {
-                dbRef.child('Post').child(key).remove();
+                dbRef.child('Post').child(key.toString()).remove().then((_) {
+                  // Remove the item from the local state
+                  setState(() {
+                    postDetailsList
+                        .removeWhere((item) => item['postID'] == key);
+                  });
+                }).catchError((e) {
+                  print(e);
+                });
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -863,6 +854,8 @@ class _homeState extends State<home> {
   }
 
   Widget noti() {
+    //sord notiDetailsList
+    notiDetailsList.sort((a, b) => (b['time']).compareTo(a['time']));
     return ListView.builder(
         itemCount: notiDetailsList.length,
         itemBuilder: (context, index) {
@@ -878,7 +871,7 @@ class _homeState extends State<home> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          notiScreen(caseID: notiDetail['form'])),
+                          notiScreen(caseID: notiDetail['from'] ?? 'no data ')),
                 );
               },
               child: Card(

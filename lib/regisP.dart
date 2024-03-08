@@ -6,6 +6,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:hong_chao/home.dart';
 
 class regisP extends StatefulWidget {
   static String routeName = '/regisP';
@@ -207,6 +208,7 @@ class _regisPState extends State<regisP> {
                       _nidController.clear();
                       _phoneController.clear();
                       nidUrl = '';
+                      Navigator.pushNamed(context, home.routeName);
                     }
                   },
                   child: const Text('submit')),
