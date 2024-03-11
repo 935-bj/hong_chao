@@ -1,5 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hong_chao/authService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -97,12 +98,16 @@ class _OpenCaseState extends State<OpenCase> {
       String endDateFormatted =
           DateFormat('dd-MM-yyyy HH:mm').format(_endDate!);
 
-      // Create a new case object with the formatted dates
+      // Get the username
+      String username = await getUsername();
+
+      // Create a new case object with the formatted dates and username
       Map<String, dynamic> caseData = {
         'startDate': startDateFormatted,
         'endDate': endDateFormatted,
         'uid': uid,
         'author': author,
+        'username': username,
       };
 
       // Retrieve the content from the Post child
@@ -119,7 +124,7 @@ class _OpenCaseState extends State<OpenCase> {
       await dbRef.child('OpenCase').child(widget.postDetail!['postID']).update({
         'startDate': startDateFormatted,
         'endDate': endDateFormatted,
-        'status': 'Open',
+        'author': username,
         'content': content, // Update content from Post to OpenCase
       });
       await dbRef.child('Post').child(widget.postDetail!['postID']).update({
@@ -131,6 +136,39 @@ class _OpenCaseState extends State<OpenCase> {
     } catch (error) {
       print('Error opening case: $error');
     }
+  }
+
+  Future<String> getUsername() async {
+    try {
+      String? snapshot = await AuthService().username();
+      if (snapshot != null) {
+        return snapshot;
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return 'getUsername() Error: $e';
+    }
+  }
+
+  Widget usernameWg() {
+    return FutureBuilder<String?>(
+      future: AuthService().username(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Display loading indicator while waiting
+        } else {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return Text(
+              snapshot.data ?? '',
+              style: const TextStyle(fontSize: 20),
+            );
+          }
+        }
+      },
+    );
   }
 
   // Other methods remain unchanged

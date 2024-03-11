@@ -335,11 +335,16 @@ class _homeState extends State<home> {
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Status: ' +
+                                  Text('Author: ' +
                                       snapshot
-                                          .child('status')
+                                          .child('author')
                                           .value
                                           .toString()),
+                                  // Text('Status: ' +
+                                  //     snapshot
+                                  //         .child('status')
+                                  //         .value
+                                  //         .toString()),
                                   Text('Due: ' +
                                       snapshot
                                           .child('endDate')
