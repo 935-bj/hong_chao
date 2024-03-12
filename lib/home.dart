@@ -43,6 +43,15 @@ class _homeState extends State<home> {
   List<Map<String, dynamic>> postDetailsList = [];
   List<Map<String, dynamic>> notiDetailsList = [];
 
+  // Assume postsList contains all posts fetched from the database
+  List<Map<String, dynamic>> postsList = [];
+
+  bool shouldDisplayJoinButton(DateTime endDate) {
+    DateTime currentDate = DateTime.now();
+    return currentDate
+        .isBefore(endDate); // Returns true if current date is after endDate
+  }
+
   @override
   void initState() {
     super.initState();
@@ -322,6 +331,14 @@ class _homeState extends State<home> {
                   // Call your _fetchdata() function here
                   _fetchdata();
                   // display it in ListTile along with snapshot data
+
+                  // Retrieve endDate from the snapshot
+                  DateTime endDate = DateFormat('dd-MM-yyyy HH:mm')
+                      .parse(snapshot.child('endDate').value.toString());
+
+                  // Check if current date is after endDate
+                  bool isBeforeEndDate = DateTime.now().isBefore(endDate);
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
@@ -418,32 +435,50 @@ class _homeState extends State<home> {
                                   child: Text('Bidding'),
                                 ),
                                 SizedBox(width: 8),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Ensure snapshot value is not null
-                                    if (snapshot.value != null) {
-                                      // Access the necessary data fields from the snapshot
-                                      var postID = snapshot
-                                          .key; // Assuming 'postID' is the key of the post
-                                      // Create a post detail map
-                                      var postDetail = {
-                                        'postID': postID,
-                                      };
-                                      // Navigate to the BiddingScreen with postDetail
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              JoinP(postDetail: postDetail),
-                                        ),
-                                      );
-                                    } else {
-                                      print(
-                                          'Error: Unable to get post detail.');
-                                    }
-                                  },
-                                  child: Text('Join as Plaintiff'),
-                                ),
+                                // Conditionally display the join button based on the endDate
+                                if (isBeforeEndDate)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Ensure snapshot value is not null and snapshot key is not null
+                                      if (snapshot.value != null &&
+                                          snapshot.key != null) {
+                                        // Access the necessary data fields from the snapshot
+                                        var postID = snapshot
+                                            .key!; // Assuming 'postID' is the key of the post
+                                        // Create a post detail map
+                                        var postDetail = {
+                                          'postID': postID,
+                                        };
+                                        // Navigate to the JoinP screen with postDetail
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                JoinP(postDetail: postDetail),
+                                          ),
+                                        );
+                                        // Add the winner lawyer to the database if the condition is met
+                                        ref
+                                            .child(postID)
+                                            .child('Winner lawyer')
+                                            .set({
+                                          'postID': postID,
+                                          'winnerType':
+                                              'plaintiff', // Assuming this is the type of winner
+                                        }).then((_) {
+                                          print(
+                                              'Winner lawyer added to the database.');
+                                        }).catchError((error) {
+                                          print(
+                                              'Failed to add winner lawyer: $error');
+                                        });
+                                      } else {
+                                        print(
+                                            'Error: Unable to get post detail or postID is null.');
+                                      }
+                                    },
+                                    child: Text('Join as Plaintiff'),
+                                  ),
                               ],
                             ),
                           ],
