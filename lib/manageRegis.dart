@@ -1,114 +1,173 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-
-
-
 class manageRegis extends StatefulWidget {
   static String routeName = '/manageRegis';
   const manageRegis({super.key});
+
   @override
   State<manageRegis> createState() => _manageRegisState();
 }
 
-// ต้องใส่ListView.builderยังไงให้เเบบtextเรียงต่อกันเป็นlist?
-
 class _manageRegisState extends State<manageRegis> {
-  //เเสดงผลข้อมูล
+  late DatabaseReference dbRef;
+  List<Map<String, dynamic>> reportDetailsList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    dbRef = FirebaseDatabase.instance.ref();
+
+    _fetchdata();
+  }
+
+  void _fetchdata() {
+    //reportDetailsList.clear();
+    dbRef.child('reportPost').onValue.listen((DatabaseEvent? snapshot) {
+      if (snapshot != null && snapshot.snapshot.value != null) {
+        Map<dynamic, dynamic> reportData = snapshot.snapshot.value as Map;
+        reportData.forEach((key, value) {
+          Map<dynamic, dynamic> reportDetails = value as Map;
+
+          bool isDuplicate =
+              reportDetailsList.any((element) => element['reportID'] == key);
+
+          if (!isDuplicate) {
+            Map<String, dynamic> reportMap = {
+              'reportID': key,
+              'content': reportDetails['content'],
+              'postID': reportDetails['pid'],
+              'timestamp': reportDetails['timestamp'],
+              'userID': reportDetails['uid'],
+              'postData': reportDetails['postData'],
+            };
+            print(reportMap);
+            setState(() {
+              reportDetailsList.add(reportMap);
+            });
+          }
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text('Manage Registration Form'),
-        )
-      ), //Appbar 
+          child: Text('Manage Report'),
+        ),
+      ),
+      body: ListView.builder(
+          itemCount: reportDetailsList.length,
+          itemBuilder: (context, index) {
+            if (index < 0 || index >= reportDetailsList.length) {
+              // Debugging: Print the problematic index
+              print('Invalid index: $index');
+              return Container();
+            }
 
-      //ListView.builder???
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.lightBlue, 
-              borderRadius: BorderRadius.circular(20)
-              ), //Boxdecoration
-              height: 200,
-              child: Row(
+            Map<String, dynamic> reportDetail = reportDetailsList[index];
+            return Card(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "FullName: ",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                      ), //textstyle
-                    ), //text
-                    Text(
-                    "Username: ",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                      ), //textstyle
-                    ) //text
-
-                   
-                ],
-              ), //Row
-          ), //container
-          SizedBox(height: 5,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.lightBlue, 
-              borderRadius: BorderRadius.circular(20)
-              ), //Boxdecoration
-              height: 200,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                    'reportID: ${reportDetail['reportID']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
                   Text(
-                    "FullName",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                      ), //textstyle
-                    ), //text
-                    Text("Username")
-                ],
-              ), //Row
-          ),
-          SizedBox(height: 5,),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.lightBlue, 
-              borderRadius: BorderRadius.circular(20)
-              ), //Boxdecoration
-              height: 200,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                    'post content: ${reportDetail['postData']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
                   Text(
-                    "FullName",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold
-                      ), //textstyle
-                    ), //text
-                    Text("Username")
+                    'detail: ${reportDetail['content']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    'Post ID: ${reportDetail['postID']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    'Time report: ${reportDetail['timestamp']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    'Report by: ${reportDetail['userID']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          //delete post
+                          dbRef
+                              .child('Post')
+                              .child(reportDetail['postID'].toString())
+                              .remove();
+                          //delete report
+                          dbRef
+                              .child('reportPost')
+                              .child(reportDetail['reportID'].toString())
+                              .remove()
+                              .then((_) {
+                            setState(() {
+                              reportDetailsList.removeWhere((report) =>
+                                  report['reportID'] ==
+                                  reportDetail['reportID']);
+                            });
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.delete_forever_rounded,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          'Delete post',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(208, 72, 47, 1.0),
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          //remove report only
+                          dbRef
+                              .child('reportPost')
+                              .child(reportDetail['reportID'].toString())
+                              .remove()
+                              .then((_) {
+                            setState(() {
+                              reportDetailsList.removeWhere((report) =>
+                                  report['reportID'] ==
+                                  reportDetail['reportID']);
+                            });
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                        ),
+                        label: const Text('Decline report',
+                            style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromRGBO(132, 177, 40, 1.0)),
+                      ),
+                    ],
+                  )
                 ],
-              ), //Row
-          )
-          
-          
-
-        ]
-      ) //Column
-    )); //Padding //Scaffold
-    
+              ),
+            );
+          }),
+    );
   }
 }
