@@ -14,6 +14,8 @@ import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/joinPaintiff.dart';
+import 'package:hong_chao/rateLawyer.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

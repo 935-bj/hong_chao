@@ -22,55 +22,90 @@ class JoinP extends StatefulWidget {
 class _JoinPState extends State<JoinP> {
   late DatabaseReference dbRef;
   late DatabaseReference ref;
-  List<dynamic> dataList = [];
+
+  List<Map<String, dynamic>> bidsList = [];
+
   String? _uid;
   String? _author;
 
   Bidding _bidding = Bidding();
-  int _bidAmount = 0;
+  late TextEditingController _bidAmountController;
+  int _minimumBid = 0;
 
   @override
   void initState() {
     super.initState();
-    dbRef = FirebaseDatabase.instance.ref();
-    ref = FirebaseDatabase.instance.ref().child('OpenCase').child('Bid');
-    _fetchData();
-  }
 
-  Future<void> _fetchData() async {
-    ref.once().then((DatabaseEvent event) {
+    dbRef = FirebaseDatabase.instance.ref().child('OpenCase');
+    ref = dbRef.child(widget.postDetail!['postID']).child('Bids');
+    _bidAmountController = TextEditingController();
+    // _fetchAuthorInfo();
+
+    // Listen to changes in the bid amount and update the minimum bid
+    ref.onValue.listen((event) {
       DataSnapshot snapshot = event.snapshot;
-      if (snapshot.value != null && snapshot.value is Map) {
-        setState(() {
-          dataList = (snapshot.value as Map).values.toList();
-        });
+      if (snapshot.value != null) {
+        Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
+        if (bids != null) {
+          int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
+            int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
+            if (prev == null) {
+              return bidAmount;
+            } else {
+              return bidAmount < prev ? bidAmount : prev;
+            }
+          });
+
+          if (minBid != null) {
+            // Find the author who placed the minimum bid
+            String? minBidAuthor;
+            bids.forEach((key, value) {
+              if (value['Biding price'] == minBid.toString()) {
+                minBidAuthor = value['author'];
+              }
+            });
+
+            // Update the minimum bid and author
+            _minimumBid = minBid;
+            _author = minBidAuthor;
+
+            setState(() {});
+          }
+        }
       }
-    }).catchError((error) {
-      print('Error fetching data: $error');
     });
   }
 
   Future<void> _submitBid() async {
     try {
-      // Get current user
       User? user = AuthService.currentUser;
-      String? displayName = user?.displayName;
+      String displayName = await getUsername();
 
-      // Get current time
       DateTime now = DateTime.now();
-      String formattedTime = now.toUtc().toString();
+      String formattedTime = DateFormat('dd-MM-yyyy HH:mm').format(now);
 
-      // Check if widget.postDetail is not null
+      int bidAmount = int.tryParse(_bidAmountController.text) ?? 0;
+
       if (widget.postDetail != null) {
-        // Create a new child node under 'Bid' using push()
-        var newBidRef = ref.child(widget.postDetail!['postID']).push();
+        var newBidRef = ref.push();
 
-        // Update the new child node with the bid information
         await newBidRef.set({
-          'author': displayName, // Add current user's display name
-          'Biding price': _bidAmount.toString(), // Update with the bid amount
-          'timestamp': formattedTime, // Add current time
+          'author': displayName,
+          'Biding price': bidAmount.toString(),
+          'timestamp': formattedTime,
         });
+
+        setState(() {});
+        _bidAmountController.clear();
+
+        // Display details of the latest bid
+        var latestBid = {
+          'author': displayName,
+          'Biding price': bidAmount.toString(),
+          'timestamp': formattedTime,
+        };
+
+        print('Bid placed successfully!');
       } else {
         print('Error: widget.postDetail is null');
       }
@@ -79,11 +114,24 @@ class _JoinPState extends State<JoinP> {
     }
   }
 
+  Future<String> getUsername() async {
+    try {
+      String? snapshot = await AuthService().username();
+      if (snapshot != null) {
+        return snapshot;
+      } else {
+        return '';
+      }
+    } catch (e) {
+      return 'getUsername() Error: $e';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         title: Text('Bidding'),
+        title: Text('Bidding'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -95,51 +143,28 @@ class _JoinPState extends State<JoinP> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Plaintiff: ',
+                    'Plaintiff: $_author',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
-                    AuthService.currentUser!.email ?? '',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  //usernameWg(),
                 ],
               ),
             ),
-             Text(
-                    'Case Information',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-            SizedBox(height: 20),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              onChanged: (value) {
-                _bidAmount = int.tryParse(value) ?? 0;
-              },
-              decoration: InputDecoration(
-                labelText: 'Enter case information',
-                border: OutlineInputBorder(),
+            Text(
+              'Current Minimum Bid: $_minimumBid ฿',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue,
               ),
             ),
-
-             Text(
-                    'Current Bid: \$${_bidding.getCurrentBid()}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
             SizedBox(height: 20),
             TextFormField(
+              controller: _bidAmountController,
               keyboardType: TextInputType.number,
-              onChanged: (value) {
-                _bidAmount = int.tryParse(value) ?? 0;
-              },
               decoration: InputDecoration(
                 labelText: 'Enter Bid Amount',
                 border: OutlineInputBorder(),
@@ -148,7 +173,9 @@ class _JoinPState extends State<JoinP> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                _submitBid();
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  _submitBid();
+                });
               },
               child: Text('Place Bid'),
             ),
@@ -157,31 +184,35 @@ class _JoinPState extends State<JoinP> {
               child: FirebaseAnimatedList(
                 query: ref,
                 itemBuilder: (context, snapshot, animation, index) {
-                  if (snapshot.value != null &&
-                      snapshot.value is Map<dynamic, dynamic>) {
-                    Map<dynamic, dynamic> dataMap =
+                  if (snapshot.value != null && snapshot.value is Map) {
+                    Map<dynamic, dynamic> bidMap =
                         snapshot.value as Map<dynamic, dynamic>;
-                    List<dynamic> dataList = dataMap.values.toList();
-                    // Ensure index is within bounds
                     return Card(
                       child: ListTile(
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        title: Row(
                           children: [
                             Text(
-                                'Biding price: ${dataList[index]['Biding price']}'),
-                            Text('Time: ${dataList[index]['timestamp']}'),
+                              'Plaintiff: ${bidMap['author']}',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ],
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Bid Amount: ${bidMap['Biding price']} ฿'),
+                            Text('Timestamp: ${bidMap['timestamp']}'),
                           ],
                         ),
                       ),
                     );
                   }
-                  // If snapshot value is null or not a Map, or index is out of bounds, return an empty widget
                   return SizedBox();
                 },
               ),
             ),
-                  SizedBox(height: 20),
+
+            SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 _submitBid();
@@ -194,6 +225,26 @@ class _JoinPState extends State<JoinP> {
       ),
     );
   }
+
+  Widget usernameWg() {
+    return FutureBuilder<String?>(
+      future: AuthService().username(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator(); // Display loading indicator while waiting
+        } else {
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return Text(
+              snapshot.data ?? '',
+              style: const TextStyle(fontSize: 20),
+            );
+          }
+        }
+      },
+    );
+  }
 }
 
 class Bidding {
@@ -204,7 +255,6 @@ class Bidding {
     if (bidAmount >= _currentBid + _minimumIncrement) {
       _currentBid = bidAmount;
       print('Bid of \$$_currentBid placed successfully.');
-      // You might want to update the UI or perform other actions here.
     } else {
       print(
           'Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
@@ -213,6 +263,10 @@ class Bidding {
 
   int getCurrentBid() {
     return _currentBid;
+  }
+
+  int getMinimumIncrement() {
+    return _minimumIncrement;
   }
 
   void setMinimumIncrement(int increment) {
