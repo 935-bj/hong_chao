@@ -339,12 +339,26 @@ class _homeState extends State<home> {
                   // Check if current date is after endDate
                   bool isBeforeEndDate = DateTime.now().isBefore(endDate);
 
+                  // Access the necessary data fields from the snapshot
+                  var postID = snapshot.key;
+
+                  // (Test)Add the winner lawyer to the database if the condition is met
+                  if (!isBeforeEndDate) {
+                    ref.child(postID!).child('Winner lawyer').set({
+                      'postID': postID,
+                      'Lawyer Name':
+                          'plaintiff', // Assuming this is the type of winner
+                    }).catchError((error) {
+                      print('Failed to add winner lawyer: $error');
+                    });
+                  }
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
                       elevation: 2, // adjust elevation as needed
                       child: Padding(
-                        padding: const EdgeInsets.all(2.0),
+                        padding: const EdgeInsets.all(8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -357,11 +371,6 @@ class _homeState extends State<home> {
                                           .child('author')
                                           .value
                                           .toString()),
-                                  // Text('Status: ' +
-                                  //     snapshot
-                                  //         .child('status')
-                                  //         .value
-                                  //         .toString()),
                                   Text('Due: ' +
                                       snapshot
                                           .child('endDate')
@@ -402,26 +411,27 @@ class _homeState extends State<home> {
                                 },
                               ),
                             ),
-                            SizedBox(
-                                height:
-                                    8), // Adjust spacing between ListTile and buttons
+                            SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // Display the "Bidding" button only if isBeforeEndDate is true
+                                // Display the Bidding button only if isBeforeEndDate is true
                                 if (isBeforeEndDate)
                                   ElevatedButton(
                                     onPressed: () {
+                                      // Ensure snapshot value is not null
                                       if (snapshot.value != null) {
-                                        var postID = snapshot.key;
+                                        // Create a post detail map
                                         var postDetail = {
                                           'postID': postID,
                                         };
+                                        // Navigate to the BiddingScreen with postDetail
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (context) => BiddingScreen(
-                                                postDetail: postDetail),
+                                              postDetail: postDetail,
+                                            ),
                                           ),
                                         );
                                       } else {
@@ -433,35 +443,28 @@ class _homeState extends State<home> {
                                   ),
                                 SizedBox(width: 8),
                                 // Display the "Join as Plaintiff" button only if isBeforeEndDate is true
+
                                 if (isBeforeEndDate)
                                   ElevatedButton(
                                     onPressed: () {
+                                      // Ensure snapshot value is not null and snapshot key is not null
                                       if (snapshot.value != null &&
                                           snapshot.key != null) {
+                                        // Access the necessary data fields from the snapshot
                                         var postID = snapshot.key!;
+                                        // Create a post detail map
                                         var postDetail = {
                                           'postID': postID,
                                         };
+                                        // Navigate to the JoinP screen with postDetail
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) =>
-                                                JoinP(postDetail: postDetail),
+                                            builder: (context) => JoinP(
+                                              postDetail: postDetail,
+                                            ),
                                           ),
                                         );
-                                        ref
-                                            .child(postID)
-                                            .child('Winner lawyer')
-                                            .set({
-                                          'postID': postID,
-                                          'winnerType': 'plaintiff',
-                                        }).then((_) {
-                                          print(
-                                              'Winner lawyer added to the database.');
-                                        }).catchError((error) {
-                                          print(
-                                              'Failed to add winner lawyer: $error');
-                                        });
                                       } else {
                                         print(
                                             'Error: Unable to get post detail or postID is null.');
