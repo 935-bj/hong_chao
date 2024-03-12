@@ -12,6 +12,8 @@ import 'package:hong_chao/regisP.dart';
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/report.dart';
 import 'package:hong_chao/joinPaintiff.dart';
+import 'package:hong_chao/rateLawyer.dart';
+
 
 import 'package:intl/intl.dart';
 
