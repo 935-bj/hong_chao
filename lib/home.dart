@@ -408,48 +408,40 @@ class _homeState extends State<home> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Ensure snapshot value is not null
-                                    if (snapshot.value != null) {
-                                      // Access the necessary data fields from the snapshot
-                                      var postID = snapshot
-                                          .key; // Assuming 'postID' is the key of the post
-                                      // Create a post detail map
-                                      var postDetail = {
-                                        'postID': postID,
-                                      };
-                                      // Navigate to the BiddingScreen with postDetail
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => BiddingScreen(
-                                              postDetail: postDetail),
-                                        ),
-                                      );
-                                    } else {
-                                      print(
-                                          'Error: Unable to get post detail.');
-                                    }
-                                  },
-                                  child: Text('Bidding'),
-                                ),
-                                SizedBox(width: 8),
-                                // Conditionally display the join button based on the endDate
+                                // Display the "Bidding" button only if isBeforeEndDate is true
                                 if (isBeforeEndDate)
                                   ElevatedButton(
                                     onPressed: () {
-                                      // Ensure snapshot value is not null and snapshot key is not null
-                                      if (snapshot.value != null &&
-                                          snapshot.key != null) {
-                                        // Access the necessary data fields from the snapshot
-                                        var postID = snapshot
-                                            .key!; // Assuming 'postID' is the key of the post
-                                        // Create a post detail map
+                                      if (snapshot.value != null) {
+                                        var postID = snapshot.key;
                                         var postDetail = {
                                           'postID': postID,
                                         };
-                                        // Navigate to the JoinP screen with postDetail
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BiddingScreen(
+                                                postDetail: postDetail),
+                                          ),
+                                        );
+                                      } else {
+                                        print(
+                                            'Error: Unable to get post detail.');
+                                      }
+                                    },
+                                    child: Text('Bidding'),
+                                  ),
+                                SizedBox(width: 8),
+                                // Display the "Join as Plaintiff" button only if isBeforeEndDate is true
+                                if (isBeforeEndDate)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      if (snapshot.value != null &&
+                                          snapshot.key != null) {
+                                        var postID = snapshot.key!;
+                                        var postDetail = {
+                                          'postID': postID,
+                                        };
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -457,14 +449,12 @@ class _homeState extends State<home> {
                                                 JoinP(postDetail: postDetail),
                                           ),
                                         );
-                                        // Add the winner lawyer to the database if the condition is met
                                         ref
                                             .child(postID)
                                             .child('Winner lawyer')
                                             .set({
                                           'postID': postID,
-                                          'winnerType':
-                                              'plaintiff', // Assuming this is the type of winner
+                                          'winnerType': 'plaintiff',
                                         }).then((_) {
                                           print(
                                               'Winner lawyer added to the database.');
