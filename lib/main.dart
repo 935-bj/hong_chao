@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
             ),
             
       },
-      initialRoute: manageRegis.routeName,
+      initialRoute: home.routeName,
     );
   }
 }

@@ -14,7 +14,6 @@ import 'package:hong_chao/report.dart';
 import 'package:hong_chao/joinPaintiff.dart';
 import 'package:hong_chao/rateLawyer.dart';
 
-
 import 'package:intl/intl.dart';
 
 import 'authService.dart';
@@ -32,7 +31,6 @@ class home extends StatefulWidget {
 class _homeState extends State<home> {
   late DatabaseReference dbRef;
   int _minimumBid = 0;
-  String? _author;
 
   //controller
   final SearchController searrchController = SearchController();
@@ -40,6 +38,8 @@ class _homeState extends State<home> {
 
   final auth = FirebaseAuth.instance;
   final ref = FirebaseDatabase.instance.ref('OpenCase');
+  
+  //final mbref = FirebaseDatabase.instance.ref('OpenCase').child(postID!)..child('Bids');
 
   int currentIndex = 0;
 
@@ -55,6 +55,8 @@ class _homeState extends State<home> {
         .isBefore(endDate); // Returns true if current date is after endDate
   }
 
+  String? _author;
+
   @override
   void initState() {
     super.initState();
@@ -62,69 +64,60 @@ class _homeState extends State<home> {
     _fetchdata();
     _fetchNoti();
     _checkUser();
-    _fetchMinimumBid();
     print("UserID: ${AuthService.currentUser!.uid}");
-
-    ref.onValue.listen((event) {
-  DataSnapshot snapshot = event.snapshot;
-  if (snapshot.value != null) {
-    Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
-    if (bids != null) {
-      int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
-        int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
-        if (prev == null) {
-          return bidAmount;
-        } else {
-          return bidAmount < prev ? bidAmount : prev;
-        }
-      });
-
-      if (minBid != null) {
-        // Find the author who placed the minimum bid
-        String? minBidAuthor;
-        bids.forEach((key, value) {
-  if (value['Biding price'] == minBid.toString() && value['author'] != null) {
-    minBidAuthor = value['author'] as String; // Ensure that value['author'] is of type String
   }
-});
-        // Update the minimum bid and author
-        _minimumBid = minBid;
-        _author = minBidAuthor;
 
-        setState(() {});
+  // Define a function to handle bidding logic
+  Future<void> handleBidding(DataSnapshot snapshot) async {
+    if (snapshot.value != null) {
+      Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
+      if (bids != null) {
+        int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
+          int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
+          return prev == null
+              ? bidAmount
+              : bidAmount < prev
+                  ? bidAmount
+                  : prev;
+        });
+
+        if (minBid != null) {
+          String? minBidAuthor;
+          bids.forEach((key, value) {
+            if (value['Biding price'] == minBid.toString()) {
+              minBidAuthor = value['author'];
+            }
+          });
+
+          // Update _minimumBid and _author only if a new minimum bid is found
+          setState(() {
+            _minimumBid = minBid;
+            _author = minBidAuthor;
+          });
+        }
       }
     }
   }
-});
-  }
 
-  void _fetchMinimumBid() {
-    DatabaseReference ref =
-        FirebaseDatabase.instance.ref('OpenCase').child('Bid');
-    ref.onValue.listen((event) {
-      DataSnapshot snapshot = event.snapshot;
-      if (snapshot.value != null) {
-        Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
-        if (bids != null) {
-          int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
-            String? bidPrice = entry.value['Biding price']; // Get the bid price
-            if (bidPrice != null) {
-              int bidAmount = int.tryParse(bidPrice) ??
-                  0; // Parse the bid price as an integer
-              if (prev == null) {
-                return bidAmount;
-              } else {
-                return bidAmount < prev ? bidAmount : prev;
-              }
-            }
-            return prev; // Return the previous minimum bid if the current bid price is null
-          });
-          setState(() {
-            _minimumBid = minBid ?? 0; // Update the minimum bid value
-          });
-        }
+// Define a function to handle winner lawyer assignment
+  Future<void> assignWinnerLawyer(String postID, bool isBeforeEndDate) async {
+    // Access Firebase reference
+    DatabaseReference winnerLawyerRef =
+        ref.child(postID).child('Winner lawyer');
+
+    // Set winner lawyer if the condition is met
+    if (!isBeforeEndDate) {
+      try {
+        await winnerLawyerRef.set({
+          'postID': postID,
+          'Lawyer Name': _author,
+          'Wining price': _minimumBid,
+        });
+      } catch (error) {
+        print('Failed to add winner lawyer: $error');
+        // Handle error
       }
-    });
+    }
   }
 
   void _fetchdata() {
@@ -360,154 +353,161 @@ class _homeState extends State<home> {
         Column(
           children: [
             Expanded(
-  child: FirebaseAnimatedList(
-    query: ref,
-    itemBuilder: (context, snapshot, animation, index) {
-      // Call your _fetchdata() function here
-      _fetchdata();
-      // display it in ListTile along with snapshot data
+              child: FirebaseAnimatedList(
+                query: ref,
+                itemBuilder: (context, snapshot, animation, index) {
+                  // Call your _fetchdata() function here
+                  _fetchdata();
+                  // display it in ListTile along with snapshot data
 
-      // Retrieve endDate from the snapshot
-      DateTime endDate = DateFormat('dd-MM-yyyy HH:mm')
-          .parse(snapshot.child('endDate').value.toString());
+                  // Retrieve endDate from the snapshot
+                  DateTime endDate = DateFormat('dd-MM-yyyy HH:mm')
+                      .parse(snapshot.child('endDate').value.toString());
 
-      // Check if current date is after endDate
-      bool isBeforeEndDate = DateTime.now().isBefore(endDate);
+                  // Check if current date is after endDate
+                  bool isBeforeEndDate = DateTime.now().isBefore(endDate);
 
-      // Access the necessary data fields from the snapshot
-      var postID = snapshot.key;
+                  // Access the necessary data fields from the snapshot
+                  var postID = snapshot.key;
 
-      // (Test)Add the winner lawyer to the database if the condition is met
-      if (!isBeforeEndDate) {
-        ref.child(postID!).child('Winner lawyer').set({
-          'postID': postID,
-          'Lawyer Name': _author, // Assuming this is the type of winner
-        }).catchError((error) {
-          print('Failed to add winner lawyer: $error');
-        });
-      }
+                  // Handle bidding logic
+                  ref.child(postID!).child('Bids').onValue.listen((event) {
+                    DataSnapshot snapshot = event.snapshot;
+                    handleBidding(snapshot);
+                  });
 
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Card(
-          elevation: 2, // adjust elevation as needed
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  title: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Author: ' +
-                          snapshot.child('author').value.toString()),
-                      Text('Due: ' +
-                          snapshot.child('endDate').value.toString()),
-                    ],
-                  ),
-                  subtitle: Text(
-                    snapshot.child('content').value.toString(),
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (String choice) {
-                      if (choice == 'Delete') {
-                        // Delete functionality
-                        dbRef
-                            .child('OpenCase')
-                            .child(snapshot.key.toString())
-                            .remove()
-                            .then((_) {
-                          // Remove the item from the local state
-                          setState(() {
-                            postDetailsList.removeWhere(
-                                (item) => item['postID'] == snapshot.key);
-                          });
-                        }).catchError((e) {
-                          print(e);
-                        });
-                      }
-                    },
-                    itemBuilder: (BuildContext context) {
-                      return ['Delete'].map((String choice) {
-                        return PopupMenuItem<String>(
-                          value: choice,
-                          child: Text(choice),
-                        );
-                      }).toList();
-                    },
-                  ),
-                ),
-                SizedBox(height: 8),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Display the Bidding button only if isBeforeEndDate is true
-                    if (isBeforeEndDate)
-                      ElevatedButton(
-                        onPressed: () {
-                          // Ensure snapshot value is not null
-                          if (snapshot.value != null) {
-                            // Create a post detail map
-                            var postDetail = {
-                              'postID': postID,
-                            };
-                            // Navigate to the BiddingScreen with postDetail
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => BiddingScreen(
-                                  postDetail: postDetail,
-                                ),
+                  // Assign winner lawyer if bidding is closed
+                  assignWinnerLawyer(postID, isBeforeEndDate);
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Card(
+                      elevation: 2, // adjust elevation as needed
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Author: ' +
+                                      snapshot
+                                          .child('author')
+                                          .value
+                                          .toString()),
+                                  Text('Due: ' +
+                                      snapshot
+                                          .child('endDate')
+                                          .value
+                                          .toString()),
+                                ],
                               ),
-                            );
-                          } else {
-                            print(
-                                'Error: Unable to get post detail.');
-                          }
-                        },
-                        child: Text('Bidding'),
-                      ),
-                    SizedBox(width: 8),
-                    // Display the "Join as Plaintiff" button only if isBeforeEndDate is true
-                    ElevatedButton(
-                      onPressed: () {
-                        // Ensure snapshot value is not null and snapshot key is not null
-                        if (snapshot.value != null &&
-                            snapshot.key != null) {
-                          // Access the necessary data fields from the snapshot
-                          var postID = snapshot.key!;
-                          // Create a post detail map
-                          var postDetail = {
-                            'postID': postID,
-                          };
-                          // Navigate to the JoinP screen with postDetail
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => JoinP(
-                                postDetail: postDetail,
+                              subtitle: Text(
+                                snapshot.child('content').value.toString(),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              trailing: PopupMenuButton<String>(
+                                onSelected: (String choice) {
+                                  if (choice == 'Delete') {
+                                    // Delete functionality
+                                    dbRef
+                                        .child('OpenCase')
+                                        .child(snapshot.key.toString())
+                                        .remove()
+                                        .then((_) {
+                                      // Remove the item from the local state
+                                      setState(() {
+                                        postDetailsList.removeWhere((item) =>
+                                            item['postID'] == snapshot.key);
+                                      });
+                                    }).catchError((e) {
+                                      print(e);
+                                    });
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) {
+                                  return ['Delete'].map((String choice) {
+                                    return PopupMenuItem<String>(
+                                      value: choice,
+                                      child: Text(choice),
+                                    );
+                                  }).toList();
+                                },
                               ),
                             ),
-                          );
-                        } else {
-                          print(
-                              'Error: Unable to get post detail or postID is null.');
-                        }
-                      },
-                      child: Text('Join as Plaintiff'),
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Display the Bidding button only if isBeforeEndDate is true
+                                if (isBeforeEndDate)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Ensure snapshot value is not null
+                                      if (snapshot.value != null) {
+                                        // Create a post detail map
+                                        var postDetail = {
+                                          'postID': postID,
+                                        };
+                                        // Navigate to the BiddingScreen with postDetail
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BiddingScreen(
+                                              postDetail: postDetail,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        print(
+                                            'Error: Unable to get post detail.');
+                                      }
+                                    },
+                                    child: Text('Bidding'),
+                                  ),
+                                SizedBox(width: 8),
+                                // Display the "Join as Plaintiff" button only if isBeforeEndDate is true
+
+                                if (isBeforeEndDate)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Ensure snapshot value is not null and snapshot key is not null
+                                      if (snapshot.value != null &&
+                                          snapshot.key != null) {
+                                        // Access the necessary data fields from the snapshot
+                                        var postID = snapshot.key!;
+                                        // Create a post detail map
+                                        var postDetail = {
+                                          'postID': postID,
+                                        };
+                                        // Navigate to the JoinP screen with postDetail
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => JoinP(
+                                              postDetail: postDetail,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        print(
+                                            'Error: Unable to get post detail or postID is null.');
+                                      }
+                                    },
+                                    child: Text('Join as Plaintiff'),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          ),
-        ),
-      );
-    },
-  ),
-),
             // Other widgets can go here if needed
           ],
         ),

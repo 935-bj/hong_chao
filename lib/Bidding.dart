@@ -26,7 +26,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
   String? _uid;
   String? _author;
 
-  Bidding _bidding = Bidding();
+  //Bidding _bidding = Bidding();
   late TextEditingController _bidAmountController;
   int _minimumBid = 0;
 
@@ -236,34 +236,34 @@ class _BiddingScreenState extends State<BiddingScreen> {
   }
 }
 
-class Bidding {
-  int _currentBid = 0;
-  int _minimumIncrement = 5;
+// class Bidding {
+//   int _currentBid = 0;
+//   int _minimumIncrement = 5;
 
-  void placeBid(int bidAmount) {
-    if (bidAmount >= _currentBid + _minimumIncrement) {
-      _currentBid = bidAmount;
-      print('Bid of \$$_currentBid placed successfully.');
-    } else {
-      print(
-          'Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
-    }
-  }
+//   void placeBid(int bidAmount) {
+//     if (bidAmount >= _currentBid + _minimumIncrement) {
+//       _currentBid = bidAmount;
+//       print('Bid of \$$_currentBid placed successfully.');
+//     } else {
+//       print(
+//           'Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
+//     }
+//   }
 
-  int getCurrentBid() {
-    return _currentBid;
-  }
+//   int getCurrentBid() {
+//     return _currentBid;
+//   }
 
-  int getMinimumIncrement() {
-    return _minimumIncrement;
-  }
+//   int getMinimumIncrement() {
+//     return _minimumIncrement;
+//   }
 
-  void setMinimumIncrement(int increment) {
-    if (increment > 0) {
-      _minimumIncrement = increment;
-      print('Minimum bid increment set to \$$_minimumIncrement.');
-    } else {
-      print('Minimum bid increment must be greater than 0.');
-    }
-  }
-}
+//   void setMinimumIncrement(int increment) {
+//     if (increment > 0) {
+//       _minimumIncrement = increment;
+//       print('Minimum bid increment set to \$$_minimumIncrement.');
+//     } else {
+//       print('Minimum bid increment must be greater than 0.');
+//     }
+//   }
+// }
