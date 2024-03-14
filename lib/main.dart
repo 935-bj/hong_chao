@@ -46,6 +46,7 @@ class MyApp extends StatelessWidget {
               postDetail: {},
             ),
         postScreen.routeName: ((context) => const postScreen()),
+        rateLawyer.routeName: ((context) => const rateLawyer()),
         //report.routeName: (context) => report(postID: ''),
         /*report.routeName: (context) {
           final Map args = ModalRoute.of(context)!.settings.arguments as Map;
@@ -61,9 +62,10 @@ class MyApp extends StatelessWidget {
             ),
         JoinP.routeName: (context) => const JoinP(
               postDetail: {},
-            )
+            ),
+            
       },
-      initialRoute: home.routeName,
+      initialRoute: manageRegis.routeName,
     );
   }
 }

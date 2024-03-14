@@ -6,6 +6,7 @@ import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:hong_chao/home.dart';
 import 'package:hong_chao/authService.dart';
+import 'package:hong_chao/rateLawyer.dart';
 
 import 'package:intl/intl.dart';
 
@@ -22,6 +23,15 @@ class JoinP extends StatefulWidget {
 class _JoinPState extends State<JoinP> {
   late DatabaseReference dbRef;
   late DatabaseReference ref;
+
+  // void rateLawyer(BuildContext context) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => rateLawyer(),
+  //     ),
+  //   );
+  // }
 
   List<Map<String, dynamic>> bidsList = [];
 
@@ -213,12 +223,15 @@ class _JoinPState extends State<JoinP> {
             ),
 
             SizedBox(height: 20),
-            ElevatedButton(
+      ElevatedButton(
               onPressed: () {
                 _submitBid();
               },
               child: Text('Submit'),
             ),
+
+    
+
 
           ],
         ),
