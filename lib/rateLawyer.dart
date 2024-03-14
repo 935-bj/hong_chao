@@ -52,4 +52,3 @@
 //       barrierDismissible: true, // set to false if you want to force a rating
 //       builder: (context) => _dialog,
 //     );
-
