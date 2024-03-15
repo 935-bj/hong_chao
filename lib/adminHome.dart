@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hong_chao/mgmtReport.dart';
+import 'package:hong_chao/mgmtLawyerRegis.dart';
+import 'package:hong_chao/mgmtPlaintiffRegis.dart';
 //import 'authService.dart';
 
 class adminHome extends StatelessWidget {
@@ -34,7 +36,9 @@ class adminHome extends StatelessWidget {
               width: 300,
               height: 45,
               child: (ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                   Navigator.pushNamed(context, mgmtPlaintiffRegis.routeName);
+                },
                 child: const Text('Plaintiff Form',
                     style: TextStyle(fontSize: 20)),
               ))),
@@ -43,7 +47,9 @@ class adminHome extends StatelessWidget {
               width: 300,
               height: 45,
               child: (ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pushNamed(context, mgmtLawyerRegis.routeName);
+                },
                 child:
                     const Text('Lawyer Form', style: TextStyle(fontSize: 20)),
               ))),

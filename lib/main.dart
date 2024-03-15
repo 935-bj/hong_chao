@@ -67,7 +67,10 @@ class MyApp extends StatelessWidget {
             ),
             
       },
-      initialRoute: mgmtPlaintiffRegis.routeName,
+
+      initialRoute: home.routeName,
+     
+
     );
   }
 }
