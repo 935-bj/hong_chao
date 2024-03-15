@@ -66,7 +66,10 @@ class MyApp extends StatelessWidget {
               postDetail: {},
             ),           
       },
+
       initialRoute: home.routeName,
+     
+
     );
   }
 }
