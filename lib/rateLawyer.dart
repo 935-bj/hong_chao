@@ -30,7 +30,7 @@ class _rateLawyerState extends State<rateLawyer> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Center(
-        child: Text('Rate Lawyer'),
+        child: Text('Rate your satisfaction score of this lawyer?'),
       ),
       content: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
