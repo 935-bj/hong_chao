@@ -1,7 +1,5 @@
-
-import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-
+import 'package:flutter/material.dart';
 
 class manageRegis extends StatefulWidget {
   static String routeName = '/manageRegis';
@@ -32,16 +30,16 @@ class _manageRegisState extends State<manageRegis> {
           Map<dynamic, dynamic> registrationDetails = value as Map;
 
           bool isDuplicate =
-               registrationList.any((element) => element['userID'] == key);
+              registrationList.any((element) => element['regisID'] == key);
 
           if (!isDuplicate) {
             Map<String, dynamic> registrationMap = {
-              'userID': key,
-              'username': registrationDetails['username'],
-              'email': registrationDetails['email'],
-              'password': registrationDetails['password'],
-              'birthdate': registrationDetails['birthdate'],
-              'phoneNumber': registrationDetails['phoneNumber'],
+              'regisID': key,
+              '': reportDetails['lid'],
+              '': reportDetails['lidUrl'],
+              'name': reportDetails['name'],
+              '': reportDetails['nidUrl'],
+              'phone': reportDetails['phone'],
             };
             print(registrationMap);
             setState(() {
@@ -53,6 +51,7 @@ class _manageRegisState extends State<manageRegis> {
     });
   }
 
+//ยังไม่เเก้
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,51 +74,99 @@ class _manageRegisState extends State<manageRegis> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                    Text(
-                  'User ID: ${registrationDetail['userID']}',
-                  style: const TextStyle(fontSize: 18.0),
-                ),
-                Text(
-                  'Username: ${registrationDetail['username']}',
-                  style: const TextStyle(fontSize: 18.0),
-                ),
-                Text(
-                  'Email: ${registrationDetail['email']}',
-                  style: const TextStyle(fontSize: 18.0),
-                ),
-                Text(
-                  'Password: ${registrationDetail['password']}',
-                  style: const TextStyle(fontSize: 18.0),
-                ),
-                Text(
-                  'Birth Date: ${registrationDetail['birthdate']}',
-                  style: const TextStyle(fontSize: 18.0),
-                ),
-                Text(
-                  'Phone Number: ${registrationDetail['phoneNumber']}',
-                  style: const TextStyle(fontSize: 18.0),
-                ),
+                  Text(
+                    'regisID: ${registrationDetail['regisID']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    ': ${reportDetail['']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    ': ${reportDetail['']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    ': ${reportDetail['']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    ': ${reportDetail['']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    ': ${reportDetail['']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
                   const SizedBox(
                     height: 10,
                   ),
+
+  //ยังไม่เเก้
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        // Accept action
-                      },
-                      child: const Text('Accept'),
-                    ),
-                    const SizedBox(width: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Decline action
-                      },
-                      child: const Text('Decline'),
-                    ),
-                  ],
-                  ),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          //delete post
+                          dbRef
+                              .child('Post')
+                              .child(reportDetail['postID'].toString())
+                              .remove();
+                          //delete report
+                          dbRef
+                              .child('reportPost')
+                              .child(reportDetail['reportID'].toString())
+                              .remove()
+                              .then((_) {
+                            setState(() {
+                              reportDetailsList.removeWhere((report) =>
+                                  report['reportID'] ==
+                                  reportDetail['reportID']);
+                            });
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.delete_forever_rounded,
+                          color: Colors.white,
+                        ),
+                        label: const Text(
+                          'Delete post',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(208, 72, 47, 1.0),
+                        ),
+                      ),
+                      const SizedBox(width: 25),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          //remove report only
+                          dbRef
+                              .child('reportPost')
+                              .child(reportDetail['reportID'].toString())
+                              .remove()
+                              .then((_) {
+                            setState(() {
+                              reportDetailsList.removeWhere((report) =>
+                                  report['reportID'] ==
+                                  reportDetail['reportID']);
+                            });
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.close_rounded,
+                          color: Colors.white,
+                        ),
+                        label: const Text('Decline report',
+                            style: TextStyle(color: Colors.white)),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromRGBO(132, 177, 40, 1.0)),
+                      ),
+                    ],
+                  )
                 ],
               ),
             );
