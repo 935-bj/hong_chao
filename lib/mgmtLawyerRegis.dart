@@ -113,23 +113,20 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
-                          //delete post
-                          // dbRef
-                          //     .child('Post')
-                          //     .child(reportDetail['postID'].toString())
-                          //     .remove();
-                          // //delete report
-                          // dbRef
-                          //     .child('reportPost')
-                          //     .child(reportDetail['reportID'].toString())
-                          //     .remove()
-                          //     .then((_) {
-                          //   setState(() {
-                          //     reportDetailsList.removeWhere((report) =>
-                          //         report['reportID'] ==
-                          //         reportDetail['reportID']);
-                          //   });
-                          // });
+                          // ลบข้อมูลในdatabase
+                       dbRef
+                               .child('lawyer_form')
+                               .child(registrationDetail['regisID'].toString())
+                               .remove()
+                               .then((_) {
+                           //ลบข้อมูลในUI
+                             setState(() {
+                               registrationList.removeWhere((registration) =>
+                                   registration['regisID'] ==
+                                   registrationDetail['regisID']);
+                             });
+                        });
+
                         },
                         icon: const Icon(
                           Icons.delete_forever_rounded,
@@ -147,18 +144,20 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                       const SizedBox(width: 25),
                       ElevatedButton.icon(
                         onPressed: () {
-                        // //remove report only
-                        //   dbRef
-                        //       .child('reportPost')
-                        //       .child(reportDetail['reportID'].toString())
-                        //       .remove()
-                        //       .then((_) {
-                        //     setState(() {
-                        //       reportDetailsList.removeWhere((report) =>
-                        //           report['reportID'] ==
-                        //           reportDetail['reportID']);
-                        //     });
-                        //   });
+                        // ลบข้อมูลในdatabase
+                       dbRef
+                               .child('lawyer_form')
+                               .child(registrationDetail['regisID'].toString())
+                               .remove()
+                               .then((_) {
+                           //ลบข้อมูลในUI
+                             setState(() {
+                               registrationList.removeWhere((registration) =>
+                                   registration['regisID'] ==
+                                   registrationDetail['regisID']);
+                             });
+                        });
+                        dbRef.child('user').child(registrationDetail['regisID'].toString()).update({'type':'L'});
                         },
                         icon: const Icon(
                           Icons.check,

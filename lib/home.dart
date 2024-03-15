@@ -472,7 +472,6 @@ class _homeState extends State<home> {
                                           snapshot.key != null) {
                                         // Access the necessary data fields from the snapshot
                                         var postID = snapshot.key!;
-<<<<<<< HEAD
 
                                         // Perform the database operation immediately
                                         dbRef
@@ -490,23 +489,6 @@ class _homeState extends State<home> {
                                         //     builder: (context) => YourNextScreen(),
                                         //   ),
                                         // );
-=======
-                                        // Create a post detail map
-                                        var postDetail = {
-                                          'postID': postID,
-                                        };
-                                        // Navigate to the JoinP screen with postDetail
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => JoinP(
-                                              postDetail: postDetail,
-                                            ),
-                                          ),
-                                        );
-                                        
-
->>>>>>> ee66d68e4e36089ece51f387e582ecde3d972856
                                       } else {
                                         print(
                                             'Error: Unable to get post detail or postID is null.');
