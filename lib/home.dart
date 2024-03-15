@@ -13,7 +13,7 @@ import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/report.dart';
 import 'package:hong_chao/joinPaintiff.dart';
 import 'package:hong_chao/rateLawyer.dart';
-
+import 'package:hong_chao/updateP.dart';
 import 'package:intl/intl.dart';
 
 import 'authService.dart';
@@ -416,19 +416,14 @@ class _homeState extends State<home> {
                                     onPressed: () {
                                       // Ensure snapshot value is not null
                                       if (snapshot.value != null) {
+                                        // Extract postID from snapshot or any other source
                                         // Create a post detail map
                                         var postDetail = {
                                           'postID': postID,
                                         };
-                                        // Navigate to the BiddingScreen with postDetail
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => BiddingScreen(
-                                              postDetail: postDetail,
-                                            ),
-                                          ),
-                                        );
+                                        // Call the dialog from UpdateDialog class with postDetail
+                                        UpdateDialog.showUpdateDialog(
+                                            context, postDetail);
                                       } else {
                                         print(
                                             'Error: Unable to get post detail.');
@@ -472,7 +467,6 @@ class _homeState extends State<home> {
                                           snapshot.key != null) {
                                         // Access the necessary data fields from the snapshot
                                         var postID = snapshot.key!;
-<<<<<<< HEAD
 
                                         // Perform the database operation immediately
                                         dbRef
@@ -490,23 +484,6 @@ class _homeState extends State<home> {
                                         //     builder: (context) => YourNextScreen(),
                                         //   ),
                                         // );
-=======
-                                        // Create a post detail map
-                                        var postDetail = {
-                                          'postID': postID,
-                                        };
-                                        // Navigate to the JoinP screen with postDetail
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => JoinP(
-                                              postDetail: postDetail,
-                                            ),
-                                          ),
-                                        );
-                                        
-
->>>>>>> ee66d68e4e36089ece51f387e582ecde3d972856
                                       } else {
                                         print(
                                             'Error: Unable to get post detail or postID is null.');
@@ -527,8 +504,6 @@ class _homeState extends State<home> {
             // Other widgets can go here if needed
           ],
         ),
-
-       
 
         //search index 2
         SearchAnchor(

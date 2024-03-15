@@ -136,7 +136,7 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                           color: Colors.white,
                         ),
                         label: const Text(
-                          'Accept',
+                          'Decline',
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -161,10 +161,10 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                           // });
                         },
                         icon: const Icon(
-                          Icons.close_rounded,
+                          Icons.check,
                           color: Colors.white,
                         ),
-                        label: const Text('Decline',
+                        label: const Text('Approve',
                             style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                             backgroundColor:
