@@ -147,18 +147,18 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                       const SizedBox(width: 25),
                       ElevatedButton.icon(
                         onPressed: () {
-                          //remove report only
-                          // dbRef
-                          //     .child('reportPost')
-                          //     .child(reportDetail['reportID'].toString())
-                          //     .remove()
-                          //     .then((_) {
-                          //   setState(() {
-                          //     reportDetailsList.removeWhere((report) =>
-                          //         report['reportID'] ==
-                          //         reportDetail['reportID']);
-                          //   });
-                          // });
+                        // //remove report only
+                        //   dbRef
+                        //       .child('reportPost')
+                        //       .child(reportDetail['reportID'].toString())
+                        //       .remove()
+                        //       .then((_) {
+                        //     setState(() {
+                        //       reportDetailsList.removeWhere((report) =>
+                        //           report['reportID'] ==
+                        //           reportDetail['reportID']);
+                        //     });
+                        //   });
                         },
                         icon: const Icon(
                           Icons.check,
