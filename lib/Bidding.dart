@@ -10,11 +10,13 @@ import 'package:intl/intl.dart';
 class BiddingScreen extends StatefulWidget {
   static String routeName = '/Biding';
   final Map<String, dynamic>? postDetail;
+  
 
   const BiddingScreen({Key? key, this.postDetail}) : super(key: key);
 
   @override
   _BiddingScreenState createState() => _BiddingScreenState();
+  
 }
 
 class _BiddingScreenState extends State<BiddingScreen> {
@@ -23,7 +25,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
   List<Map<String, dynamic>> bidsList = [];
 
-  String? _uid;
+ 
   String? _author;
 
   //Bidding _bidding = Bidding();
@@ -234,7 +236,17 @@ class _BiddingScreenState extends State<BiddingScreen> {
       },
     );
   }
+
+  Future<Map?> winnerLawyer() async {
+    Map<String, dynamic> winner = {
+      'author': _author,
+      'minBid': _minimumBid,
+    };
+    return winner;
+  }
 }
+
+
 
 // class Bidding {
 //   int _currentBid = 0;

@@ -57,8 +57,12 @@ class MyApp extends StatelessWidget {
         editPost.routeName: (context) => const editPost(),
         adminHome.routeName: (context) => const adminHome(),
         mgmtReport.routeName: (context) => const mgmtReport(),
+<<<<<<< HEAD
+        //manageRegis.routeName: (context) => const manageRegis(),
+=======
         mgmtLawyerRegis.routeName: (context) => const mgmtLawyerRegis(),
         mgmtPlaintiffRegis.routeName: (context) => const mgmtPlaintiffRegis(),
+>>>>>>> ee66d68e4e36089ece51f387e582ecde3d972856
         BiddingScreen.routeName: (context) => const BiddingScreen(
               postDetail: {},
             ),

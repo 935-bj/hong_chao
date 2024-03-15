@@ -30,7 +30,6 @@ class home extends StatefulWidget {
 
 class _homeState extends State<home> {
   late DatabaseReference dbRef;
-  int _minimumBid = 0;
 
   //controller
   final SearchController searrchController = SearchController();
@@ -38,7 +37,7 @@ class _homeState extends State<home> {
 
   final auth = FirebaseAuth.instance;
   final ref = FirebaseDatabase.instance.ref('OpenCase');
-  
+
   //final mbref = FirebaseDatabase.instance.ref('OpenCase').child(postID!)..child('Bids');
 
   int currentIndex = 0;
@@ -67,58 +66,28 @@ class _homeState extends State<home> {
     print("UserID: ${AuthService.currentUser!.uid}");
   }
 
-  // Define a function to handle bidding logic
-  Future<void> handleBidding(DataSnapshot snapshot) async {
-    if (snapshot.value != null) {
-      Map<dynamic, dynamic>? bids = snapshot.value as Map<dynamic, dynamic>?;
-      if (bids != null) {
-        int? minBid = bids.entries.fold<int?>(null, (prev, entry) {
-          int bidAmount = int.tryParse(entry.value['Biding price']) ?? 0;
-          return prev == null
-              ? bidAmount
-              : bidAmount < prev
-                  ? bidAmount
-                  : prev;
-        });
-
-        if (minBid != null) {
-          String? minBidAuthor;
-          bids.forEach((key, value) {
-            if (value['Biding price'] == minBid.toString()) {
-              minBidAuthor = value['author'];
-            }
-          });
-
-          // Update _minimumBid and _author only if a new minimum bid is found
-          setState(() {
-            _minimumBid = minBid;
-            _author = minBidAuthor;
-          });
-        }
-      }
-    }
-  }
-
 // Define a function to handle winner lawyer assignment
-  Future<void> assignWinnerLawyer(String postID, bool isBeforeEndDate) async {
-    // Access Firebase reference
-    DatabaseReference winnerLawyerRef =
-        ref.child(postID).child('Winner lawyer');
+//   Future<void> assignWinnerLawyer(String postID, bool isBeforeEndDate) async {
+//   // Access Firebase reference
+//   DatabaseReference winnerLawyerRef = ref.child(postID).child('Winner lawyer');
 
-    // Set winner lawyer if the condition is met
-    if (!isBeforeEndDate) {
-      try {
-        await winnerLawyerRef.set({
-          'postID': postID,
-          'Lawyer Name': _author,
-          'Wining price': _minimumBid,
-        });
-      } catch (error) {
-        print('Failed to add winner lawyer: $error');
-        // Handle error
-      }
-    }
-  }
+//   // Set winner lawyer if the condition is met
+//   if (!isBeforeEndDate) {
+//     try {
+//       Map<String, dynamic> winnerInfo = await ;
+
+//       // Then we set the data in Firebase
+//       winner.winnerLawyerRef.set({
+//         'postID': postID,
+//         'Lawyer Name': winner['author'], // Assuming 'author' is the key in your map
+//         'minBid': winner['minBid'], // Assuming 'minBid' is the key in your map
+//       });
+//     } catch (error) {
+//       print('Failed to add winner lawyer: $error');
+//       // Handle error
+//     }
+//   }
+// }
 
   void _fetchdata() {
     postDetailsList.clear();
@@ -370,14 +339,14 @@ class _homeState extends State<home> {
                   // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
 
-                  // Handle bidding logic
-                  ref.child(postID!).child('Bids').onValue.listen((event) {
-                    DataSnapshot snapshot = event.snapshot;
-                    handleBidding(snapshot);
-                  });
+                  // // Handle bidding logic
+                  // ref.child(postID!).child('Bids').onValue.listen((event) {
+                  //   DataSnapshot snapshot = event.snapshot;
+                  //   handleBidding(snapshot);
+                  // });
 
-                  // Assign winner lawyer if bidding is closed
-                  assignWinnerLawyer(postID, isBeforeEndDate);
+                  // // Assign winner lawyer if bidding is closed
+                  // assignWinnerLawyer(postID, isBeforeEndDate);
 
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -442,6 +411,31 @@ class _homeState extends State<home> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 // Display the Bidding button only if isBeforeEndDate is true
+                                if (!isBeforeEndDate)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Ensure snapshot value is not null
+                                      if (snapshot.value != null) {
+                                        // Create a post detail map
+                                        var postDetail = {
+                                          'postID': postID,
+                                        };
+                                        // Navigate to the BiddingScreen with postDetail
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => BiddingScreen(
+                                              postDetail: postDetail,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        print(
+                                            'Error: Unable to get post detail.');
+                                      }
+                                    },
+                                    child: Text('Update process'),
+                                  ),
                                 if (isBeforeEndDate)
                                   ElevatedButton(
                                     onPressed: () {
@@ -478,6 +472,25 @@ class _homeState extends State<home> {
                                           snapshot.key != null) {
                                         // Access the necessary data fields from the snapshot
                                         var postID = snapshot.key!;
+<<<<<<< HEAD
+
+                                        // Perform the database operation immediately
+                                        dbRef
+                                            .child('OpenCase')
+                                            .child(postID)
+                                            .child('jointPt')
+                                            .push()
+                                            .set(AuthService.currentUser!.uid);
+
+                                        // You can optionally navigate to another screen after performing the database operation.
+                                        // Replace YourNextScreen with the widget you want to navigate to.
+                                        // Navigator.push(
+                                        //   context,
+                                        //   MaterialPageRoute(
+                                        //     builder: (context) => YourNextScreen(),
+                                        //   ),
+                                        // );
+=======
                                         // Create a post detail map
                                         var postDetail = {
                                           'postID': postID,
@@ -493,6 +506,7 @@ class _homeState extends State<home> {
                                         );
                                         
 
+>>>>>>> ee66d68e4e36089ece51f387e582ecde3d972856
                                       } else {
                                         print(
                                             'Error: Unable to get post detail or postID is null.');
@@ -952,4 +966,9 @@ class _homeState extends State<home> {
               ));
         });
   }
+
+  // void getWinner(){
+  //   BiddingScreen biddingScreen = BiddingScreen();
+  //   Map<String, dynamic> winnerInfo = biddingScreen.winnerLawyer();
+  // }
 }
