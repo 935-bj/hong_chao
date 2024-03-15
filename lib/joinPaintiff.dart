@@ -222,13 +222,13 @@ class _JoinPState extends State<JoinP> {
               ),
             ),
 
-            SizedBox(height: 20),
-      ElevatedButton(
-              onPressed: () {
-                _submitBid();
-              },
-              child: Text('Submit'),
-            ),
+      //       SizedBox(height: 20),
+      // ElevatedButton(
+      //         onPressed: () {
+      //           _submitBid();
+      //         },
+      //         child: Text('Submit'),
+      //       ),
 
     
 

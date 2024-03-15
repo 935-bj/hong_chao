@@ -7,7 +7,8 @@ import 'package:hong_chao/home.dart';
 import 'package:hong_chao/authService.dart';
 import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/mgmtReport.dart';
-import 'package:hong_chao/manageRegis.dart';
+import 'package:hong_chao/mgmtLawyerRegis.dart';
+import 'package:hong_chao/mgmtPlaintiffRegis.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -56,7 +57,12 @@ class MyApp extends StatelessWidget {
         editPost.routeName: (context) => const editPost(),
         adminHome.routeName: (context) => const adminHome(),
         mgmtReport.routeName: (context) => const mgmtReport(),
+<<<<<<< HEAD
         //manageRegis.routeName: (context) => const manageRegis(),
+=======
+        mgmtLawyerRegis.routeName: (context) => const mgmtLawyerRegis(),
+        mgmtPlaintiffRegis.routeName: (context) => const mgmtPlaintiffRegis(),
+>>>>>>> ee66d68e4e36089ece51f387e582ecde3d972856
         BiddingScreen.routeName: (context) => const BiddingScreen(
               postDetail: {},
             ),
