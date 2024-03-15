@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
             ),
             
       },
-      initialRoute: home.routeName,
+      initialRoute: mgmtLawyerRegis.routeName,
     );
   }
 }
