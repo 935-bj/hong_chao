@@ -1,15 +1,15 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
-class manageRegis extends StatefulWidget {
-  static String routeName = '/manageRegis';
-  const manageRegis({super.key});
+class mgmtLawyerRegis extends StatefulWidget {
+  static String routeName = '/mgmtLawyerRegis';
+  const mgmtLawyerRegis({super.key});
 
   @override
-  State<manageRegis> createState() => _manageRegisState();
+  State<mgmtLawyerRegis> createState() => _mgmtLawyerRegisState();
 }
 
-class _manageRegisState extends State<manageRegis> {
+class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
   late DatabaseReference dbRef;
   List<Map<String, dynamic>> registrationList = [];
 
@@ -23,7 +23,7 @@ class _manageRegisState extends State<manageRegis> {
 
   void _fetchdata() {
     //reportDetailsList.clear();
-    dbRef.child('registrations').onValue.listen((DatabaseEvent? snapshot) {
+    dbRef.child('lawyer_form').onValue.listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
         Map<dynamic, dynamic> registrationData = snapshot.snapshot.value as Map;
         registrationData.forEach((key, value) {
@@ -35,11 +35,12 @@ class _manageRegisState extends State<manageRegis> {
           if (!isDuplicate) {
             Map<String, dynamic> registrationMap = {
               'regisID': key,
-              '': reportDetails['lid'],
-              '': reportDetails['lidUrl'],
-              'name': reportDetails['name'],
-              '': reportDetails['nidUrl'],
-              'phone': reportDetails['phone'],
+              'licence': registrationDetails['lid'],
+              'licenceUrl': registrationDetails['lidUrl'],
+              'name': registrationDetails['name'],
+              'nationalID': registrationDetails['nid'],
+              'nationalIDUrl': registrationDetails['nidUrl'],
+              'phone': registrationDetails['phone'],
             };
             print(registrationMap);
             setState(() {
@@ -51,13 +52,13 @@ class _manageRegisState extends State<manageRegis> {
     });
   }
 
-//ยังไม่เเก้
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text('Manage Registrations'),
+          child: Text('Manage Lawyer Registrations'),
         ),
       ),
       body: ListView.builder(
@@ -79,59 +80,63 @@ class _manageRegisState extends State<manageRegis> {
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    ': ${reportDetail['']}',
+                    'licence: ${registrationDetail['lid']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    ': ${reportDetail['']}',
+                    'licenceUrl: ${registrationDetail['lidUrl']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    ': ${reportDetail['']}',
+                    'name: ${registrationDetail['name']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    ': ${reportDetail['']}',
+                    'nationalID: ${registrationDetail['nid']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    ': ${reportDetail['']}',
+                    'nationalIDUrl: ${registrationDetail['nidUrl']}',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                  Text(
+                    'phone: ${registrationDetail['phone']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   const SizedBox(
                     height: 10,
                   ),
 
-  //ยังไม่เเก้
+  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
                           //delete post
-                          dbRef
-                              .child('Post')
-                              .child(reportDetail['postID'].toString())
-                              .remove();
-                          //delete report
-                          dbRef
-                              .child('reportPost')
-                              .child(reportDetail['reportID'].toString())
-                              .remove()
-                              .then((_) {
-                            setState(() {
-                              reportDetailsList.removeWhere((report) =>
-                                  report['reportID'] ==
-                                  reportDetail['reportID']);
-                            });
-                          });
+                          // dbRef
+                          //     .child('Post')
+                          //     .child(reportDetail['postID'].toString())
+                          //     .remove();
+                          // //delete report
+                          // dbRef
+                          //     .child('reportPost')
+                          //     .child(reportDetail['reportID'].toString())
+                          //     .remove()
+                          //     .then((_) {
+                          //   setState(() {
+                          //     reportDetailsList.removeWhere((report) =>
+                          //         report['reportID'] ==
+                          //         reportDetail['reportID']);
+                          //   });
+                          // });
                         },
                         icon: const Icon(
                           Icons.delete_forever_rounded,
                           color: Colors.white,
                         ),
                         label: const Text(
-                          'Delete post',
+                          'Accept',
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
@@ -143,23 +148,23 @@ class _manageRegisState extends State<manageRegis> {
                       ElevatedButton.icon(
                         onPressed: () {
                           //remove report only
-                          dbRef
-                              .child('reportPost')
-                              .child(reportDetail['reportID'].toString())
-                              .remove()
-                              .then((_) {
-                            setState(() {
-                              reportDetailsList.removeWhere((report) =>
-                                  report['reportID'] ==
-                                  reportDetail['reportID']);
-                            });
-                          });
+                          // dbRef
+                          //     .child('reportPost')
+                          //     .child(reportDetail['reportID'].toString())
+                          //     .remove()
+                          //     .then((_) {
+                          //   setState(() {
+                          //     reportDetailsList.removeWhere((report) =>
+                          //         report['reportID'] ==
+                          //         reportDetail['reportID']);
+                          //   });
+                          // });
                         },
                         icon: const Icon(
                           Icons.close_rounded,
                           color: Colors.white,
                         ),
-                        label: const Text('Decline report',
+                        label: const Text('Decline',
                             style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
                             backgroundColor:

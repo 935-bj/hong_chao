@@ -491,6 +491,8 @@ class _homeState extends State<home> {
                                             ),
                                           ),
                                         );
+                                        
+
                                       } else {
                                         print(
                                             'Error: Unable to get post detail or postID is null.');
@@ -511,6 +513,8 @@ class _homeState extends State<home> {
             // Other widgets can go here if needed
           ],
         ),
+
+       
 
         //search index 2
         SearchAnchor(
