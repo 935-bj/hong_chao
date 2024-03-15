@@ -64,8 +64,7 @@ class MyApp extends StatelessWidget {
             ),
         JoinP.routeName: (context) => const JoinP(
               postDetail: {},
-            ),
-            
+            ),           
       },
       initialRoute: home.routeName,
     );
