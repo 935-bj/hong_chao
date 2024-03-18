@@ -10,22 +10,20 @@ import 'package:intl/intl.dart';
 class BiddingScreen extends StatefulWidget {
   static String routeName = '/Biding';
   final Map<String, dynamic>? postDetail;
-  
 
   const BiddingScreen({Key? key, this.postDetail}) : super(key: key);
 
   @override
   _BiddingScreenState createState() => _BiddingScreenState();
-  
 }
 
 class _BiddingScreenState extends State<BiddingScreen> {
   late DatabaseReference dbRef;
   late DatabaseReference ref;
+  late DatabaseReference minRef;
 
   List<Map<String, dynamic>> bidsList = [];
 
- 
   String? _author;
 
   //Bidding _bidding = Bidding();
@@ -38,6 +36,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
     dbRef = FirebaseDatabase.instance.ref().child('OpenCase');
     ref = dbRef.child(widget.postDetail!['postID']).child('Bids');
+    minRef = dbRef.child(widget.postDetail!['postID']).child('minBids');
     _bidAmountController = TextEditingController();
     // _fetchAuthorInfo();
 
@@ -88,11 +87,17 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
       if (widget.postDetail != null) {
         var newBidRef = ref.push();
+        var minBidRef = minRef.push();
 
         await newBidRef.set({
           'author': displayName,
           'Biding price': bidAmount.toString(),
           'timestamp': formattedTime,
+        });
+
+        await minBidRef.set({
+          'author': _author,
+          'Biding price': _minimumBid,
         });
 
         setState(() {});
@@ -236,46 +241,4 @@ class _BiddingScreenState extends State<BiddingScreen> {
       },
     );
   }
-
-  Future<Map?> winnerLawyer() async {
-    Map<String, dynamic> winner = {
-      'author': _author,
-      'minBid': _minimumBid,
-    };
-    return winner;
-  }
 }
-
-
-
-// class Bidding {
-//   int _currentBid = 0;
-//   int _minimumIncrement = 5;
-
-//   void placeBid(int bidAmount) {
-//     if (bidAmount >= _currentBid + _minimumIncrement) {
-//       _currentBid = bidAmount;
-//       print('Bid of \$$_currentBid placed successfully.');
-//     } else {
-//       print(
-//           'Bid amount must be at least \$${_currentBid + _minimumIncrement}.');
-//     }
-//   }
-
-//   int getCurrentBid() {
-//     return _currentBid;
-//   }
-
-//   int getMinimumIncrement() {
-//     return _minimumIncrement;
-//   }
-
-//   void setMinimumIncrement(int increment) {
-//     if (increment > 0) {
-//       _minimumIncrement = increment;
-//       print('Minimum bid increment set to \$$_minimumIncrement.');
-//     } else {
-//       print('Minimum bid increment must be greater than 0.');
-//     }
-//   }
-// }
