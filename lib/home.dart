@@ -339,15 +339,6 @@ class _homeState extends State<home> {
                   // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
 
-                  // // Handle bidding logic
-                  // ref.child(postID!).child('Bids').onValue.listen((event) {
-                  //   DataSnapshot snapshot = event.snapshot;
-                  //   handleBidding(snapshot);
-                  // });
-
-                  // // Assign winner lawyer if bidding is closed
-                  // assignWinnerLawyer(postID, isBeforeEndDate);
-
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
@@ -361,16 +352,53 @@ class _homeState extends State<home> {
                               title: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  if (!isBeforeEndDate)
+                                  Text('Winning lawyer: ' +
+                                      snapshot
+                                          .child('minBids')
+                                          .child('minimunBids')
+                                          .child('author')
+                                          .value
+                                          .toString(),
+                                          style: TextStyle(color: Colors.red),),
+                                  if (!isBeforeEndDate)
+                                  Text('Bidding price: ' +
+                                      snapshot
+                                          .child('minBids')
+                                          .child('minimunBids')
+                                          .child('Biding price')
+                                          .value
+                                          .toString(),
+                                          style: TextStyle(color: Colors.red),),
+
+                                  SizedBox(height: 10),
+                                  
+                                  if (isBeforeEndDate)
                                   Text('Author: ' +
                                       snapshot
                                           .child('author')
                                           .value
                                           .toString()),
+                                  if (isBeforeEndDate)
                                   Text('Due: ' +
                                       snapshot
                                           .child('endDate')
                                           .value
                                           .toString()),
+
+                                  SizedBox(height: 10),
+
+                                  if (isBeforeEndDate)
+                                  Text('Current bidding price: ' +
+                                      snapshot
+                                          .child('minBids')
+                                          .child('minimunBids')
+                                          .child('Biding price')
+                                          .value
+                                          .toString(),
+                                          style: TextStyle(color: Colors.red),),
+
+                                          SizedBox(height: 5),
                                 ],
                               ),
                               subtitle: Text(
