@@ -87,7 +87,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
 
       if (widget.postDetail != null) {
         var newBidRef = ref.push();
-        var minBidRef = minRef.push();
+        var minBidRef = minRef.child('minimunBids');
 
         await newBidRef.set({
           'author': displayName,
@@ -95,7 +95,7 @@ class _BiddingScreenState extends State<BiddingScreen> {
           'timestamp': formattedTime,
         });
 
-        await minBidRef.set({
+        minBidRef.update({
           'author': _author,
           'Biding price': _minimumBid,
         });
