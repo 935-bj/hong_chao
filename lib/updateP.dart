@@ -14,55 +14,58 @@ class UpdateDialog {
       'Case Finish': false,
     };
 
+    bool hasSelection = false;
+
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Update'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Would you like to update post ${postDetail['postID']}?'),
-                SizedBox(height: 10),
-                // Add checkboxes for each selection
-                for (var entry in selection.entries)
-                  CheckboxListTile(
-                    title: Text(entry.key),
-                    value: selection[entry.key],
-                    onChanged: (value) {
-                      // Update selection when checkbox is changed
-                      Navigator.of(context).pop();
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Update'),
-                            content: Text('You have selected ${entry.key}.'),
-                            actions: <Widget>[
-                              TextButton(
-                                child: Text('OK'),
-                                onPressed: () {
-                                  // Implement your logic here for handling the selection
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Update'),
+              content: SingleChildScrollView(
+                child: ListBody(
+                  children: <Widget>[
+                    Text('Would you like to update case process ${postDetail['postID']}?'),
+                    SizedBox(height: 10),
+                    // Add checkboxes for each selection
+                    for (var entry in selection.entries)
+                      ListTile(
+                        title: Text(entry.key),
+                        leading: Checkbox(
+                          value: selection[entry.key],
+                          onChanged: (value) {
+                            setState(() {
+                              selection[entry.key] = value!;
+                              hasSelection = selection.containsValue(true);
+                            });
+                          },
+                          shape: CircleBorder(),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                TextButton(
+                  child: Text('Update'),
+                  onPressed: hasSelection
+                      ? () {
+                          // Implement your logic here for handling the update
+                          Navigator.of(context).pop();
+                          // Perform update action
+                        }
+                      : null,
+                ),
               ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+            );
+          },
         );
       },
     );
