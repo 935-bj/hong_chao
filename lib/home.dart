@@ -353,6 +353,22 @@ class _homeState extends State<home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (!isBeforeEndDate)
+                                  Text('Author: ' +
+                                      snapshot
+                                          .child('author')
+                                          .value
+                                          .toString()),
+                                  if (!isBeforeEndDate)
+                                  Text('Due: ' +
+                                      snapshot
+                                          .child('endDate')
+                                          .value
+                                          .toString(),
+                                          style: TextStyle(color: Colors.red),),
+
+                                  SizedBox(height: 5),
+
+                                  if (!isBeforeEndDate)
                                   Text('Winning lawyer: ' +
                                       snapshot
                                           .child('minBids')
@@ -360,7 +376,7 @@ class _homeState extends State<home> {
                                           .child('author')
                                           .value
                                           .toString(),
-                                          style: TextStyle(color: Colors.red),),
+                                          style: TextStyle(color: Colors.green),),
                                   if (!isBeforeEndDate)
                                   Text('Bidding price: ' +
                                       snapshot
@@ -369,7 +385,7 @@ class _homeState extends State<home> {
                                           .child('Biding price')
                                           .value
                                           .toString(),
-                                          style: TextStyle(color: Colors.red),),
+                                          style: TextStyle(color: Colors.green),),
 
                                   SizedBox(height: 10),
                                   
@@ -396,7 +412,7 @@ class _homeState extends State<home> {
                                           .child('Biding price')
                                           .value
                                           .toString(),
-                                          style: TextStyle(color: Colors.red),),
+                                          style: TextStyle(color: Colors.green),),
 
                                           SizedBox(height: 5),
                                 ],
