@@ -66,29 +66,6 @@ class _homeState extends State<home> {
     print("UserID: ${AuthService.currentUser!.uid}");
   }
 
-// Define a function to handle winner lawyer assignment
-//   Future<void> assignWinnerLawyer(String postID, bool isBeforeEndDate) async {
-//   // Access Firebase reference
-//   DatabaseReference winnerLawyerRef = ref.child(postID).child('Winner lawyer');
-
-//   // Set winner lawyer if the condition is met
-//   if (!isBeforeEndDate) {
-//     try {
-//       Map<String, dynamic> winnerInfo = await ;
-
-//       // Then we set the data in Firebase
-//       winner.winnerLawyerRef.set({
-//         'postID': postID,
-//         'Lawyer Name': winner['author'], // Assuming 'author' is the key in your map
-//         'minBid': winner['minBid'], // Assuming 'minBid' is the key in your map
-//       });
-//     } catch (error) {
-//       print('Failed to add winner lawyer: $error');
-//       // Handle error
-//     }
-//   }
-// }
-
   void _fetchdata() {
     postDetailsList.clear();
     dbRef.child('Post').onValue.listen((DatabaseEvent? snapshot) {
@@ -353,68 +330,69 @@ class _homeState extends State<home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   if (!isBeforeEndDate)
-                                  Text('Author: ' +
-                                      snapshot
-                                          .child('author')
-                                          .value
-                                          .toString()),
+                                    Text('Author: ' +
+                                        snapshot
+                                            .child('author')
+                                            .value
+                                            .toString()),
                                   if (!isBeforeEndDate)
-                                  Text('Due: ' +
-                                      snapshot
-                                          .child('endDate')
-                                          .value
-                                          .toString(),
-                                          style: TextStyle(color: Colors.red),),
-
+                                    Text(
+                                      'Due: ' +
+                                          snapshot
+                                              .child('endDate')
+                                              .value
+                                              .toString(),
+                                      style: TextStyle(color: Colors.red),
+                                    ),
                                   SizedBox(height: 5),
-
                                   if (!isBeforeEndDate)
-                                  Text('Winning lawyer: ' +
-                                      snapshot
-                                          .child('minBids')
-                                          .child('minimunBids')
-                                          .child('author')
-                                          .value
-                                          .toString(),
-                                          style: TextStyle(color: Colors.green),),
+                                    Text(
+                                      'Winning lawyer: ' +
+                                          snapshot
+                                              .child('minBids')
+                                              .child('minimunBids')
+                                              .child('author')
+                                              .value
+                                              .toString(),
+                                      style: TextStyle(color: Colors.green),
+                                    ),
                                   if (!isBeforeEndDate)
-                                  Text('Bidding price: ' +
-                                      snapshot
-                                          .child('minBids')
-                                          .child('minimunBids')
-                                          .child('Biding price')
-                                          .value
-                                          .toString(),
-                                          style: TextStyle(color: Colors.green),),
-
+                                    Text(
+                                      'Bidding price: ' +
+                                          snapshot
+                                              .child('minBids')
+                                              .child('minimunBids')
+                                              .child('Biding price')
+                                              .value
+                                              .toString(),
+                                      style: TextStyle(color: Colors.green),
+                                    ),
                                   SizedBox(height: 10),
-                                  
                                   if (isBeforeEndDate)
-                                  Text('Author: ' +
-                                      snapshot
-                                          .child('author')
-                                          .value
-                                          .toString()),
+                                    Text('Author: ' +
+                                        snapshot
+                                            .child('author')
+                                            .value
+                                            .toString()),
                                   if (isBeforeEndDate)
-                                  Text('Due: ' +
-                                      snapshot
-                                          .child('endDate')
-                                          .value
-                                          .toString()),
-
+                                    Text('Due: ' +
+                                        snapshot
+                                            .child('endDate')
+                                            .value
+                                            .toString()),
                                   SizedBox(height: 10),
-
                                   if (isBeforeEndDate)
-                                  Text('Current bidding price: ' +
-                                      snapshot
-                                          .child('minBids')
-                                          .child('minimunBids')
-                                          .child('Biding price')
-                                          .value
-                                          .toString(),
-                                          style: TextStyle(color: Colors.green),),
-
-                                          SizedBox(height: 5),
+                                    Text(
+                                      'Current bidding price: ' +
+                                          snapshot
+                                              .child('minBids')
+                                              .child('minimunBids')
+                                              .child('Biding price')
+                                              .value
+                                              .toString(),
+                                      style: TextStyle(color: Colors.green),
+                                    ),
+                                  SizedBox(height: 5),
                                 ],
                               ),
                               subtitle: Text(
@@ -985,9 +963,4 @@ class _homeState extends State<home> {
               ));
         });
   }
-
-  // void getWinner(){
-  //   BiddingScreen biddingScreen = BiddingScreen();
-  //   Map<String, dynamic> winnerInfo = biddingScreen.winnerLawyer();
-  // }
 }
