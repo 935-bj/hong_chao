@@ -354,7 +354,7 @@ class _homeState extends State<home> {
                                               .child('author')
                                               .value
                                               .toString(),
-                                      style: TextStyle(color: Colors.green),
+                                      style: TextStyle(color: Color.fromARGB(255, 0, 30, 255)),
                                     ),
                                   if (!isBeforeEndDate)
                                     Text(
@@ -365,7 +365,7 @@ class _homeState extends State<home> {
                                               .child('Biding price')
                                               .value
                                               .toString(),
-                                      style: TextStyle(color: Colors.green),
+                                      style: TextStyle(color: Color.fromARGB(255, 0, 30, 255)),
                                     ),
                                   SizedBox(height: 10),
                                   if (isBeforeEndDate)

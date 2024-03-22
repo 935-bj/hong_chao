@@ -14,7 +14,7 @@ class UpdateDialog {
       'Pretrial Preparation': false,
       'Post-Trial Action': false,
       'Case Closure': false,
-      'Case Finish': false,
+      'Finish Case': false,
     };
 
     bool hasSelection = false;
