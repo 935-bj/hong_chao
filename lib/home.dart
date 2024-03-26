@@ -132,9 +132,18 @@ class _homeState extends State<home> {
     });
   }
 
-  Future<String?> isUserTypeNotL() async {
+  Future<String?> isUserType() async {
     AuthService authService = AuthService(); // Instantiate AuthService
     return await authService.userType(); // Call userType() on the instance
+  }
+
+  Future<String?> isUserNameMatched() async {
+    AuthService authService = AuthService();
+    //String? currentUserName = await authService.username(); // Get current user's name
+    //String? authenticatedUserName = AuthService.currentUser?.displayName; // Get current authenticated user's name
+    // Check if both names match
+    //return currentUserName == authenticatedUserName;
+    return await authService.username();
   }
 
   @override
@@ -321,6 +330,12 @@ class _homeState extends State<home> {
                   // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
 
+                  String? winningLawyerUsername = snapshot
+                      .child('minBids')
+                      .child('minimunBids')
+                      .child('author')
+                      .value as String?;
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
@@ -408,32 +423,48 @@ class _homeState extends State<home> {
                                 snapshot.child('content').value.toString(),
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
-                              trailing: PopupMenuButton<String>(
-                                onSelected: (String choice) {
-                                  if (choice == 'Delete') {
-                                    // Delete functionality
-                                    dbRef
-                                        .child('OpenCase')
-                                        .child(snapshot.key.toString())
-                                        .remove()
-                                        .then((_) {
-                                      // Remove the item from the local state
-                                      setState(() {
-                                        postDetailsList.removeWhere((item) =>
-                                            item['postID'] == snapshot.key);
-                                      });
-                                    }).catchError((e) {
-                                      print(e);
-                                    });
+                              trailing: FutureBuilder<String?>(
+                                future: isUserNameMatched(), // Pass postID here
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasError) {
+                                    // If an error occurred
+                                    return Text('Error: ${snapshot.error}');
                                   }
-                                },
-                                itemBuilder: (BuildContext context) {
-                                  return ['Delete'].map((String choice) {
-                                    return PopupMenuItem<String>(
-                                      value: choice,
-                                      child: Text(choice),
+                                  //bool isUserNameMatching = snapshot.data ?? false; // Check if username matches
+                                  if (snapshot.hasData) {
+                                    return PopupMenuButton<String>(
+                                      onSelected: (String choice) {
+                                        if (choice == 'Delete') {
+                                          // Delete functionality
+                                          dbRef
+                                              .child('OpenCase')
+                                              .child(
+                                                  postID!) // Use postID directly here
+                                              .remove()
+                                              .then((_) {
+                                            // Remove the item from the local state
+                                            setState(() {
+                                              postDetailsList.removeWhere(
+                                                  (item) =>
+                                                      item['postID'] == postID);
+                                            });
+                                          }).catchError((e) {
+                                            print(e);
+                                          });
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) {
+                                        return ['Delete'].map((String choice) {
+                                          return PopupMenuItem<String>(
+                                            value: choice,
+                                            child: Text(choice),
+                                          );
+                                        }).toList();
+                                      },
                                     );
-                                  }).toList();
+                                  }
+                                  // If the username matches, you might return something else or null
+                                  return SizedBox(); // Return an empty SizedBox if the username matches
                                 },
                               ),
                             ),
@@ -443,30 +474,39 @@ class _homeState extends State<home> {
                               children: [
                                 // Display the Bidding button only if isBeforeEndDate is true
                                 if (!isBeforeEndDate)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Ensure snapshot value is not null
-                                      if (snapshot.value != null) {
-                                        // Extract postID from snapshot or any other source
-                                        // Create a post detail map
-                                        var postDetail = {
-                                          'postID': postID,
-                                        };
-                                        // Call the dialog from UpdateDialog class with postDetail
-                                        UpdateDialog.showUpdateDialog(
-                                            context, postDetail);
-                                      } else {
-                                        print(
-                                            'Error: Unable to get post detail.');
-                                      }
-                                    },
-                                    child: Text('Update process'),
-                                  ),
+                                  FutureBuilder<String?>(
+  future: isUserNameMatched(),
+  builder: (context, snapshot) {
+    if (snapshot.hasError) {
+      return Text('Error: ${snapshot.error}');
+    } else if (snapshot.hasData) {
+      String? currentUserName = snapshot.data;
+      if (winningLawyerUsername == currentUserName) {
+        return ElevatedButton(
+          onPressed: () {
+            if (postID != null) {
+              var postDetail = {'postID': postID};
+              UpdateDialog.showUpdateDialog(context, postDetail);
+            } else {
+              print('Error: Unable to get post detail.');
+            }
+          },
+          child: Text('Update process'),
+        );
+      } else {
+        return SizedBox(); // Or any other widget you want to show
+      }
+    }
+    // This case handles the loading state, but returns nothing
+    return SizedBox(); // Or any other widget you want to show
+  },
+),
+
                                 if (isBeforeEndDate)
                                   Column(
                                     children: [
                                       FutureBuilder<String?>(
-                                        future: isUserTypeNotL(),
+                                        future: isUserType(),
                                         builder: (context, snapshot) {
                                           if (snapshot.hasError) {
                                             return Text(
