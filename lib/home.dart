@@ -132,6 +132,11 @@ class _homeState extends State<home> {
     });
   }
 
+  Future<String?> isUserTypeNotL() async {
+    AuthService authService = AuthService(); // Instantiate AuthService
+    return await authService.userType(); // Call userType() on the instance
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -354,7 +359,9 @@ class _homeState extends State<home> {
                                               .child('author')
                                               .value
                                               .toString(),
-                                      style: TextStyle(color: Color.fromARGB(255, 0, 30, 255)),
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 0, 30, 255)),
                                     ),
                                   if (!isBeforeEndDate)
                                     Text(
@@ -365,7 +372,9 @@ class _homeState extends State<home> {
                                               .child('Biding price')
                                               .value
                                               .toString(),
-                                      style: TextStyle(color: Color.fromARGB(255, 0, 30, 255)),
+                                      style: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 0, 30, 255)),
                                     ),
                                   SizedBox(height: 10),
                                   if (isBeforeEndDate)
@@ -454,65 +463,103 @@ class _homeState extends State<home> {
                                     child: Text('Update process'),
                                   ),
                                 if (isBeforeEndDate)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Ensure snapshot value is not null
-                                      if (snapshot.value != null) {
-                                        // Create a post detail map
-                                        var postDetail = {
-                                          'postID': postID,
-                                        };
-                                        // Navigate to the BiddingScreen with postDetail
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => BiddingScreen(
-                                              postDetail: postDetail,
-                                            ),
-                                          ),
-                                        );
-                                      } else {
-                                        print(
-                                            'Error: Unable to get post detail.');
-                                      }
-                                    },
-                                    child: Text('Bidding'),
-                                  ),
-                                SizedBox(width: 8),
-                                // Display the "Join as Plaintiff" button only if isBeforeEndDate is true
-
-                                if (isBeforeEndDate)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      // Ensure snapshot value is not null and snapshot key is not null
-                                      if (snapshot.value != null &&
-                                          snapshot.key != null) {
-                                        // Access the necessary data fields from the snapshot
-                                        var postID = snapshot.key!;
-
-                                        // Perform the database operation immediately
-                                        dbRef
-                                            .child('OpenCase')
-                                            .child(postID)
-                                            .child('jointPt')
-                                            .push()
-                                            .set(AuthService.currentUser!.uid);
-
-                                        // You can optionally navigate to another screen after performing the database operation.
-                                        // Replace YourNextScreen with the widget you want to navigate to.
-                                        // Navigator.push(
-                                        //   context,
-                                        //   MaterialPageRoute(
-                                        //     builder: (context) => YourNextScreen(),
-                                        //   ),
-                                        // );
-                                      } else {
-                                        print(
-                                            'Error: Unable to get post detail or postID is null.');
-                                      }
-                                    },
-                                    child: Text('Join as Plaintiff'),
-                                  ),
+                                  Column(
+                                    children: [
+                                      FutureBuilder<String?>(
+                                        future: isUserTypeNotL(),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          }
+                                          if (snapshot.hasData) {
+                                            if (snapshot.data == 'L') {
+                                              return ElevatedButton(
+                                                onPressed: () async {
+                                                  // Ensure postID is not null
+                                                  if (postID != null) {
+                                                    // Navigate to the BiddingScreen with postDetail
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            BiddingScreen(
+                                                          postDetail: {
+                                                            'postID': postID
+                                                          },
+                                                        ),
+                                                      ),
+                                                    );
+                                                  } else {
+                                                    print(
+                                                        'Error: postID is null.');
+                                                  }
+                                                },
+                                                child: Text('Bidding'),
+                                              );
+                                            } else {
+                                              // User's type is not 'L', they might be allowed to bid or join
+                                              if (snapshot.data == 'P') {
+                                                return ElevatedButton(
+                                                  onPressed: () async {
+                                                    // Ensure postID is not null
+                                                    if (postID != null) {
+                                                      try {
+                                                        // Perform database operation to join as plaintiff
+                                                        await dbRef
+                                                            .child('OpenCase')
+                                                            .child(postID!)
+                                                            .child('jointPt')
+                                                            .push()
+                                                            .set(AuthService
+                                                                .currentUser!
+                                                                .uid);
+                                                        print(
+                                                            'Successfully joined as plaintiff');
+                                                      } catch (e) {
+                                                        print('Error: $e');
+                                                      }
+                                                    } else {
+                                                      print(
+                                                          'Error: postID is null.');
+                                                    }
+                                                  },
+                                                  child:
+                                                      Text('Join as Plaintiff'),
+                                                );
+                                              } else {
+                                                return Column(
+                                                  children: [
+                                                    Text(
+                                                      'You are not allowed to bid or join the case,',
+                                                      style: TextStyle(
+                                                        color: Colors.red,
+                                                        fontWeight: FontWeight
+                                                            .bold, // Set the color to red
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      'please change your user type',
+                                                      style: TextStyle(
+                                                        color: Colors
+                                                            .red, // Set the color to red
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              }
+                                            }
+                                          } else {
+                                            // Data not available, handle this case accordingly
+                                            return Text(
+                                                'User data not available');
+                                          }
+                                        },
+                                      ),
+                                    ],
+                                  )
                               ],
                             ),
                           ],
@@ -552,8 +599,105 @@ class _homeState extends State<home> {
                 );
               });
             }),
+
         //noti index3
-        noti(),
+        Column(
+          children: [
+            Expanded(
+              child: FirebaseAnimatedList(
+                query: ref,
+                itemBuilder: (context, snapshot, animation, index) {
+                  // Call your _fetchdata() function here
+                  _fetchdata();
+                  // display it in ListTile along with snapshot data
+
+                  // Retrieve endDate from the snapshot
+                  DateTime endDate = DateFormat('dd-MM-yyyy HH:mm')
+                      .parse(snapshot.child('endDate').value.toString());
+
+                  // Check if current date is after endDate
+                  bool isBeforeEndDate = DateTime.now().isBefore(endDate);
+
+                  // Access the necessary data fields from the snapshot
+                  var postID = snapshot.key;
+
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: Card(
+                      elevation: 2, // adjust elevation as needed
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Author: ' +
+                                      snapshot
+                                          .child('author')
+                                          .value
+                                          .toString()),
+                                  SizedBox(height: 5),
+                                  Text(
+                                    'Winning lawyer: ' +
+                                        snapshot
+                                            .child('minBids')
+                                            .child('minimunBids')
+                                            .child('author')
+                                            .value
+                                            .toString(),
+                                    style: TextStyle(
+                                        color: Color.fromARGB(255, 0, 30, 255)),
+                                  ),
+                                  SizedBox(height: 5),
+                                ],
+                              ),
+                              subtitle: Text(
+                                snapshot.child('content').value.toString(),
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Display the Bidding button only if isBeforeEndDate is true
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Ensure snapshot value is not null
+                                    if (snapshot.value != null) {
+                                      // Extract postID from snapshot or any other source
+                                      // Create a post detail map
+                                      var postDetail = {
+                                        'postID': postID,
+                                      };
+                                      // Call the dialog
+                                      UpdateDialog.showNotiDialog(
+                                          context, postDetail);
+                                    } else {
+                                      print(
+                                          'Error: Unable to get post detail.');
+                                    }
+                                  },
+                                  child: Text('See status'),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Other widgets can go here if needed
+          ],
+        ),
+        //noti(),
+
         //profile index4
         customProfile(),
       ][currentIndex],
