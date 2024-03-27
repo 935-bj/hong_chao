@@ -139,10 +139,6 @@ class _homeState extends State<home> {
 
   Future<String?> isUserNameMatched() async {
     AuthService authService = AuthService();
-    //String? currentUserName = await authService.username(); // Get current user's name
-    //String? authenticatedUserName = AuthService.currentUser?.displayName; // Get current authenticated user's name
-    // Check if both names match
-    //return currentUserName == authenticatedUserName;
     return await authService.username();
   }
 
@@ -575,6 +571,7 @@ class _homeState extends State<home> {
                                                       print(
                                                           'Error: postID is null.');
                                                     }
+                                                    setState(() {});
                                                   },
                                                   child:
                                                       Text('Join as Plaintiff'),
@@ -673,81 +670,98 @@ class _homeState extends State<home> {
                   // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
 
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: Card(
-                      elevation: 2, // adjust elevation as needed
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Author: ' +
-                                      snapshot
-                                          .child('author')
-                                          .value
-                                          .toString()),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    'Winning lawyer: ' +
+                  String? joinPt = snapshot.child('jointPt').value?.toString();
+
+                  if (joinPt != null) {
+                    // Iterate over each child of joinPt
+                    Map<dynamic, dynamic>? joinPtMap =
+                        snapshot.child('jointPt').value as Map?;
+                    if (joinPtMap != null) {
+                      for (var childSnapshotValue in joinPtMap.values) {
+                        // Check if the current user's UID matches the child's value
+                        if (childSnapshotValue ==
+                            AuthService.currentUser?.uid) {
+                          // Return the Card widget if there's a match
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: Card(
+                              elevation: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    ListTile(
+                                      title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                              'Author: ${snapshot.child('author').value.toString()}'),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            'Winning lawyer: ${snapshot.child('minBids').child('minimunBids').child('author').value.toString()}',
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 0, 30, 255)),
+                                          ),
+                                          SizedBox(height: 5),
+                                        ],
+                                      ),
+                                      subtitle: Text(
                                         snapshot
-                                            .child('minBids')
-                                            .child('minimunBids')
-                                            .child('author')
+                                            .child('content')
                                             .value
                                             .toString(),
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 0, 30, 255)),
-                                  ),
-                                  SizedBox(height: 5),
-                                ],
-                              ),
-                              subtitle: Text(
-                                snapshot.child('content').value.toString(),
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Display the Bidding button only if isBeforeEndDate is true
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Ensure snapshot value is not null
-                                    if (snapshot.value != null) {
-                                      // Extract postID from snapshot or any other source
-                                      // Create a post detail map
-                                      var postDetail = {
-                                        'postID': postID,
-                                      };
-                                      // Call the dialog
-                                      UpdateDialog.showNotiDialog(
-                                          context, postDetail);
-                                    } else {
-                                      print(
-                                          'Error: Unable to get post detail.');
-                                    }
-                                  },
-                                  child: Text('See status'),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        // Display the Bidding button only if isBeforeEndDate is true
+                                        if (isBeforeEndDate)
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              // Ensure snapshot value is not null
+                                              if (snapshot.value != null) {
+                                                // Extract postID from snapshot or any other source
+                                                var postDetail = {
+                                                  'postID': postID
+                                                }; // Create a post detail map
+                                                UpdateDialog.showNotiDialog(
+                                                    context, postDetail);
+                                              } else {
+                                                print(
+                                                    'Error: Unable to get post detail.');
+                                                // Show a user-friendly message here if required
+                                              }
+                                            },
+                                            child: Text('See status'),
+                                          ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
-                              ],
+                              ),
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                          );
+                        }
+                      }
+                    }
+                  }
+                  // Return an empty Container if the current user doesn't match joinPt
+                  return Container();
                 },
               ),
             ),
             // Other widgets can go here if needed
           ],
         ),
+
         //noti(),
 
         //profile index4
