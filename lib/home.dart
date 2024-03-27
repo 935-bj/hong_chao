@@ -336,6 +336,8 @@ class _homeState extends State<home> {
                       .child('author')
                       .value as String?;
 
+                  String? author = snapshot.child('author').value as String?;
+
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8.0),
                     child: Card(
@@ -432,36 +434,41 @@ class _homeState extends State<home> {
                                   }
                                   //bool isUserNameMatching = snapshot.data ?? false; // Check if username matches
                                   if (snapshot.hasData) {
-                                    return PopupMenuButton<String>(
-                                      onSelected: (String choice) {
-                                        if (choice == 'Delete') {
-                                          // Delete functionality
-                                          dbRef
-                                              .child('OpenCase')
-                                              .child(
-                                                  postID!) // Use postID directly here
-                                              .remove()
-                                              .then((_) {
-                                            // Remove the item from the local state
-                                            setState(() {
-                                              postDetailsList.removeWhere(
-                                                  (item) =>
-                                                      item['postID'] == postID);
+                                    String? currentUserName = snapshot.data;
+                                    if (author == currentUserName) {
+                                      return PopupMenuButton<String>(
+                                        onSelected: (String choice) {
+                                          if (choice == 'Delete') {
+                                            // Delete functionality
+                                            dbRef
+                                                .child('OpenCase')
+                                                .child(
+                                                    postID!) // Use postID directly here
+                                                .remove()
+                                                .then((_) {
+                                              // Remove the item from the local state
+                                              setState(() {
+                                                postDetailsList.removeWhere(
+                                                    (item) =>
+                                                        item['postID'] ==
+                                                        postID);
+                                              });
+                                            }).catchError((e) {
+                                              print(e);
                                             });
-                                          }).catchError((e) {
-                                            print(e);
-                                          });
-                                        }
-                                      },
-                                      itemBuilder: (BuildContext context) {
-                                        return ['Delete'].map((String choice) {
-                                          return PopupMenuItem<String>(
-                                            value: choice,
-                                            child: Text(choice),
-                                          );
-                                        }).toList();
-                                      },
-                                    );
+                                          }
+                                        },
+                                        itemBuilder: (BuildContext context) {
+                                          return ['Delete']
+                                              .map((String choice) {
+                                            return PopupMenuItem<String>(
+                                              value: choice,
+                                              child: Text(choice),
+                                            );
+                                          }).toList();
+                                        },
+                                      );
+                                    }
                                   }
                                   // If the username matches, you might return something else or null
                                   return SizedBox(); // Return an empty SizedBox if the username matches
@@ -475,32 +482,37 @@ class _homeState extends State<home> {
                                 // Display the Bidding button only if isBeforeEndDate is true
                                 if (!isBeforeEndDate)
                                   FutureBuilder<String?>(
-  future: isUserNameMatched(),
-  builder: (context, snapshot) {
-    if (snapshot.hasError) {
-      return Text('Error: ${snapshot.error}');
-    } else if (snapshot.hasData) {
-      String? currentUserName = snapshot.data;
-      if (winningLawyerUsername == currentUserName) {
-        return ElevatedButton(
-          onPressed: () {
-            if (postID != null) {
-              var postDetail = {'postID': postID};
-              UpdateDialog.showUpdateDialog(context, postDetail);
-            } else {
-              print('Error: Unable to get post detail.');
-            }
-          },
-          child: Text('Update process'),
-        );
-      } else {
-        return SizedBox(); // Or any other widget you want to show
-      }
-    }
-    // This case handles the loading state, but returns nothing
-    return SizedBox(); // Or any other widget you want to show
-  },
-),
+                                    future: isUserNameMatched(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      } else if (snapshot.hasData) {
+                                        String? currentUserName = snapshot.data;
+                                        if (winningLawyerUsername ==
+                                            currentUserName) {
+                                          return ElevatedButton(
+                                            onPressed: () {
+                                              if (postID != null) {
+                                                var postDetail = {
+                                                  'postID': postID
+                                                };
+                                                UpdateDialog.showUpdateDialog(
+                                                    context, postDetail);
+                                              } else {
+                                                print(
+                                                    'Error: Unable to get post detail.');
+                                              }
+                                            },
+                                            child: Text('Update process'),
+                                          );
+                                        } else {
+                                          return SizedBox(); // Or any other widget you want to show
+                                        }
+                                      }
+                                      // This case handles the loading state, but returns nothing
+                                      return SizedBox(); // Or any other widget you want to show
+                                    },
+                                  ),
 
                                 if (isBeforeEndDate)
                                   Column(
