@@ -723,7 +723,6 @@ class _homeState extends State<home> {
                                           MainAxisAlignment.center,
                                       children: [
                                         // Display the Bidding button only if isBeforeEndDate is true
-                                        if (isBeforeEndDate)
                                           ElevatedButton(
                                             onPressed: () {
                                               // Ensure snapshot value is not null

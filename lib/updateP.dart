@@ -107,6 +107,7 @@ class UpdateDialog {
                           notiRef
                               .child(postDetail['postID'])
                               .child('case process')
+                              //.push()
                               .set(selection);
                           Navigator.of(context).pop();
                           // Perform update action
