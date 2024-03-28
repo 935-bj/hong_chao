@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 
 class UpdateDialog {
   static final dbRef = FirebaseDatabase.instance.ref().child('OpenCase');
-  static final notiRef = FirebaseDatabase.instance.ref().child('noti');
+  static final notiRef = FirebaseDatabase.instance.ref().child('OpenCase');
 
   static Future<void> showUpdateDialog(
       BuildContext context, Map<String, dynamic> postDetail) async {
@@ -120,12 +120,13 @@ class UpdateDialog {
                               .child('case process')
                               .set(selection);
                           notiRef
-                              .child(postDetail['postID'])
-                              //.child('time')
-                              .child(timestamp)
-                              .child('case process')
-                              .set(selection);
+    .child(postDetail['postID'])
+    .child('noti')
+    // .push()  // Use push to generate unique keys
+    .child('time') // Specify 'time' as a child
+    .set(timestamp);
                           Navigator.of(context).pop();
+                          
                           // Perform update action
                         }
                       : null,
