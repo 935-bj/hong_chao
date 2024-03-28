@@ -65,7 +65,7 @@ class MyApp extends StatelessWidget {
               postDetail: {},
             ),
       },
-      initialRoute: regisL.routeName,
+      initialRoute: login.routeName,
     );
   }
 }

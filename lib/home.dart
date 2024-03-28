@@ -35,7 +35,7 @@ class _homeState extends State<home> {
   final SearchController searrchController = SearchController();
   final TextEditingController postController = TextEditingController();
 
-  final auth = FirebaseAuth.instance;
+  final auth = FirebaseAuth.instance; //consider to delete the unuse var
   final ref = FirebaseDatabase.instance.ref('OpenCase');
 
   //final mbref = FirebaseDatabase.instance.ref('OpenCase').child(postID!)..child('Bids');
@@ -723,24 +723,24 @@ class _homeState extends State<home> {
                                           MainAxisAlignment.center,
                                       children: [
                                         // Display the Bidding button only if isBeforeEndDate is true
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              // Ensure snapshot value is not null
-                                              if (snapshot.value != null) {
-                                                // Extract postID from snapshot or any other source
-                                                var postDetail = {
-                                                  'postID': postID
-                                                }; // Create a post detail map
-                                                UpdateDialog.showNotiDialog(
-                                                    context, postDetail);
-                                              } else {
-                                                print(
-                                                    'Error: Unable to get post detail.');
-                                                // Show a user-friendly message here if required
-                                              }
-                                            },
-                                            child: Text('See status'),
-                                          ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // Ensure snapshot value is not null
+                                            if (snapshot.value != null) {
+                                              // Extract postID from snapshot or any other source
+                                              var postDetail = {
+                                                'postID': postID
+                                              }; // Create a post detail map
+                                              UpdateDialog.showNotiDialog(
+                                                  context, postDetail);
+                                            } else {
+                                              print(
+                                                  'Error: Unable to get post detail.');
+                                              // Show a user-friendly message here if required
+                                            }
+                                          },
+                                          child: Text('See status'),
+                                        ),
                                       ],
                                     ),
                                   ],
@@ -997,7 +997,13 @@ class _homeState extends State<home> {
                           onPressed: () {
                             AuthService().signOut(context);
                             print('log out');
-                            Navigator.pushNamed(context, login.routeName);
+                            /**Navigator.pushReplacementNamed(
+                                context, login.routeName);**/
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => login()),
+                            );
+                            //try .pop()
                           },
                           child: const Text('Log out'),
                         )
@@ -1097,7 +1103,7 @@ class _homeState extends State<home> {
                               });
                               print('direct to regisP');
                             },
-                            child: const Text('Register as PLaintiff'),
+                            child: const Text('Register as Plaintiff'),
                           ),
                           const SizedBox(
                             width: 10,
