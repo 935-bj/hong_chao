@@ -50,170 +50,172 @@ class _regisPState extends State<regisP> {
           child: Text('Register as Plaintiff'),
         ),
       ),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      const Text('Name Lastname'),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      TextFormField(
-                        controller: _nameController,
-                        decoration: const InputDecoration(
-                          hintText: 'real name',
+      body: SingleChildScrollView(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        const Text('Name Lastname'),
+                        const SizedBox(
+                          height: 5,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('Phone number'),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      TextFormField(
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(10),
-                        ],
-                        decoration: const InputDecoration(
-                          hintText: 'phone number',
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      const Text('National ID'),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      TextFormField(
-                        controller: _nidController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(13),
-                        ],
-                        decoration: const InputDecoration(
-                          hintText: 'national ID',
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Center(
-                            child: Text('Upload evidence'),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: const InputDecoration(
+                            hintText: 'real name',
                           ),
-                          const SizedBox(width: 5),
-                          GestureDetector(
-                            onTap: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Note'),
-                                      content: const Text(
-                                          'upload a picture of your national ID card or your pastport if you are foreigner '),
-                                      actions: [
-                                        //close the dialog box
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('OK'),
-                                        ),
-                                      ],
-                                    );
-                                  });
-                            },
-                            child: const Icon(Icons.help_outline),
-                          )
-                        ],
-                      ),
-                      ElevatedButton(
-                        //if user click this button, user can upload image from gallery
-                        onPressed: () async {
-                          //get the img from gallery
-                          ImagePicker imagePicker = ImagePicker();
-                          XFile? file = await imagePicker.pickImage(
-                              source: ImageSource.gallery);
-                          print('The path is: ${file?.path}');
-                          if (file == null) print('file null');
-
-                          //get ref to storage
-                          Reference root = FirebaseStorage.instance.ref();
-                          Reference Dir = root.child('nid_card');
-                          Reference uploadTo = Dir.child('${user?.uid}.jpg');
-
-                          //upload
-                          try {
-                            await uploadTo.putFile(File(file!.path));
-                            nidUrl = await uploadTo.getDownloadURL();
-                            print(nidUrl);
-                          } catch (error) {}
-                        },
-                        child: const Row(
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text('Phone number'),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextFormField(
+                          controller: _phoneController,
+                          keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(10),
+                          ],
+                          decoration: const InputDecoration(
+                            hintText: 'phone number',
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        const Text('National ID'),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        TextFormField(
+                          controller: _nidController,
+                          keyboardType: TextInputType.number,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                            LengthLimitingTextInputFormatter(13),
+                          ],
+                          decoration: const InputDecoration(
+                            hintText: 'national ID',
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.image_rounded),
-                            Text('Upload photo from Gallery'),
+                            const Center(
+                              child: Text('Upload evidence'),
+                            ),
+                            const SizedBox(width: 5),
+                            GestureDetector(
+                              onTap: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Text('Note'),
+                                        content: const Text(
+                                            'upload a picture of your national ID card or your pastport if you are foreigner '),
+                                        actions: [
+                                          //close the dialog box
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('OK'),
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              },
+                              child: const Icon(Icons.help_outline),
+                            )
                           ],
                         ),
-                      ),
-                    ],
-                  )),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Center(
-              child: ElevatedButton(
-                  onPressed: () {
-                    if (_nameController.text.isEmpty ||
-                        _phoneController.text.isEmpty ||
-                        _nidController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('all filed need to be filled',
-                              style: TextStyle(fontSize: 20)),
-                          duration: Duration(seconds: 10),
+                        ElevatedButton(
+                          //if user click this button, user can upload image from gallery
+                          onPressed: () async {
+                            //get the img from gallery
+                            ImagePicker imagePicker = ImagePicker();
+                            XFile? file = await imagePicker.pickImage(
+                                source: ImageSource.gallery);
+                            print('The path is: ${file?.path}');
+                            if (file == null) print('file null');
+
+                            //get ref to storage
+                            Reference root = FirebaseStorage.instance.ref();
+                            Reference Dir = root.child('nid_card');
+                            Reference uploadTo = Dir.child('${user?.uid}.jpg');
+
+                            //upload
+                            try {
+                              await uploadTo.putFile(File(file!.path));
+                              nidUrl = await uploadTo.getDownloadURL();
+                              print(nidUrl);
+                            } catch (error) {}
+                          },
+                          child: const Row(
+                            children: [
+                              Icon(Icons.image_rounded),
+                              Text('Upload photo from Gallery'),
+                            ],
+                          ),
                         ),
-                      );
-                    }
-                    if (nidUrl.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'you must upload the evidences before submit the form',
-                              style: TextStyle(fontSize: 20)),
-                          duration: Duration(seconds: 10),
-                        ),
-                      );
-                    } else {
-                      sendForm(
-                          '${user?.uid}',
-                          _nameController.text,
-                          int.parse(_phoneController.text),
-                          int.parse(_nidController.text),
-                          nidUrl);
-                      _nameController.clear();
-                      _nidController.clear();
-                      _phoneController.clear();
-                      nidUrl = '';
-                      Navigator.pushNamed(context, home.routeName);
-                    }
-                  },
-                  child: const Text('submit')),
-            )
-          ]),
+                      ],
+                    )),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: ElevatedButton(
+                    onPressed: () {
+                      if (_nameController.text.isEmpty ||
+                          _phoneController.text.isEmpty ||
+                          _nidController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('all filed need to be filled',
+                                style: TextStyle(fontSize: 20)),
+                            duration: Duration(seconds: 10),
+                          ),
+                        );
+                      }
+                      if (nidUrl.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'you must upload the evidences before submit the form',
+                                style: TextStyle(fontSize: 20)),
+                            duration: Duration(seconds: 10),
+                          ),
+                        );
+                      } else {
+                        sendForm(
+                            '${user?.uid}',
+                            _nameController.text,
+                            int.parse(_phoneController.text),
+                            int.parse(_nidController.text),
+                            nidUrl);
+                        _nameController.clear();
+                        _nidController.clear();
+                        _phoneController.clear();
+                        nidUrl = '';
+                        Navigator.pushNamed(context, home.routeName);
+                      }
+                    },
+                    child: const Text('submit')),
+              )
+            ]),
+      ),
     );
   }
 }

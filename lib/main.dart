@@ -17,7 +17,6 @@ import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/joinPaintiff.dart';
 import 'package:hong_chao/rateLawyer.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -64,12 +63,9 @@ class MyApp extends StatelessWidget {
             ),
         JoinP.routeName: (context) => const JoinP(
               postDetail: {},
-            ),           
+            ),
       },
-
-      initialRoute: home.routeName,
-     
-
+      initialRoute: regisP.routeName,
     );
   }
 }
