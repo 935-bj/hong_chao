@@ -55,13 +55,14 @@ class _regisLState extends State<regisL> {
     return Scaffold(
       appBar: AppBar(
         title: const Center(
-          child: Text('Register as Plaintiff'),
+          child: Text('Register as Lawyer'),
         ),
       ),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: SingleChildScrollView(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Form(
@@ -276,7 +277,7 @@ class _regisLState extends State<regisL> {
                   },
                   child: const Text('submit')),
             )
-          ]),
+          ])),
     );
   }
 }

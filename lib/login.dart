@@ -24,12 +24,6 @@ class _loginState extends State<login> {
   void initState() {
     super.initState();
     AuthService.initAuthState();
-
-    /*_auth.authStateChanges().listen((event) {
-      setState(() {
-        _user = event;
-      });
-    });*/
     dbRef = FirebaseDatabase.instance.ref();
   }
 
@@ -47,23 +41,16 @@ class _loginState extends State<login> {
     return Center(
       child: SizedBox(
           height: 50,
-          child: SignInButton(Buttons.google, text: "Sign Up with Google",
-              onPressed: () {
-            AuthService.signInWithGoogle();
+          child: SignInButton(Buttons.google, text: "Sign in with Google",
+              onPressed: () async {
+            await AuthService.signInWithGoogle();
+            if (AuthService.currentUser != null) {
+              Navigator.pushReplacementNamed(context, home.routeName);
+            }
           })),
     );
   }
 
-  /*Widget _to_home() {
-    //Navigator.pushNamed(context, home.routeName);
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => home(
-              auth: AuthService.authInstance, user: AuthService.currentUser),
-        ));
-    return Container();
-  }*/
   Widget _to_home() {
     Navigator.pushReplacementNamed(context, home.routeName);
     return Container();
