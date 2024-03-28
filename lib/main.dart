@@ -9,6 +9,7 @@ import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/mgmtReport.dart';
 import 'package:hong_chao/mgmtLawyerRegis.dart';
 import 'package:hong_chao/mgmtPlaintiffRegis.dart';
+import 'package:hong_chao/myCase.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
         JoinP.routeName: (context) => const JoinP(
               postDetail: {},
             ),
+        myCase.routeName: (context) => const myCase(),
       },
       initialRoute: login.routeName,
     );

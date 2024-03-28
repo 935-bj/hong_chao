@@ -1006,7 +1006,7 @@ class _homeState extends State<home> {
                             //try .pop()
                           },
                           child: const Text('Log out'),
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -1063,10 +1063,13 @@ class _homeState extends State<home> {
                           ),
                           TextButton(
                             onPressed: () {
-                              //AuthService().signOut(context);
                               AuthService().signOut(context);
                               print('log out');
-                              Navigator.pushNamed(context, login.routeName);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => login()),
+                              );
                             },
                             child: const Text('Log out'),
                           )
@@ -1124,10 +1127,13 @@ class _homeState extends State<home> {
                           ),
                           TextButton(
                             onPressed: () {
-                              //AuthService().signOut(context);
                               AuthService().signOut(context);
                               print('log out');
-                              Navigator.pushNamed(context, login.routeName);
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => login()),
+                              );
                             },
                             child: const Text('Log out'),
                           )
