@@ -67,7 +67,7 @@ class MyApp extends StatelessWidget {
             ),
         myCase.routeName: (context) => const myCase(),
       },
-      initialRoute: login.routeName,
+      initialRoute: home.routeName,
     );
   }
 }

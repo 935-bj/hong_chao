@@ -37,6 +37,7 @@ class _homeState extends State<home> {
 
   final auth = FirebaseAuth.instance; //consider to delete the unuse var
   final ref = FirebaseDatabase.instance.ref('OpenCase');
+  //final notiRef = FirebaseDatabase.instance.ref('OpenCase').child('');
 
   //final mbref = FirebaseDatabase.instance.ref('OpenCase').child(postID!)..child('Bids');
 
@@ -658,14 +659,6 @@ class _homeState extends State<home> {
                 itemBuilder: (context, snapshot, animation, index) {
                   // Call your _fetchdata() function here
                   _fetchdata();
-                  // display it in ListTile along with snapshot data
-
-                  // Retrieve endDate from the snapshot
-                  DateTime endDate = DateFormat('dd-MM-yyyy HH:mm')
-                      .parse(snapshot.child('endDate').value.toString());
-
-                  // Check if current date is after endDate
-                  bool isBeforeEndDate = DateTime.now().isBefore(endDate);
 
                   // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
@@ -696,6 +689,8 @@ class _homeState extends State<home> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          Text('Time: ${snapshot.child('noti').child('time').value.toString()}'),
+
                                           Text(
                                               'Author: ${snapshot.child('author').value.toString()}'),
                                           SizedBox(height: 5),
@@ -761,7 +756,7 @@ class _homeState extends State<home> {
           ],
         ),
 
-        //noti(),
+        noti(),
 
         //profile index4
         customProfile(),
@@ -1166,7 +1161,7 @@ class _homeState extends State<home> {
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
-                          notiScreen(caseID: notiDetail['from'] ?? 'no data ')),
+                          notiScreen(caseID: notiDetail['from'] ?? 'no data ', timestamp: '',)),
                 );
               },
               child: Card(

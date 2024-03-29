@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 class notiScreen extends StatefulWidget {
   final String caseID;
-  const notiScreen({Key? key, required this.caseID}) : super(key: key);
+  final String timestamp;
+  
+  const notiScreen({Key? key, required this.caseID, required this.timestamp}) : super(key: key);
 
   @override
   State<notiScreen> createState() => _notiScreenState();
@@ -25,7 +27,7 @@ class _notiScreenState extends State<notiScreen> {
         title: Text('Notification Screen'),
       ),
       body: Center(
-        child: Text('Notification screen for case ID: ${widget.caseID}'),
+        child: Text('Notification screen for case ID: ${widget.timestamp}'),
       ),
     );
   }
