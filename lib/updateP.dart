@@ -1,16 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-
 import 'authService.dart';
-
 import 'package:intl/intl.dart';
 
 class UpdateDialog {
   static final dbRef = FirebaseDatabase.instance.ref().child('OpenCase');
   static final notiRef = FirebaseDatabase.instance.ref().child('OpenCase');
 
-  static Future<void> showUpdateDialog(
-      BuildContext context, Map<String, dynamic> postDetail) async {
+  static Future<void> showUpdateDialog(BuildContext context, Map<String, dynamic> postDetail) async {
     // Retrieve existing selections from the database
     Map<String, bool> selection = {
       'Case Initiation': false,
@@ -25,50 +23,17 @@ class UpdateDialog {
 
     bool hasSelection = false;
 
-    DatabaseEvent event =
-        await dbRef.child(postDetail['postID']).child('case process').once();
+    DatabaseEvent event = await dbRef.child(postDetail['postID']).child('case process').once();
 
     if (event.snapshot.value != null) {
-      Map<dynamic, dynamic>? values =
-          event.snapshot.value as Map<dynamic, dynamic>?;
+      Map<dynamic, dynamic>? values = event.snapshot.value as Map<dynamic, dynamic>?;
+
       if (values != null) {
         selection.forEach((key, value) {
           if (values.containsKey(key)) {
             selection[key] = values[key] as bool;
           }
         });
-        hasSelection = selection.containsValue(true);
-      }
-    }
-
-    DateTime now = DateTime.now();
-    // Generate timestamp
-    String timestamp = DateFormat('dd-MM-yyyy HH:mm').format(now);
-
-    DatabaseEvent notiEvent = await notiRef
-        .child(postDetail['postID'])
-        .child('time')
-        .child(timestamp)
-        .child('case process')
-        .once();
-
-    if (notiEvent.snapshot.value != null) {
-      Map<dynamic, dynamic>? values =
-          notiEvent.snapshot.value as Map<dynamic, dynamic>?;
-
-      if (values != null) {
-        values = Map.fromEntries(
-          values.entries.toList()..sort((a, b) => a.key.compareTo(b.key)),
-        );
-
-        selection.clear();
-
-        values.forEach((key, value) {
-          if (key is String && value is bool) {
-            selection[key] = value;
-          }
-        });
-
         hasSelection = selection.containsValue(true);
       }
     }
@@ -83,7 +48,7 @@ class UpdateDialog {
               content: SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text('Would you like to update case?'),
+                    Text('Would you like to update the case?'),
                     SizedBox(height: 10),
                     // Add checkboxes for each selection
                     for (var entry in selection.entries)
@@ -118,16 +83,27 @@ class UpdateDialog {
                           dbRef
                               .child(postDetail['postID'])
                               .child('case process')
-                              .set(selection);
-                          notiRef
-                              .child(postDetail['postID'])
-                              .child('noti')
-                              .push()  // Use push to generate unique keys
-                              .child('time') // Specify 'time' as a child
-                              .set(timestamp);
-                          Navigator.of(context).pop();
-
-                          // Perform update action
+                              .set(selection)
+                              .then((_) {
+                                // Generate timestamp
+                                String timestamp = DateFormat('dd-MM-yyyy HH:mm').format(DateTime.now());
+                                // Add the timestamp to the 'noti' node
+                                notiRef
+                                    .child(postDetail['postID'])
+                                    .child('noti')
+                                    .push()  // Use push to generate unique keys
+                                    .child('time') // Specify 'time' as a child
+                                    .set(timestamp)
+                                    .then((_) {
+                                      Navigator.of(context).pop();
+                                    })
+                                    .catchError((error) {
+                                      print('Failed to add timestamp: $error');
+                                    });
+                              })
+                              .catchError((error) {
+                                print('Failed to update selection: $error');
+                              });
                         }
                       : null,
                 ),
