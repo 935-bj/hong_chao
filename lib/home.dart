@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/login.dart';
+import 'package:hong_chao/myPost.dart';
 import 'package:hong_chao/notiScreen.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
@@ -689,8 +690,8 @@ class _homeState extends State<home> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text('Time: ${snapshot.child('noti').child('time').value.toString()}'),
-
+                                          Text(
+                                              'Time: ${snapshot.child('noti').child('time').value.toString()}'),
                                           Text(
                                               'Author: ${snapshot.child('author').value.toString()}'),
                                           SizedBox(height: 5),
@@ -982,7 +983,9 @@ class _homeState extends State<home> {
                           width: 10,
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(context, myPost.routeName);
+                          },
                           child: const Text('My post'),
                         ),
                         const SizedBox(
@@ -1043,7 +1046,9 @@ class _homeState extends State<home> {
                             width: 10,
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, myPost.routeName);
+                            },
                             child: const Text('My post'),
                           ),
                           const SizedBox(
@@ -1107,8 +1112,8 @@ class _homeState extends State<home> {
                             width: 10,
                           ),
                           TextButton(
-                            onPressed: () {},
-                            child: const Text('My Post'),
+                            onPressed: () {Navigator.pushNamed(context, myPost.routeName);},
+                            child: const Text('My post'),
                           ),
                           const SizedBox(
                             width: 10,
@@ -1160,8 +1165,10 @@ class _homeState extends State<home> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) =>
-                          notiScreen(caseID: notiDetail['from'] ?? 'no data ', timestamp: '',)),
+                      builder: (context) => notiScreen(
+                            caseID: notiDetail['from'] ?? 'no data ',
+                            timestamp: '',
+                          )),
                 );
               },
               child: Card(

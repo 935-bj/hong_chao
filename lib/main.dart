@@ -10,6 +10,7 @@ import 'package:hong_chao/mgmtReport.dart';
 import 'package:hong_chao/mgmtLawyerRegis.dart';
 import 'package:hong_chao/mgmtPlaintiffRegis.dart';
 import 'package:hong_chao/myCase.dart';
+import 'package:hong_chao/myPost.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
 import 'package:hong_chao/regisP.dart';
@@ -66,6 +67,7 @@ class MyApp extends StatelessWidget {
               postDetail: {},
             ),
         myCase.routeName: (context) => const myCase(),
+        myPost.routeName: (context) => const myPost()
       },
       initialRoute: home.routeName,
     );
