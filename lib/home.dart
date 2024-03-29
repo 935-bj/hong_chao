@@ -700,6 +700,15 @@ class _homeState extends State<home> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
+                                          SizedBox(height: 5),
+                                          Text(
+                      'Your case has been updated!',
+                      style: TextStyle(
+                        color: Colors.red, // Change color to red
+                        fontSize: 18, // Increase font size for prominence
+                        fontWeight: FontWeight.bold, // Emphasize the status
+                      ),
+                    ),
                                           SizedBox(height: 8),
                                           Row(
                                             mainAxisAlignment:
