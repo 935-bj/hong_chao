@@ -109,19 +109,14 @@ class _myCaseState extends State<myCase> {
               itemBuilder: (context, snapshot, animation, index) {
                 print('$myUser');
                 print('${snapshot.child('author').value.toString()}');
-                if (myUser == snapshot.child('author').value.toString()) {
-                  // Call your _fetchdata() function here
-                  _fetchData();
-                  // display it in ListTile along with snapshot data
-
-                  // Retrieve endDate from the snapshot
+                if (myUser == snapshot.child('author').value.toString() ||
+                    snapshot.child('jointPt').hasChild(myUid)) {
                   DateTime endDate = DateFormat('dd-MM-yyyy HH:mm')
                       .parse(snapshot.child('endDate').value.toString());
 
                   // Check if current date is after endDate
                   bool isBeforeEndDate = DateTime.now().isBefore(endDate);
 
-                  // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
 
                   String? winningLawyerUsername = snapshot
@@ -223,10 +218,8 @@ class _myCaseState extends State<myCase> {
                                 future: isUserNameMatched(), // Pass postID here
                                 builder: (context, snapshot) {
                                   if (snapshot.hasError) {
-                                    // If an error occurred
                                     return Text('Error: ${snapshot.error}');
                                   }
-                                  //bool isUserNameMatching = snapshot.data ?? false; // Check if username matches
                                   if (snapshot.hasData) {
                                     String? currentUserName = snapshot.data;
                                     if (author == currentUserName) {
@@ -415,8 +408,8 @@ class _myCaseState extends State<myCase> {
                     ),
                   );
                 } else {
-                  return const Center(
-                    child: Text(''),
+                  return const SizedBox(
+                    height: 0.1,
                   );
                 }
               },
