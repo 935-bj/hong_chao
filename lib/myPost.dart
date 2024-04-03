@@ -15,39 +15,16 @@ class myPost extends StatefulWidget {
 
 class _myPostState extends State<myPost> {
   late DatabaseReference dbRef;
-  List<Map<String, dynamic>> myPostList = [];
   List<Map<String, dynamic>> postDetailsList = [];
 
   @override
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref();
-    _fetchmyPostdata();
-    _fetchPost();
+    _fetchData();
   }
 
-  void _fetchmyPostdata() {
-    myPostList.clear();
-    dbRef
-        .child('user')
-        .child('myPost')
-        .onValue
-        .listen((DatabaseEvent? snapshot) {
-      if (snapshot != null && snapshot.snapshot.value != null) {
-        Map<dynamic, dynamic> myPostData = snapshot.snapshot.value as Map;
-
-        myPostData.forEach((key, value) {
-          Map<String, dynamic> myPostMap = {'$key': value};
-
-          setState(() {
-            myPostList.add(myPostMap);
-          });
-        });
-      }
-    });
-  }
-
-  void _fetchPost() {
+  void _fetchData() {
     postDetailsList.clear();
     dbRef.child('Post').onValue.listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
@@ -75,12 +52,12 @@ class _myPostState extends State<myPost> {
             };
 
             setState(() {
-              postDetailsList.add(postMap);
+              if (postMap['uid'] == AuthService.currentUser!.uid) {
+                postDetailsList.add(postMap);
+              }
             });
           },
         );
-        //print(postData);
-        //return display(data: postData);
       }
     });
   }
@@ -101,135 +78,125 @@ class _myPostState extends State<myPost> {
               print('Invalid index: $index');
               return Container();
             }
-            String postID = myPostList[index].keys.first;
-            Map<String, dynamic>? postDetails;
-            try {
-              postDetails = postDetailsList.firstWhere(
-                (post) => post['postID'] == postID,
-              );
-            } catch (e) {
-              print('Post details not found for postID: $postID');
-            }
 
-            if (postDetails != null) {
-              String time = postDetails['timestamp'].toString();
+            Map<String, dynamic> postDetail = postDetailsList[index];
 
-              String formattedTime = time.substring(0, time.length - 10);
-              return Card(
-                //กล่อง
-                child: ListTile(
-                  title: Text(
-                    postDetails['content'] ??
-                        '', // Use an empty string if postDetail['content'] is null
-                    style: const TextStyle(fontSize: 20.0),
-                  ),
-                  subtitle: Text(
-                      '${postDetails['agreeList'].length} agree • ${postDetails['author'].toString()} • $formattedTime'),
-                  //Text(postDetail['content'],style: TextStyle(fontSize: 18.0),),
+            String time = postDetail['timestamp'].toString();
 
-                  trailing: PopupMenuButton<String>(
-                    itemBuilder: (BuildContext context) {
-                      List<PopupMenuEntry<String>> items = [];
+            String formattedTime = time.substring(0, time.length - 10);
+            return Card(
+              //กล่อง
+              child: ListTile(
+                title: Text(
+                  postDetail['content'] ??
+                      '', // Use an empty string if postDetail['content'] is null
+                  style: const TextStyle(fontSize: 20.0),
+                ),
+                subtitle: Text(
+                    '${postDetail['agreeList'].length} agree • ${postDetail['author'].toString()} • $formattedTime'),
+                //Text(postDetail['content'],style: TextStyle(fontSize: 18.0),),
 
-                      // if currentUser != post owner, they can only click Agree, report
+                trailing: PopupMenuButton<String>(
+                  itemBuilder: (BuildContext context) {
+                    List<PopupMenuEntry<String>> items = [];
 
-                      //agree
+                    // if currentUser != post owner, they can only click Agree, report
+
+                    //agree
+                    items.add(
+                      PopupMenuItem<String>(
+                        value: 'Agree',
+                        child: const Text('Agree'),
+                        // Empty onSelected handler
+                        onTap: () {
+                          String curUid = AuthService.currentUser!.uid;
+                          if (!postDetail['agreeList'].contains(curUid)) {
+                            dbRef
+                                .child('Post')
+                                .child(postDetail['postID'].toString())
+                                .child('agreeList')
+                                .update({
+                              AuthService.currentUser!.uid:
+                                  AuthService.currentUser!.uid
+                            }).then((_) {
+                              setState(() {
+                                postDetail['agreeList']
+                                    .add(AuthService.currentUser!.uid);
+                              });
+                            }).catchError((e) {
+                              print('erroe: $e');
+                            });
+                          } else {
+                            print('current user already agree to this post');
+                          }
+                        },
+                      ),
+                    );
+
+                    //report
+                    items.add(
+                      PopupMenuItem<String>(
+                        value: 'Report',
+                        child: const Text('Report'),
+                        onTap: () {
+                          _to_report(
+                              postDetail['postID'], postDetail['content']);
+
+                          print('heading to report');
+                        },
+                      ),
+                    );
+
+                    // If the current user is owner of the post,
+                    //beside Agree they can make it a case, edit, delete
+                    if (AuthService.currentUser?.uid == postDetail['uid']) {
+                      //make this post to case
                       items.add(
                         PopupMenuItem<String>(
-                          value: 'Agree',
-                          child: const Text('Agree'),
+                          value: 'Make this post to case',
+                          child: const Text('Make this post to case'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    OpenCase(postDetail: postDetail),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                      //edit post
+                      items.add(
+                        PopupMenuItem<String>(
+                          value: 'Edit',
+                          child: const Text('Edit'),
                           // Empty onSelected handler
                           onTap: () {
-                            String curUid = AuthService.currentUser!.uid;
-                            if (!postDetails?['agreeList'].contains(curUid)) {
-                              dbRef
-                                  .child('Post')
-                                  .child(postDetails!['postID'].toString())
-                                  .child('agreeList')
-                                  .update({
-                                AuthService.currentUser!.uid:
-                                    AuthService.currentUser!.uid
-                              }).then((_) {
-                                setState(() {
-                                  postDetails!['agreeList']
-                                      .add(AuthService.currentUser!.uid);
-                                });
-                              }).catchError((e) {
-                                print('erroe: $e');
-                              });
-                            } else {
-                              print('current user already agree to this post');
-                            }
+                            Navigator.pushNamed(context, editPost.routeName,
+                                arguments: editPostArg(postDetail['postID']));
+                            print('edit clicked');
                           },
                         ),
                       );
-
-                      //report
+                      //delete post
                       items.add(
                         PopupMenuItem<String>(
-                          value: 'Report',
-                          child: const Text('Report'),
+                          value: 'Delete',
+                          child: const Text('Delete'),
                           onTap: () {
-                            _to_report(postDetails?['postID'],
-                                postDetails?['content']);
-
-                            print('heading to report');
+                            print('tab delete');
+                            _deleteDialog(postDetail['postID'].toString());
                           },
                         ),
                       );
+                    }
 
-                      // If the current user is owner of the post,
-                      //beside Agree they can make it a case, edit, delete
-                      if (AuthService.currentUser?.uid == postDetails!['uid']) {
-                        //make this post to case
-                        items.add(
-                          PopupMenuItem<String>(
-                            value: 'Make this post to case',
-                            child: const Text('Make this post to case'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      OpenCase(postDetail: postDetails),
-                                ),
-                              );
-                            },
-                          ),
-                        );
-                        //edit post
-                        items.add(
-                          PopupMenuItem<String>(
-                            value: 'Edit',
-                            child: const Text('Edit'),
-                            // Empty onSelected handler
-                            onTap: () {
-                              Navigator.pushNamed(context, editPost.routeName,
-                                  arguments:
-                                      editPostArg(postDetails!['postID']));
-                              print('edit clicked');
-                            },
-                          ),
-                        );
-                        //delete post
-                        items.add(
-                          PopupMenuItem<String>(
-                            value: 'Delete',
-                            child: const Text('Delete'),
-                            onTap: () {
-                              print('tab delete');
-                              _deleteDialog(postDetails!['postID'].toString());
-                            },
-                          ),
-                        );
-                      }
-
-                      return items;
-                    },
-                  ),
+                    return items;
+                  },
                 ),
-              );
-            }
+              ),
+            );
           }),
     );
   }

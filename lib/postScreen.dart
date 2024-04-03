@@ -76,11 +76,6 @@ class _postScreenState extends State<postScreen> {
                   'uid': AuthService.currentUser!.uid,
                   'author': username
                 });
-                dbRef
-                    .child('user')
-                    .child('${AuthService.currentUser!.uid}')
-                    .child('myPost')
-                    .update({'${DateTime.now().toString()}': postID});
                 Navigator.pushNamed(context, home.routeName);
                 _postController.clear();
               },
