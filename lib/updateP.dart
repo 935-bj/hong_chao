@@ -120,13 +120,13 @@ class UpdateDialog {
                               .child('case process')
                               .set(selection);
                           notiRef
-    .child(postDetail['postID'])
-    .child('noti')
-    // .push()  // Use push to generate unique keys
-    .child('time') // Specify 'time' as a child
-    .set(timestamp);
+                              .child(postDetail['postID'])
+                              .child('noti')
+                              .push()  // Use push to generate unique keys
+                              .child('time') // Specify 'time' as a child
+                              .set(timestamp);
                           Navigator.of(context).pop();
-                          
+
                           // Perform update action
                         }
                       : null,
@@ -139,8 +139,8 @@ class UpdateDialog {
     );
   }
 
-  static Future<void> showNotiDialog(
-      BuildContext context, Map<String, dynamic> postDetail) async {
+  static Future<void> showNotiDialog(BuildContext context,
+      Map<String, dynamic> postDetail, DataSnapshot snapshot) async {
     Map<String, bool> selection = {
       'Case Initiation': false,
       'Evidence Gathering': false,
@@ -181,7 +181,38 @@ class UpdateDialog {
               return SingleChildScrollView(
                 child: ListBody(
                   children: <Widget>[
-                    Text('Status has been updated'),
+                    Text(
+                      'Status has been updated',
+                      style: TextStyle(
+                        color: Colors.red, // Change color to red
+                        fontSize: 18, // Increase font size for prominence
+                        fontWeight: FontWeight.bold, // Emphasize the status
+                      ),
+                    ),
+                    SizedBox(height: 10), // Add space for separation
+                    Text(
+                      'Author: ${snapshot.child('author').value.toString()}',
+                      style: TextStyle(
+                        fontSize: 16, // Decrease font size slightly
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Winning lawyer: ${snapshot.child('minBids').child('minimunBids').child('author').value.toString()}',
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 0, 30, 255),
+                        fontSize: 16, // Keep font size consistent
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      'Case detail: ' +
+                          snapshot.child('content').value.toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16, // Keep font size consistent
+                      ),
+                    ),
                     SizedBox(height: 10),
                     // Add checkboxes for each selection
                     for (var entry in selection.entries)

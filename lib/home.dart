@@ -658,106 +658,97 @@ class _homeState extends State<home> {
               child: FirebaseAnimatedList(
                 query: ref,
                 itemBuilder: (context, snapshot, animation, index) {
-                  // Call your _fetchdata() function here
-                  _fetchdata();
-
-                  // Access the necessary data fields from the snapshot
                   var postID = snapshot.key;
 
                   String? joinPt = snapshot.child('jointPt').value?.toString();
 
                   if (joinPt != null) {
-                    // Iterate over each child of joinPt
                     Map<dynamic, dynamic>? joinPtMap =
                         snapshot.child('jointPt').value as Map?;
                     if (joinPtMap != null) {
-                      for (var childSnapshotValue in joinPtMap.values) {
-                        // Check if the current user's UID matches the child's value
-                        if (childSnapshotValue ==
-                            AuthService.currentUser?.uid) {
-                          // Return the Card widget if there's a match
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8.0),
-                            child: Card(
-                              elevation: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    ListTile(
-                                      title: Column(
+                      List<Widget> cards = [];
+                      joinPtMap.forEach((key, value) {
+                        if (value == AuthService.currentUser?.uid) {
+                          // Access the noti node for the current notification
+                          var notiSnapshot = snapshot.child('noti');
+                          // Check if notiSnapshot exists and contains data
+                          if (notiSnapshot.exists) {
+                            // Iterate over each child of notiSnapshot (each notification)
+                            notiSnapshot.children
+                                .forEach((notificationSnapshot) {
+                              // Access the time for the current notification
+                              var time = notificationSnapshot
+                                  .child('time')
+                                  .value
+                                  .toString();
+                              // Add a Card to the list of cards
+                              cards.add(
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: Card(
+                                    elevation: 2,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                               'Time: ${snapshot.child('noti').child('time').value.toString()}'),
                                           Text(
-                                              'Author: ${snapshot.child('author').value.toString()}'),
-                                          SizedBox(height: 5),
-                                          Text(
-                                            'Winning lawyer: ${snapshot.child('minBids').child('minimunBids').child('author').value.toString()}',
+                                            'Time: $time',
                                             style: TextStyle(
-                                                color: Color.fromARGB(
-                                                    255, 0, 30, 255)),
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                          SizedBox(height: 5),
+                                          SizedBox(height: 8),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  if (snapshot.value != null) {
+                                                    var postDetail = {
+                                                      'postID': postID
+                                                    };
+                                                    UpdateDialog.showNotiDialog(
+                                                        context,
+                                                        postDetail,
+                                                        snapshot);
+                                                  } else {
+                                                    print(
+                                                        'Error: Unable to get post detail.');
+                                                  }
+                                                },
+                                                child: Text('Check status'),
+                                              ),
+                                            ],
+                                          ),
                                         ],
                                       ),
-                                      subtitle: Text(
-                                        snapshot
-                                            .child('content')
-                                            .value
-                                            .toString(),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold),
-                                      ),
                                     ),
-                                    SizedBox(height: 8),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        // Display the Bidding button only if isBeforeEndDate is true
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            // Ensure snapshot value is not null
-                                            if (snapshot.value != null) {
-                                              // Extract postID from snapshot or any other source
-                                              var postDetail = {
-                                                'postID': postID
-                                              }; // Create a post detail map
-                                              UpdateDialog.showNotiDialog(
-                                                  context, postDetail);
-                                            } else {
-                                              print(
-                                                  'Error: Unable to get post detail.');
-                                              // Show a user-friendly message here if required
-                                            }
-                                          },
-                                          child: Text('See status'),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          );
+                              );
+                            });
+                          }
                         }
-                      }
+                      });
+                      return Column(
+                        children: cards,
+                      );
                     }
                   }
-                  // Return an empty Container if the current user doesn't match joinPt
                   return Container();
                 },
               ),
             ),
-            // Other widgets can go here if needed
           ],
         ),
 
-        noti(),
+        //noti(),
 
         //profile index4
         customProfile(),
