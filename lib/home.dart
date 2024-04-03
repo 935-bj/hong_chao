@@ -6,6 +6,7 @@ import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/myPost.dart';
+import 'package:hong_chao/myCase.dart';
 import 'package:hong_chao/notiScreen.dart';
 import 'package:hong_chao/postScreen.dart';
 import 'package:hong_chao/regisL.dart';
@@ -1055,7 +1056,9 @@ class _homeState extends State<home> {
                             width: 10,
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, myCase.routeName);
+                            },
                             child: const Text('My case'),
                           ),
                           const SizedBox(
@@ -1119,7 +1122,9 @@ class _homeState extends State<home> {
                             width: 10,
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.pushNamed(context, myCase.routeName);
+                            },
                             child: const Text('My Case'),
                           ),
                           const SizedBox(

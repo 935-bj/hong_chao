@@ -16,6 +16,7 @@ class myPost extends StatefulWidget {
 class _myPostState extends State<myPost> {
   late DatabaseReference dbRef;
   List<Map<String, dynamic>> postDetailsList = [];
+  final String myUid = AuthService.currentUser!.uid;
 
   @override
   void initState() {
@@ -52,7 +53,7 @@ class _myPostState extends State<myPost> {
             };
 
             setState(() {
-              if (postMap['uid'] == AuthService.currentUser!.uid) {
+              if (myUid ==postMap['uid']) {
                 postDetailsList.add(postMap);
               }
             });
