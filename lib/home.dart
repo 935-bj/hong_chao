@@ -672,8 +672,6 @@ class _homeState extends State<home> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                              'Time: ${snapshot.child('noti').child('time').value.toString()}'),
-                                          Text(
                                             'Time: $time',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
