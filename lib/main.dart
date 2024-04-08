@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/adminHome.dart';
+import 'package:hong_chao/adminLogin.dart';
 import 'package:hong_chao/login.dart';
 import 'package:hong_chao/home.dart';
 import 'package:hong_chao/authService.dart';
@@ -18,6 +19,7 @@ import 'package:hong_chao/editPost.dart';
 import 'package:hong_chao/Bidding.dart';
 import 'package:hong_chao/joinPaintiff.dart';
 import 'package:hong_chao/rateLawyer.dart';
+import 'package:hong_chao/searchResult.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,9 +69,11 @@ class MyApp extends StatelessWidget {
               postDetail: {},
             ),
         myCase.routeName: (context) => const myCase(),
-        myPost.routeName: (context) => const myPost()
+        myPost.routeName: (context) => const myPost(),
+        searchResult.routeName: (context) => const searchResult(searchQ: ''),
+        adminLogin.routeName: (context) => const adminLogin(),
       },
-      initialRoute: home.routeName,
+      initialRoute: login.routeName,
     );
   }
 }

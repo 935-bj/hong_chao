@@ -15,6 +15,7 @@ import 'package:hong_chao/OpenCase.dart';
 import 'package:hong_chao/report.dart';
 import 'package:hong_chao/joinPaintiff.dart';
 import 'package:hong_chao/rateLawyer.dart';
+import 'package:hong_chao/searchResult.dart';
 import 'package:hong_chao/updateP.dart';
 import 'package:intl/intl.dart';
 
@@ -1134,152 +1135,46 @@ class _homeState extends State<home> {
   }
 
   Widget search(TextEditingController searchController) {
-    //DbRef = FirebaseDatabase.instance.ref('OpenCase')
+    String searchQ = '';
     return Column(
       children: [
-        TextFormField(
-          controller: searchController,
-          decoration: const InputDecoration(
-            hintText: 'Search',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        Expanded(
-          child: FirebaseAnimatedList(
-            query: FirebaseDatabase.instance.ref('Post'),
-            itemBuilder: (BuildContext context, DataSnapshot snapshot,
-                Animation<double> animation, int index) {
-              final content = snapshot.child('content').value.toString();
-              if (searchController.text.isEmpty) {
-                return const SizedBox(
-                  height: 0.1,
-                );
-              } else if (content
-                  .toLowerCase()
-                  .contains(searchController.text.toLowerCase().toString())) {
-                Map postDetail = snapshot.value as Map;
-                String time = postDetail['timestamp'].toString();
-                String formattedTime = time.substring(0, time.length - 10);
-                return Card(
-                  child: ListTile(
-                    title: Text(
-                      postDetail['content'] ??
-                          '', // Use an empty string if postDetail['content'] is null
-                      style: const TextStyle(fontSize: 20.0),
-                    ),
-                    subtitle: Text(
-                        '${postDetail['agreeList'].length} agree • ${postDetail['author'].toString()} • $formattedTime'),
-                    trailing: PopupMenuButton<String>(
-                      itemBuilder: (BuildContext context) {
-                        List<PopupMenuEntry<String>> items = [];
-
-                        // if currentUser != post owner, they can only click Agree, report
-
-                        //agree
-                        items.add(
-                          PopupMenuItem<String>(
-                            value: 'Agree',
-                            child: const Text('Agree'),
-                            // Empty onSelected handler
-                            onTap: () {
-                              String curUid = AuthService.currentUser!.uid;
-                              if (!postDetail['agreeList'].contains(curUid)) {
-                                dbRef
-                                    .child('Post')
-                                    .child(postDetail['postID'].toString())
-                                    .child('agreeList')
-                                    .update({
-                                  AuthService.currentUser!.uid:
-                                      AuthService.currentUser!.uid
-                                }).then((_) {
-                                  setState(() {
-                                    postDetail['agreeList']
-                                        .add(AuthService.currentUser!.uid);
-                                  });
-                                }).catchError((e) {
-                                  print('erroe: $e');
-                                });
-                              } else {
-                                print(
-                                    'current user already agree to this post');
-                              }
-                            },
-                          ),
-                        );
-
-                        //report
-                        items.add(
-                          PopupMenuItem<String>(
-                            value: 'Report',
-                            child: const Text('Report'),
-                            onTap: () {
-                              _to_report(
-                                  postDetail['postID'], postDetail['content']);
-
-                              print('heading to report');
-                            },
-                          ),
-                        );
-
-                        // If the current user is owner of the post,
-                        //beside Agree they can make it a case, edit, delete
-                        if (AuthService.currentUser?.uid == postDetail['uid']) {
-                          //make this post to case
-                          items.add(
-                            PopupMenuItem<String>(
-                              value: 'Make this post to case',
-                              child: const Text('Make this post to case'),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => OpenCase(
-                                        postDetail:
-                                            postDetail as Map<String, dynamic>),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                          //edit post
-                          items.add(
-                            PopupMenuItem<String>(
-                              value: 'Edit',
-                              child: const Text('Edit'),
-                              // Empty onSelected handler
-                              onTap: () {
-                                Navigator.pushNamed(context, editPost.routeName,
-                                    arguments:
-                                        editPostArg(postDetail['postID']));
-                                print('edit clicked');
-                              },
-                            ),
-                          );
-                          //delete post
-                          items.add(
-                            PopupMenuItem<String>(
-                              value: 'Delete',
-                              child: const Text('Delete'),
-                              onTap: () {
-                                print('tab delete');
-                                _deleteDialog(postDetail['postID'].toString());
-                              },
-                            ),
-                          );
-                        }
-
-                        return items;
-                      },
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.only(right: 8.0), // Adjust margin as needed
+                child: TextFormField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    hintText: 'Search',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(30.0)),
                     ),
                   ),
-                );
-              }
-              //else
-              else {
-                return Container();
-              }
-            },
-          ),
+                ),
+              ),
+            ),
+            CircleAvatar(
+              radius: 30,
+              backgroundColor: Colors.deepPurple,
+              child: IconButton(
+                icon: const Icon(Icons.search_rounded),
+                color: Colors.white,
+                onPressed: () {
+                  FocusScope.of(context).unfocus();
+                  searchQ = searchController.text.toLowerCase();
+                  searchController.clear();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => searchResult(searchQ: searchQ),
+                    ),
+                  );
+                  //searchResult(searchQ);
+                },
+              ),
+            ),
+          ],
         ),
       ],
     );

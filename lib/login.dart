@@ -2,6 +2,8 @@
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:hong_chao/adminHome.dart';
+import 'package:hong_chao/adminLogin.dart';
 import 'package:sign_in_button/sign_in_button.dart';
 import 'package:hong_chao/authService.dart';
 
@@ -30,11 +32,30 @@ class _loginState extends State<login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lawbizcase'),
-      ),
-      body: AuthService.currentUser != null ? _to_home() : _googleSignIn(),
-    );
+        appBar: AppBar(
+          title: const Text('Lawbizcase'),
+        ),
+        body: Stack(
+          children: [
+            Center(
+              child: AuthService.currentUser != null
+                  ? _to_home()
+                  : _googleSignIn(),
+            ),
+            Positioned(
+                bottom: 16,
+                right: 16,
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, adminLogin.routeName);
+                  },
+                  child: Text(
+                    'Admin Login',
+                    style: TextStyle(color: Colors.deepPurple.shade100),
+                  ),
+                ))
+          ],
+        ));
   }
 
   Widget _googleSignIn() {
