@@ -111,6 +111,13 @@ class _BiddingScreenState extends State<BiddingScreen> {
         };
 
         print('Bid placed successfully!');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Bid placed successfully!',
+                style: TextStyle(fontSize: 18)),
+            duration: Duration(seconds: 10),
+          ),
+        );
       } else {
         print('Error: widget.postDetail is null');
       }
@@ -178,9 +185,19 @@ class _BiddingScreenState extends State<BiddingScreen> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                WidgetsBinding.instance!.addPostFrameCallback((_) {
-                  _submitBid();
-                });
+                if (_bidAmountController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('please offer your price',
+                          style: TextStyle(fontSize: 18)),
+                      duration: Duration(seconds: 10),
+                    ),
+                  );
+                } else {
+                  WidgetsBinding.instance!.addPostFrameCallback((_) {
+                    _submitBid();
+                  });
+                }
               },
               child: Text('Place Bid'),
             ),

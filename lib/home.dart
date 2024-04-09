@@ -227,6 +227,14 @@ class _homeState extends State<home> {
                               });
                             } else {
                               print('current user already agree to this post');
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'You agree to this post already!',
+                                      style: TextStyle(fontSize: 18)),
+                                  duration: Duration(seconds: 10),
+                                ),
+                              );
                             }
                           },
                         ),
@@ -566,6 +574,19 @@ class _homeState extends State<home> {
                                                                 .uid);
                                                         print(
                                                             'Successfully joined as plaintiff');
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          const SnackBar(
+                                                            content: Text(
+                                                                'Successfully joined as plaintiff',
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        18)),
+                                                            duration: Duration(
+                                                                seconds: 5),
+                                                          ),
+                                                        );
                                                       } catch (e) {
                                                         print('Error: $e');
                                                       }
