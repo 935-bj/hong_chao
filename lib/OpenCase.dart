@@ -23,6 +23,8 @@ class _OpenCaseState extends State<OpenCase> {
   String? _uid;
   String? _author;
 
+  late bool _endDateSelected;
+
   String _formattedDate(DateTime? date) {
     return date != null
         ? DateFormat('dd-MM-yyyy HH:mm').format(date)
@@ -37,6 +39,8 @@ class _OpenCaseState extends State<OpenCase> {
 
     _startDate = DateTime.now();
     _endDate = DateTime.now();
+
+    _endDateSelected = false;
   }
 
   Future<void> _selectDate(BuildContext context, bool isStartDate) async {
@@ -53,8 +57,9 @@ class _OpenCaseState extends State<OpenCase> {
           _startDate = pickedDate;
         } else {
           // Resetting the time part to 00:00
-          _endDate =
-              DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+          _endDate = DateTime(pickedDate.year, pickedDate.month, pickedDate.day);
+          // Set _endDateSelected flag to true
+          _endDateSelected = true;
         }
       });
     }
@@ -86,57 +91,81 @@ class _OpenCaseState extends State<OpenCase> {
   }
 
   Future<void> _openCase() async {
-    try {
-      // Get current user UID and author
-      User? user = FirebaseAuth.instance.currentUser;
-      String? uid = user?.uid;
-      String? author = user?.displayName;
-
-      // Format dates
-      String startDateFormatted =
-          DateFormat('dd-MM-yyyy HH:mm').format(_startDate);
-      String endDateFormatted =
-          DateFormat('dd-MM-yyyy HH:mm').format(_endDate!);
-
-      // Get the username
-      String username = await getUsername();
-
-      // Create a new case object with the formatted dates and username
-      Map<String, dynamic> caseData = {
-        'startDate': startDateFormatted,
-        'endDate': endDateFormatted,
-        'uid': uid,
-        'author': author,
-        'username': username,
-      };
-
-      // Retrieve the content from the Post child
-      var contentSnapshot = await dbRef
-          .child('Post')
-          .child(widget.postDetail!['postID'])
-          .child('content')
-          .once();
-
-      // Extract the value from the DataSnapshot
-      var content = contentSnapshot.snapshot.value;
-
-      // Update the OpenCase child with the retrieved content and formatted dates
-      await dbRef.child('OpenCase').child(widget.postDetail!['postID']).update({
-        'startDate': startDateFormatted,
-        'endDate': endDateFormatted,
-        'author': username,
-        'content': content, // Update content from Post to OpenCase
-      });
-      await dbRef.child('Post').child(widget.postDetail!['postID']).update({
-        'areCase': 'True',
-      });
-
-      // Close the current page
-      Navigator.of(context).pop();
-    } catch (error) {
-      print('Error opening case: $error');
+  try {
+    // Check if end date is selected
+    if (!_endDateSelected) {
+      // Display a dialog to prompt the user to select the end date
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Select End Date'),
+            content: Text('Please select the end date before opening the case.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+      return;
     }
+
+    // Get current user UID and author
+    User? user = FirebaseAuth.instance.currentUser;
+    String? uid = user?.uid;
+    String? author = user?.displayName;
+
+    // Format dates
+    String startDateFormatted =
+        DateFormat('dd-MM-yyyy HH:mm').format(_startDate);
+    String endDateFormatted =
+        DateFormat('dd-MM-yyyy HH:mm').format(_endDate!);
+
+    // Get the username
+    String username = await getUsername();
+
+    // Create a new case object with the formatted dates and username
+    Map<String, dynamic> caseData = {
+      'startDate': startDateFormatted,
+      'endDate': endDateFormatted,
+      'uid': uid,
+      'author': author,
+      'username': username,
+    };
+
+    // Retrieve the content from the Post child
+    var contentSnapshot = await dbRef
+        .child('Post')
+        .child(widget.postDetail!['postID'])
+        .child('content')
+        .once();
+
+    // Extract the value from the DataSnapshot
+    var content = contentSnapshot.snapshot.value;
+
+    // Update the OpenCase child with the retrieved content and formatted dates
+    await dbRef.child('OpenCase').child(widget.postDetail!['postID']).update({
+      'startDate': startDateFormatted,
+      'endDate': endDateFormatted,
+      'author': username,
+      'content': content, // Update content from Post to OpenCase
+    });
+    await dbRef.child('Post').child(widget.postDetail!['postID']).update({
+      'areCase': 'True',
+    });
+
+    // Close the current page
+    Navigator.of(context).pop();
+  } catch (error) {
+    print('Error opening case: $error');
   }
+}
+
 
   Future<String> getUsername() async {
     try {
