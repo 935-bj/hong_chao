@@ -1067,15 +1067,6 @@ class _homeState extends State<home> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.pushNamed(context, myCase.routeName);
-                            },
-                            child: const Text('My case'),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          TextButton(
-                            onPressed: () {
                               AuthService().signOut(context);
                               print('log out');
                               Navigator.pushReplacement(
@@ -1133,15 +1124,6 @@ class _homeState extends State<home> {
                               Navigator.pushNamed(context, myPost.routeName);
                             },
                             child: const Text('My post'),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, myCase.routeName);
-                            },
-                            child: const Text('My Case'),
                           ),
                           const SizedBox(
                             width: 10,
