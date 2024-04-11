@@ -959,6 +959,10 @@ class _homeState extends State<home> {
                         const SizedBox(
                           width: 20,
                         ),
+                        Text('Normal User'),
+                        const SizedBox(
+                          width: 20,
+                        ),
                         TextButton(
                           onPressed: () {
                             Future.delayed(Duration.zero, () {
@@ -1034,6 +1038,10 @@ class _homeState extends State<home> {
                           const SizedBox(
                             width: 20,
                           ),
+                          Text('Plaintiff User'),
+                          const SizedBox(
+                            width: 20,
+                          ),
                           TextButton(
                             onPressed: () {
                               Future.delayed(Duration.zero, () {
@@ -1101,6 +1109,10 @@ class _homeState extends State<home> {
                           const SizedBox(height: 10),
                           // Display user email
                           usernameWg(),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Text('Lawyer User'),
                           const SizedBox(
                             width: 20,
                           ),
