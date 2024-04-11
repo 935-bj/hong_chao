@@ -268,22 +268,6 @@ class _homeState extends State<home> {
                       // If the current user is owner of the post,
                       //beside Agree they can make it a case, edit, delete
                       if (AuthService.currentUser?.uid == postDetail['uid']) {
-                        //make this post to case
-                        items.add(
-                          PopupMenuItem<String>(
-                            value: 'Make this post to case',
-                            child: const Text('Make this post to case'),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      OpenCase(postDetail: postDetail),
-                                ),
-                              );
-                            },
-                          ),
-                        );
                         //edit post
                         items.add(
                           PopupMenuItem<String>(
@@ -308,6 +292,26 @@ class _homeState extends State<home> {
                             },
                           ),
                         );
+                        isUserType().then((value) {
+                          if (value == 'P') {
+                            //make this post to case
+                            items.add(
+                              PopupMenuItem<String>(
+                                value: 'Make this post to case',
+                                child: const Text('Make this post to case'),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          OpenCase(postDetail: postDetail),
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        });
                       }
 
                       return items;

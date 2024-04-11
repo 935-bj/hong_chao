@@ -27,7 +27,7 @@ class _regisLState extends State<regisL> {
   final TextEditingController _nidController = TextEditingController();
   final TextEditingController _lidController = TextEditingController();
 
-  //auth - user
+  //auth -
   FirebaseAuth auth = AuthService.authInstance;
   User? user = AuthService.currentUser;
 
