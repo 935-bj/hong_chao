@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
         searchResult.routeName: (context) => const searchResult(searchQ: ''),
         adminLogin.routeName: (context) => const adminLogin(),
       },
-      initialRoute: home.routeName,
+      initialRoute: adminHome.routeName,
     );
   }
 }

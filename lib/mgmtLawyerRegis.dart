@@ -35,14 +35,14 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
           if (!isDuplicate) {
             Map<String, dynamic> registrationMap = {
               'regisID': key,
-              'licence': registrationDetails['lid'],
-              'licenceUrl': registrationDetails['lidUrl'],
+              'lid': registrationDetails['lid'],
+              'lidUrl': registrationDetails['lidUrl'],
               'name': registrationDetails['name'],
-              'nationalID': registrationDetails['nid'],
-              'nationalIDUrl': registrationDetails['nidUrl'],
+              'nid': registrationDetails['nid'],
+              'nidUrl': registrationDetails['nidUrl'],
               'phone': registrationDetails['phone'],
             };
-            print(registrationMap);
+            //print(registrationMap);
             setState(() {
               registrationList.add(registrationMap);
             });
@@ -51,7 +51,6 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -80,12 +79,30 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    'licence: ${registrationDetail['lid']}',
+                    'LID: ${registrationDetail['lid']}',
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    'licenceUrl: ${registrationDetail['lidUrl']}',
+                    'Lawyer licence picture:',
                     style: const TextStyle(fontSize: 18.0),
+                  ),
+                  GestureDetector(
+                    onDoubleTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                  content: Image.network(
+                                registrationDetail['lidUrl'],
+                              )));
+                    },
+                    child: Image.network(
+                      registrationDetail[
+                          'lidUrl'], // Provide the image URL here
+                      width: 200, // Adjust width as needed
+                      height: 200, // Adjust height as needed
+                      fit: BoxFit.cover,
+                      // Adjust the fit property as needed
+                    ),
                   ),
                   Text(
                     'name: ${registrationDetail['name']}',
@@ -96,8 +113,26 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    'nationalIDUrl: ${registrationDetail['nidUrl']}',
+                    'national ID picture:',
                     style: const TextStyle(fontSize: 18.0),
+                  ),
+                  GestureDetector(
+                    onDoubleTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                  content: Image.network(
+                                registrationDetail['nidUrl'],
+                              )));
+                    },
+                    child: Image.network(
+                      registrationDetail[
+                          'nidUrl'], // Provide the image URL here
+                      width: 200, // Adjust width as needed
+                      height: 200, // Adjust height as needed
+                      fit: BoxFit.cover,
+                      // Adjust the fit property as needed
+                    ),
                   ),
                   Text(
                     'phone: ${registrationDetail['phone']}',
@@ -106,27 +141,24 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                   const SizedBox(
                     height: 10,
                   ),
-
-  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton.icon(
                         onPressed: () {
                           // ลบข้อมูลในdatabase
-                       dbRef
-                               .child('lawyer_form')
-                               .child(registrationDetail['regisID'].toString())
-                               .remove()
-                               .then((_) {
-                           //ลบข้อมูลในUI
-                             setState(() {
-                               registrationList.removeWhere((registration) =>
-                                   registration['regisID'] ==
-                                   registrationDetail['regisID']);
-                             });
-                        });
-
+                          dbRef
+                              .child('lawyer_form')
+                              .child(registrationDetail['regisID'].toString())
+                              .remove()
+                              .then((_) {
+                            //ลบข้อมูลในUI
+                            setState(() {
+                              registrationList.removeWhere((registration) =>
+                                  registration['regisID'] ==
+                                  registrationDetail['regisID']);
+                            });
+                          });
                         },
                         icon: const Icon(
                           Icons.delete_forever_rounded,
@@ -144,20 +176,23 @@ class _mgmtLawyerRegisState extends State<mgmtLawyerRegis> {
                       const SizedBox(width: 25),
                       ElevatedButton.icon(
                         onPressed: () {
-                        // ลบข้อมูลในdatabase
-                       dbRef
-                               .child('lawyer_form')
-                               .child(registrationDetail['regisID'].toString())
-                               .remove()
-                               .then((_) {
-                           //ลบข้อมูลในUI
-                             setState(() {
-                               registrationList.removeWhere((registration) =>
-                                   registration['regisID'] ==
-                                   registrationDetail['regisID']);
-                             });
-                        });
-                        dbRef.child('user').child(registrationDetail['regisID'].toString()).update({'type':'L'});
+                          // ลบข้อมูลในdatabase
+                          dbRef
+                              .child('lawyer_form')
+                              .child(registrationDetail['regisID'].toString())
+                              .remove()
+                              .then((_) {
+                            //ลบข้อมูลในUI
+                            setState(() {
+                              registrationList.removeWhere((registration) =>
+                                  registration['regisID'] ==
+                                  registrationDetail['regisID']);
+                            });
+                          });
+                          dbRef
+                              .child('user')
+                              .child(registrationDetail['regisID'].toString())
+                              .update({'type': 'L'});
                         },
                         icon: const Icon(
                           Icons.check,

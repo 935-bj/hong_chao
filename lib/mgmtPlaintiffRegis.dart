@@ -20,7 +20,8 @@ class _mgmtPlaintiffRegisState extends State<mgmtPlaintiffRegis> {
 
     _fetchdata();
   }
-void _fetchdata() {
+
+  void _fetchdata() {
     //reportDetailsList.clear();
     dbRef.child('plaintiff_form').onValue.listen((DatabaseEvent? snapshot) {
       if (snapshot != null && snapshot.snapshot.value != null) {
@@ -36,10 +37,10 @@ void _fetchdata() {
               'regisID': key,
               'imageUrl': registrationDetails['imageUrl'],
               'name': registrationDetails['name'],
-              'nationalID': registrationDetails['nid'],
+              'nid': registrationDetails['nid'],
               'phone': registrationDetails['phone'],
             };
-            print(registrationMap);
+            //print(registrationMap);
             setState(() {
               registrationList.add(registrationMap);
             });
@@ -49,11 +50,10 @@ void _fetchdata() {
     });
   }
 
-
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(
+      appBar: AppBar(
         title: const Center(
           child: Text('Manage Plaintiff Registrations'),
         ),
@@ -77,8 +77,26 @@ void _fetchdata() {
                     style: const TextStyle(fontSize: 18.0),
                   ),
                   Text(
-                    'imageUrl: ${registrationDetail['imageUrl']}',
+                    'National ID picture',
                     style: const TextStyle(fontSize: 18.0),
+                  ),
+                  GestureDetector(
+                    onDoubleTap: () {
+                      showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                                  content: Image.network(
+                                registrationDetail['imageUrl'],
+                              )));
+                    },
+                    child: Image.network(
+                      registrationDetail[
+                          'imageUrl'], // Provide the image URL here
+                      width: 200, // Adjust width as needed
+                      height: 200, // Adjust height as needed
+                      fit: BoxFit.cover,
+                      // Adjust the fit property as needed
+                    ),
                   ),
                   Text(
                     'name: ${registrationDetail['name']}',
@@ -95,27 +113,24 @@ void _fetchdata() {
                   const SizedBox(
                     height: 10,
                   ),
-
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton.icon(
-                        
-                          onPressed: () {
+                        onPressed: () {
                           // ลบข้อมูลในdatabase
-                       dbRef
-                               .child('plaintiff_form')
-                               .child(registrationDetail['regisID'].toString())
-                               .remove()
-                               .then((_) {
-                           //ลบข้อมูลในUI
-                             setState(() {
-                               registrationList.removeWhere((registration) =>
-                                   registration['regisID'] ==
-                                   registrationDetail['regisID']);
-                             });
-                        });
+                          dbRef
+                              .child('plaintiff_form')
+                              .child(registrationDetail['regisID'].toString())
+                              .remove()
+                              .then((_) {
+                            //ลบข้อมูลในUI
+                            setState(() {
+                              registrationList.removeWhere((registration) =>
+                                  registration['regisID'] ==
+                                  registrationDetail['regisID']);
+                            });
+                          });
                         },
                         icon: const Icon(
                           Icons.delete_forever_rounded,
@@ -134,20 +149,22 @@ void _fetchdata() {
                       ElevatedButton.icon(
                         onPressed: () {
                           // ลบข้อมูลในdatabase
-                       dbRef
-                               .child('plaintiff_form')
-                               .child(registrationDetail['regisID'].toString())
-                               .remove()
-                               .then((_) {
-                           //ลบข้อมูลในUI
-                             setState(() {
-                               registrationList.removeWhere((registration) =>
-                                   registration['regisID'] ==
-                                   registrationDetail['regisID']);
-                             });
-                        });
-                        dbRef.child('user').child(registrationDetail['regisID'].toString()).update({'type':'P'});
-                         
+                          dbRef
+                              .child('plaintiff_form')
+                              .child(registrationDetail['regisID'].toString())
+                              .remove()
+                              .then((_) {
+                            //ลบข้อมูลในUI
+                            setState(() {
+                              registrationList.removeWhere((registration) =>
+                                  registration['regisID'] ==
+                                  registrationDetail['regisID']);
+                            });
+                          });
+                          dbRef
+                              .child('user')
+                              .child(registrationDetail['regisID'].toString())
+                              .update({'type': 'P'});
                         },
                         icon: const Icon(
                           Icons.check,
@@ -160,7 +177,7 @@ void _fetchdata() {
                                 const Color.fromRGBO(132, 177, 40, 1.0)),
                       ),
                     ],
-                  )
+                  ),
                 ],
               ),
             );
