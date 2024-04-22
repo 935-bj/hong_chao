@@ -53,7 +53,7 @@ class _myPostState extends State<myPost> {
             };
 
             setState(() {
-              if (myUid ==postMap['uid']) {
+              if (myUid == postMap['uid']) {
                 postDetailsList.add(postMap);
               }
             });
@@ -128,7 +128,13 @@ class _myPostState extends State<myPost> {
                               print('erroe: $e');
                             });
                           } else {
-                            print('current user already agree to this post');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('You agree to this post already!',
+                                    style: TextStyle(fontSize: 18)),
+                                duration: Duration(seconds: 10),
+                              ),
+                            );
                           }
                         },
                       ),

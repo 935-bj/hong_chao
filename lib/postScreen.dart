@@ -76,7 +76,8 @@ class _postScreenState extends State<postScreen> {
                   'uid': AuthService.currentUser!.uid,
                   'author': username
                 });
-                Navigator.pushNamed(context, home.routeName);
+                //Navigator.pushNamed(context, home.routeName);
+                Navigator.of(context).pop();
                 _postController.clear();
               },
               child: const Text('Post'))

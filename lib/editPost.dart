@@ -64,7 +64,7 @@ class _editPostState extends State<editPost> {
                 dbRef.child('Post').child(postID).update({
                   'content': _postController.text,
                 });
-                Navigator.pushNamed(context, home.routeName);
+                Navigator.of(context).pop();
                 _postController.clear();
               },
               child: const Text('save'))
