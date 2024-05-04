@@ -790,7 +790,7 @@ class _homeState extends State<home> {
   }
 
   Widget _to_regisP() {
-    Navigator.pushNamed(context, regisL.routeName);
+    Navigator.pushNamed(context, regisP.routeName);
     return Container();
   }
 
@@ -886,15 +886,22 @@ class _homeState extends State<home> {
                 TextButton(
                   child: const Text('create account'),
                   onPressed: () {
-                    dbRef
-                        .child('user')
-                        .child(AuthService.currentUser!.uid.toString())
-                        .set({
-                      'mail': AuthService.currentUser?.email,
-                      'name': _nameController.text,
-                      'type': 'N',
-                    });
-                    Navigator.of(context).pop();
+                    if (_nameController.text.isNotEmpty) {
+                      if (_nameController.text.length >= 5) {
+                        if (_nameController.text
+                            .contains(RegExp(r'[a-zA-Z]'))) {
+                          dbRef
+                              .child('user')
+                              .child(AuthService.currentUser!.uid.toString())
+                              .set({
+                            'mail': AuthService.currentUser?.email,
+                            'name': _nameController.text,
+                            'type': 'N',
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      }
+                    }
                   },
                 ),
               ],
@@ -984,7 +991,7 @@ class _homeState extends State<home> {
                             });
                             print('direct to regisP');
                           },
-                          child: const Text('Register as PLaintiff'),
+                          child: const Text('Register as Plaintiff'),
                         ),
                         const SizedBox(
                           width: 10,

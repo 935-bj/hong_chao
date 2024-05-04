@@ -73,6 +73,9 @@ class MyApp extends StatelessWidget {
         searchResult.routeName: (context) => const searchResult(searchQ: ''),
         adminLogin.routeName: (context) => const adminLogin(),
       },
+      //initialRoute: regisL.routeName,
+      //initialRoute: regisP.routeName,
+      //initialRoute: adminHome.routeName,
       initialRoute: home.routeName,
     );
   }

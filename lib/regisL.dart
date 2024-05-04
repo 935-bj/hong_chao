@@ -245,35 +245,79 @@ class _regisLState extends State<regisL> {
                           duration: Duration(seconds: 10),
                         ),
                       );
-                    }
-                    if (nidUrl.isEmpty || lidUrl.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'you must upload the evidences before submit the form',
-                              style: TextStyle(fontSize: 20)),
-                          duration: Duration(seconds: 10),
-                        ),
-                      );
                     } else {
-                      sendForm(
-                        '${user?.uid}',
-                        _nameController.text,
-                        int.parse(_phoneController.text),
-                        int.parse(_nidController.text),
-                        int.parse(_lidController.text),
-                        nidUrl,
-                        lidUrl,
-                      );
-                      _nameController.clear();
-                      _lidController.clear();
-                      _nidController.clear();
-                      _phoneController.clear();
-                      nidUrl = '';
-                      lidUrl = '';
+                      if (nidUrl.isEmpty || lidUrl.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'you must upload the evidences before submit the form',
+                                style: TextStyle(fontSize: 20)),
+                            duration: Duration(seconds: 5),
+                          ),
+                        );
+                      } else {
+                        if (!RegExp(r'^[a-zA-Z ]+$')
+                            .hasMatch(_nameController.text)) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('name must contain only letters',
+                                  style: TextStyle(fontSize: 20)),
+                              duration: Duration(seconds: 5),
+                            ),
+                          );
+                        } else {
+                          if (_phoneController.text.length != 10) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                    'phone number must contain 10 digits',
+                                    style: TextStyle(fontSize: 20)),
+                                duration: Duration(seconds: 5),
+                              ),
+                            );
+                          } else {
+                            if (_nidController.text.length != 13) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'national ID must contain 13 digits',
+                                      style: TextStyle(fontSize: 20)),
+                                  duration: Duration(seconds: 5),
+                                ),
+                              );
+                            } else {
+                              if (_lidController.text.length != 8) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Lawyer license number must contain 8 digits',
+                                        style: TextStyle(fontSize: 20)),
+                                    duration: Duration(seconds: 5),
+                                  ),
+                                );
+                              } else {
+                                sendForm(
+                                  '${user?.uid}',
+                                  _nameController.text,
+                                  int.parse(_phoneController.text),
+                                  int.parse(_nidController.text),
+                                  int.parse(_lidController.text),
+                                  nidUrl,
+                                  lidUrl,
+                                );
+                                _nameController.clear();
+                                _lidController.clear();
+                                _nidController.clear();
+                                _phoneController.clear();
+                                nidUrl = '';
+                                lidUrl = '';
+                                Navigator.pop(context);
+                              }
+                            }
+                          }
+                        }
+                      }
                     }
-                    //Navigator.pushNamed(context, home.routeName);
-                    Navigator.pop(context);
                   },
                   child: const Text('submit')),
             )
